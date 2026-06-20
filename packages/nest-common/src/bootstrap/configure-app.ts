@@ -16,11 +16,20 @@ export interface ConfigureAppOptions {
 
 export function configureNestApp(app: INestApplication, options: ConfigureAppOptions) {
   app.use(helmet());
+  const webUrl = process.env.NEXT_PUBLIC_WEB_URL ?? 'http://localhost:3000';
+  const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL ?? 'http://localhost:3002';
+  const lanHost = process.env.DEV_LAN_HOST;
+  const corsOrigins = new Set([
+    webUrl,
+    adminUrl,
+    'http://localhost:3000',
+    'http://localhost:3002',
+    ...(lanHost
+      ? [`http://${lanHost}:3000`, `http://${lanHost}:3002`]
+      : []),
+  ]);
   app.enableCors({
-    origin: [
-      process.env.NEXT_PUBLIC_WEB_URL ?? 'http://localhost:3000',
-      process.env.NEXT_PUBLIC_ADMIN_URL ?? 'http://localhost:3002',
-    ],
+    origin: [...corsOrigins],
     credentials: true,
   });
 

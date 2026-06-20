@@ -1,13 +1,17 @@
 import { join } from 'path';
 
+function rootEnvCandidates(cwd: string): string[] {
+  const roots = [join(cwd, '../..'), join(cwd, '../../..'), cwd];
+  const files: string[] = [];
+  for (const root of roots) {
+    files.push(join(root, '.env'), join(root, '.env.local'));
+  }
+  return files;
+}
+
 /** Resolve monorepo root `.env` when services run from `services/*`. */
 export function rootEnvFilePaths(): string[] {
-  const cwd = process.cwd();
-  return [
-    join(cwd, '../../.env'),
-    join(cwd, '../../../.env'),
-    join(cwd, '.env'),
-  ];
+  return rootEnvCandidates(process.cwd());
 }
 
 export const rootConfigModuleOptions = {
