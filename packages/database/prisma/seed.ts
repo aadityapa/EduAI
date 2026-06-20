@@ -146,6 +146,22 @@ async function main() {
     await seedSprint2(prisma, tenant.id, studentUser.id, parentUser.id);
   }
 
+  const teacherUser = await prisma.user.findFirst({
+    where: { tenantId: tenant.id, email: 'teacher@demo.eduai.in' },
+  });
+
+  if (studentUser && parentUser && teacherUser) {
+    const { seedSprint4 } = await import('./seed-sprint4');
+    await seedSprint4(
+      prisma,
+      tenant.id,
+      school.id,
+      teacherUser.id,
+      studentUser.id,
+      parentUser.id,
+    );
+  }
+
   console.log('✅ Seed complete — demo tenant: demo, password: Demo1234!');
 }
 
