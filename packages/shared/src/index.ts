@@ -168,3 +168,27 @@ export function getDashboardRoute(roles: RoleCode[]): string {
   }
   return '/dashboard';
 }
+
+/** Admin CRM runs on a separate Next.js app (default :3002). */
+export function getAdminPortalUrl(): string {
+  const url = process.env.NEXT_PUBLIC_ADMIN_URL ?? 'http://localhost:3002';
+  return url.replace(/\/$/, '');
+}
+
+const ADMIN_DASHBOARD_ROLES: RoleCode[] = [
+  ROLES.PLATFORM_ADMIN,
+  ROLES.TENANT_ADMIN,
+  ROLES.SCHOOL_ADMIN,
+];
+
+/** Post-login destination — absolute URL for admin portal, path for web app. */
+export function resolvePostLoginDestination(roles: RoleCode[]): string {
+  if (roles.some((r) => ADMIN_DASHBOARD_ROLES.includes(r))) {
+    return `${getAdminPortalUrl()}/dashboard`;
+  }
+  return getDashboardRoute(roles);
+}
+
+export function isExternalUrl(url: string): boolean {
+  return url.startsWith('http://') || url.startsWith('https://');
+}

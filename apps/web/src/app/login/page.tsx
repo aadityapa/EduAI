@@ -169,7 +169,12 @@ export default function LoginPage() {
             </div>
 
             <p className="text-center text-xs text-muted-foreground">
-              Demo: admin@demo.eduai.in / Demo1234!
+              Demo: student@demo.eduai.in / Demo1234!
+              <br />
+              Admins: use{' '}
+              <a href={process.env.NEXT_PUBLIC_ADMIN_URL ?? 'http://localhost:3002'} className="text-primary underline">
+                Admin Portal (:3002)
+              </a>
             </p>
           </CardContent>
         </Card>
