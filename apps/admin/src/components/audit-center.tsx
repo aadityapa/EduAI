@@ -1,57 +1,80 @@
 'use client';
 
-import { ActivityFeed, Button, Card, CardContent, CardHeader, CardTitle, Input, Tabs, TabsContent, TabsList, TabsTrigger, toast } from '@eduai/ui';
-import { Download, Search } from 'lucide-react';
+import { ActivityFeed, Input, Tabs, TabsContent, TabsList, TabsTrigger } from '@eduai/ui';
+import { AlertCircle, Search } from 'lucide-react';
 import { PageHeader } from './page-header';
-import { mockAuditLogs } from '@/lib/mock-data';
+import type { ActivityRecord, AuditRecord } from '@/lib/admin-api';
 
-const logCategories = {
-  activity: mockAuditLogs,
-  security: mockAuditLogs.filter((l) => l.type === 'warning' || l.type === 'error'),
-  login: mockAuditLogs.filter((l) => l.title.includes('login')),
-  ai: [{ id: 'ai1', title: 'AI quota check', description: 'Tenant sunrise at 85%', timestamp: '30 min ago', type: 'warning' as const }],
-  payment: [{ id: 'p1', title: 'Payment received', description: '₹85,000 from Demo Academy', timestamp: '1h ago', type: 'success' as const }],
-  system: [{ id: 's1', title: 'Database backup', description: 'Scheduled backup completed', timestamp: '6h ago', type: 'info' as const }],
-};
+function mapAudit(logs: AuditRecord[]) {
+  return logs.map((l) => ({
+    id: l.id,
+    title: l.action,
+    description: l.resource ?? '',
+    timestamp: new Date(l.createdAt).toLocaleString(),
+    type: 'info' as const,
+  }));
+}
 
-export function AuditCenter() {
+function mapActivity(logs: ActivityRecord[]) {
+  return logs.map((l) => ({
+    id: l.id,
+    title: l.action,
+    description: JSON.stringify(l.metadata ?? {}).slice(0, 80),
+    timestamp: new Date(l.createdAt).toLocaleString(),
+    type: 'info' as const,
+  }));
+}
+
+export function AuditCenter({
+  auditLogs,
+  activityLogs,
+  error,
+}: {
+  auditLogs: AuditRecord[] | null;
+  activityLogs: ActivityRecord[] | null;
+  error?: string;
+}) {
+  const audit = auditLogs ?? [];
+  const activity = activityLogs ?? [];
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Audit Center"
-        description="Activity, security, login, AI, payment, and system logs"
-        breadcrumbs={[{ label: 'Admin', href: '/dashboard' }, { label: 'Audit Center' }]}
-        actions={
-          <Button variant="outline" size="sm" onClick={() => toast.success('Export started')}>
-            <Download className="mr-2 h-4 w-4" />Export Logs
-          </Button>
-        }
+        description="Live audit and activity logs from billing-service"
+        breadcrumbs={[{ label: 'Admin', href: '/dashboard' }, { label: 'Audit Logs' }]}
       />
 
+      {error && (
+        <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+          <AlertCircle className="h-4 w-4" /> {error}
+        </div>
+      )}
+
       <div className="relative max-w-md">
-        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input placeholder="Filter logs…" className="pl-9" aria-label="Filter audit logs" />
       </div>
 
-      <Tabs defaultValue="activity">
+      <Tabs defaultValue="audit">
         <TabsList>
-          <TabsTrigger value="activity">Activity</TabsTrigger>
-          <TabsTrigger value="security">Security</TabsTrigger>
-          <TabsTrigger value="login">Login</TabsTrigger>
-          <TabsTrigger value="ai">AI</TabsTrigger>
-          <TabsTrigger value="payment">Payment</TabsTrigger>
-          <TabsTrigger value="system">System</TabsTrigger>
+          <TabsTrigger value="audit">Audit ({audit.length})</TabsTrigger>
+          <TabsTrigger value="activity">Activity ({activity.length})</TabsTrigger>
         </TabsList>
-        {Object.entries(logCategories).map(([key, items]) => (
-          <TabsContent key={key} value={key} className="mt-6">
-            <Card>
-              <CardHeader><CardTitle className="text-base capitalize">{key} Logs</CardTitle></CardHeader>
-              <CardContent>
-                <ActivityFeed items={items} />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        ))}
+        <TabsContent value="audit" className="mt-4">
+          {audit.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No audit logs recorded yet.</p>
+          ) : (
+            <ActivityFeed items={mapAudit(audit)} />
+          )}
+        </TabsContent>
+        <TabsContent value="activity" className="mt-4">
+          {activity.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No activity logs recorded yet.</p>
+          ) : (
+            <ActivityFeed items={mapActivity(activity)} />
+          )}
+        </TabsContent>
       </Tabs>
     </div>
   );

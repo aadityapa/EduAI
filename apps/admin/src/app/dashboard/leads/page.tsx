@@ -1,5 +1,7 @@
+import { getLeadsPageData } from '@/lib/server-data';
 import { LeadsCrm } from '@/components/leads-crm';
 
-export default function LeadsPage() {
-  return <LeadsCrm />;
+export default async function LeadsPage() {
+  const { data, error } = await getLeadsPageData();
+  return <LeadsCrm leads={data} error={error} />;
 }

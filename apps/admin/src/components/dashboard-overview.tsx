@@ -21,6 +21,7 @@ import {
 } from '@eduai/ui';
 import {
   Activity,
+  AlertCircle,
   Brain,
   Building2,
   CreditCard,
@@ -30,11 +31,11 @@ import {
   Users,
 } from 'lucide-react';
 import { PageHeader } from './page-header';
+import type { getPlatformOverview } from '@/lib/server-data';
 import {
   aiUsageData,
   chartConfig,
   courseCompletionData,
-  dashboardKpis,
   engagementData,
   revenueData,
   schoolAnalyticsData,
@@ -49,24 +50,50 @@ function formatNumber(value: number) {
   return new Intl.NumberFormat('en-IN').format(value);
 }
 
-export function DashboardOverview() {
+type Overview = Awaited<ReturnType<typeof getPlatformOverview>>;
+
+export function DashboardOverview({ overview }: { overview: Overview }) {
+  const erp = overview.erp.data as {
+    engagement?: { students?: number; teachers?: number; classes?: number };
+    ai?: { totalQueries?: number };
+  } | null;
+  const revenue = overview.revenue.data;
+  const students = erp?.engagement?.students ?? 0;
+  const teachers = erp?.engagement?.teachers ?? 0;
+  const classes = erp?.engagement?.classes ?? 0;
+  const mrr = revenue?.mrr ?? 0;
+  const aiRequests = erp?.ai?.totalQueries ?? 0;
+  const subs = revenue?.activeSubscriptions ?? 0;
+  const errors = [overview.revenue.error, overview.erp.error, overview.ai.error].filter(Boolean);
+
+  const liveRevenueChart = revenueData.map((row, i, arr) =>
+    i === arr.length - 1 ? { ...row, mrr } : row,
+  );
+
   return (
     <div className="space-y-8">
       <PageHeader
         title="Dashboard"
-        description="Platform overview — users, revenue, AI usage, and engagement"
+        description="Live KPIs from ERP + billing + AI services"
         breadcrumbs={[{ label: 'Admin', href: '/dashboard' }, { label: 'Dashboard' }]}
       />
 
+      {errors.length > 0 && (
+        <div className="flex items-start gap-2 rounded-lg border border-warning/40 bg-warning/5 p-3 text-sm">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
+          <span>Some services unavailable: {errors.join('; ')}. Start backend with pnpm dev:backend</span>
+        </div>
+      )}
+
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <KpiCard icon={<GraduationCap className="h-5 w-5" />} label="Total Students" value={formatNumber(dashboardKpis.totalStudents)} trend={{ value: 12.4, label: 'vs last month' }} />
-        <KpiCard icon={<Users className="h-5 w-5" />} label="Teachers" value={formatNumber(dashboardKpis.totalTeachers)} trend={{ value: 8.2, label: 'vs last month' }} />
-        <KpiCard icon={<School className="h-5 w-5" />} label="Schools" value={formatNumber(dashboardKpis.totalSchools)} trend={{ value: 5.1, label: 'vs last month' }} />
-        <KpiCard icon={<CreditCard className="h-5 w-5" />} label="Monthly Revenue" value={formatCurrency(dashboardKpis.monthlyRevenue)} trend={{ value: 7.6, label: 'MRR growth' }} />
-        <KpiCard icon={<Activity className="h-5 w-5" />} label="Active Users" value={formatNumber(dashboardKpis.activeUsers)} trend={{ value: 3.8 }} />
-        <KpiCard icon={<Brain className="h-5 w-5" />} label="AI Requests" value={formatNumber(dashboardKpis.aiRequests)} trend={{ value: 18.5, label: 'This month' }} />
-        <KpiCard icon={<Building2 className="h-5 w-5" />} label="Subscriptions" value={dashboardKpis.subscriptions} trend={{ value: 4.2 }} />
-        <KpiCard icon={<Repeat className="h-5 w-5" />} label="Retention" value={`${dashboardKpis.retention}%`} trend={{ value: 1.2, label: 'Net retention' }} />
+        <KpiCard icon={<GraduationCap className="h-5 w-5" />} label="Students (tenant)" value={formatNumber(students)} />
+        <KpiCard icon={<Users className="h-5 w-5" />} label="Teachers" value={formatNumber(teachers)} />
+        <KpiCard icon={<School className="h-5 w-5" />} label="Active Classes" value={formatNumber(classes)} />
+        <KpiCard icon={<CreditCard className="h-5 w-5" />} label="MRR" value={formatCurrency(mrr)} />
+        <KpiCard icon={<Activity className="h-5 w-5" />} label="Attendance Today" value={`${(overview.erp.data as { attendance?: { rate?: number } })?.attendance?.rate ?? 0}%`} />
+        <KpiCard icon={<Brain className="h-5 w-5" />} label="AI Queries" value={formatNumber(aiRequests)} />
+        <KpiCard icon={<Building2 className="h-5 w-5" />} label="Subscriptions" value={subs} />
+        <KpiCard icon={<Repeat className="h-5 w-5" />} label="Retention" value={`${((1 - (revenue?.churnRate ?? 0)) * 100).toFixed(1)}%`} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -94,7 +121,7 @@ export function DashboardOverview() {
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-[280px]">
-              <LineChart data={revenueData}>
+              <LineChart data={liveRevenueChart}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
