@@ -12,12 +12,13 @@ FROM base AS deps
 ARG SERVICE_NAME
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY packages ./packages
-COPY services/${SERVICE_NAME}/package.json ./services/${SERVICE_NAME}/
+COPY backend/packages ./backend/packages
+COPY backend/services/${SERVICE_NAME}/package.json ./backend/services/${SERVICE_NAME}/
 RUN pnpm install --frozen-lockfile
 
 FROM deps AS builder
 ARG SERVICE_NAME
-COPY services/${SERVICE_NAME} ./services/${SERVICE_NAME}
+COPY backend/services/${SERVICE_NAME} ./backend/services/${SERVICE_NAME}
 RUN pnpm --filter @eduai/${SERVICE_NAME} build
 
 FROM node:${NODE_VERSION} AS production
@@ -28,10 +29,11 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 
-COPY --from=builder /app/services/${SERVICE_NAME}/dist ./dist
-COPY --from=builder /app/services/${SERVICE_NAME}/package.json ./package.json
+COPY --from=builder /app/backend/services/${SERVICE_NAME}/dist ./dist
+COPY --from=builder /app/backend/services/${SERVICE_NAME}/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/packages ./packages
+COPY --from=builder /app/backend/packages ./backend/packages
 
 USER eduai
 EXPOSE 3000
