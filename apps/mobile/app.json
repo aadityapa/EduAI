@@ -14,7 +14,7 @@
     "android": {
       "package": "in.eduai.mobile",
       "adaptiveIcon": {
-        "backgroundColor": "#6366f1"
+        "backgroundColor": "#6D28D9"
       }
     },
     "plugins": [
@@ -22,7 +22,7 @@
       [
         "expo-notifications",
         {
-          "color": "#6366f1"
+          "color": "#6D28D9"
         }
       ]
     ],

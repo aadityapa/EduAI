@@ -151,6 +151,7 @@ export function resolveAuthSecret(envValue?: string): string {
 export const SELF_REGISTER_ROLES: RoleCode[] = ['student', 'parent'];
 
 export { withTimeout, DB_QUERY_TIMEOUT_MS } from './timeout.js';
+export { PORTS, FRONTEND_APPS, BACKEND_SERVICES, serviceUrl } from './ports.js';
 
 export function getDashboardRoute(roles: RoleCode[]): string {
   const priority: RoleCode[] = [

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import {
-  ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -10,81 +12,133 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../src/auth/AuthContext';
-import { useTheme, themeStyles } from '../src/theme/ThemeProvider';
-import { useTranslation } from '../src/i18n/useTranslation';
+import { PrimaryButton, tokens } from '../src/components/ui';
+
+type Portal = 'student' | 'teacher' | 'parent';
+
+const PORTALS: { id: Portal; label: string; email: string }[] = [
+  { id: 'student', label: 'Student', email: 'student@demo.eduai.in' },
+  { id: 'teacher', label: 'Teacher', email: 'teacher@demo.eduai.in' },
+  { id: 'parent', label: 'Parent', email: 'parent@demo.eduai.in' },
+];
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
-  const theme = useTheme();
-  const styles = themeStyles(theme);
-  const t = useTranslation();
+  const [portal, setPortal] = useState<Portal>('student');
   const [email, setEmail] = useState('student@demo.eduai.in');
   const [password, setPassword] = useState('Demo1234!');
   const [loading, setLoading] = useState(false);
+
+  function selectPortal(p: Portal) {
+    setPortal(p);
+    setEmail(PORTALS.find((x) => x.id === p)!.email);
+  }
 
   async function handleLogin() {
     setLoading(true);
     try {
       const route = await signIn(email, password);
-      if (route.startsWith('student')) router.replace('/(student)');
-      else if (route.startsWith('parent')) router.replace('/(parent)');
-      else if (route.startsWith('teacher')) router.replace('/(teacher)');
-      else Alert.alert('Login', 'Role not supported on mobile yet');
+      if (route.includes('student')) router.replace('/(student)');
+      else if (route.includes('parent')) router.replace('/(parent)');
+      else if (route.includes('teacher')) router.replace('/(teacher)');
+      else Alert.alert('Admin login', 'Use Admin Portal at http://localhost:3002');
     } catch (e) {
-      Alert.alert('Login failed', e instanceof Error ? e.message : 'Unknown error');
+      Alert.alert('Login failed', e instanceof Error ? e.message : 'Start backend on :3001');
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <View style={local.container}>
-      <Text style={[local.title, styles.title]}>{theme.appName}</Text>
-      <Text style={local.subtitle}>{t('auth.signIn', 'Sign in to continue learning')}</Text>
-      <TextInput
-        style={local.input}
-        placeholder="Email"
-        autoCapitalize="none"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={local.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <Pressable
-        style={[local.button, styles.button]}
-        onPress={handleLogin}
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={local.buttonText}>{t('auth.login', 'Sign In')}</Text>
-        )}
-      </Pressable>
-      <Text style={local.hint}>Demo: *@demo.eduai.in / Demo1234!</Text>
-    </View>
+    <KeyboardAvoidingView
+      style={styles.root}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+        <View style={styles.header}>
+          <View style={styles.logo}>
+            <Text style={styles.logoText}>E</Text>
+          </View>
+          <Text style={styles.title}>EduAI</Text>
+          <Text style={styles.subtitle}>Student · Teacher · Parent</Text>
+        </View>
+
+        <View style={styles.portalRow}>
+          {PORTALS.map((p) => (
+            <Pressable
+              key={p.id}
+              style={[styles.pill, portal === p.id && styles.pillActive]}
+              onPress={() => selectPortal(p.id)}
+            >
+              <Text style={[styles.pillText, portal === p.id && styles.pillTextActive]}>
+                {p.label}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+
+        <View style={styles.form}>
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            style={styles.input}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <Text style={styles.label}>Password</Text>
+          <TextInput style={styles.input} secureTextEntry value={password} onChangeText={setPassword} />
+          <PrimaryButton label="Sign In" onPress={handleLogin} loading={loading} />
+        </View>
+
+        <Text style={styles.hint}>Backend API :3001 · Web :3000 · Admin :3002</Text>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
-const local = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 24, backgroundColor: '#f8fafc' },
-  title: { fontSize: 28, fontWeight: '700', marginBottom: 8, textAlign: 'center' },
-  subtitle: { fontSize: 14, color: '#64748b', textAlign: 'center', marginBottom: 24 },
+const styles = StyleSheet.create({
+  root: { flex: 1, backgroundColor: tokens.colors.background },
+  scroll: { flexGrow: 1, padding: tokens.spacing.lg, justifyContent: 'center' },
+  header: { alignItems: 'center', marginBottom: tokens.spacing.lg },
+  logo: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    backgroundColor: tokens.colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: tokens.spacing.sm,
+  },
+  logoText: { color: '#fff', fontSize: 28, fontWeight: '800' },
+  title: { fontSize: tokens.fontSize.xxl, fontWeight: '800', color: tokens.colors.text },
+  subtitle: { fontSize: tokens.fontSize.sm, color: tokens.colors.textMuted, marginTop: 4 },
+  portalRow: { flexDirection: 'row', gap: 8, marginBottom: tokens.spacing.lg },
+  pill: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: tokens.radius.sm,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.border,
+    alignItems: 'center',
+    backgroundColor: tokens.colors.surface,
+  },
+  pillActive: { borderColor: tokens.colors.primary, backgroundColor: tokens.colors.primary + '15' },
+  pillText: { fontWeight: '600', color: tokens.colors.textMuted, fontSize: tokens.fontSize.sm },
+  pillTextActive: { color: tokens.colors.primary },
+  form: {
+    backgroundColor: tokens.colors.surface,
+    borderRadius: tokens.radius.lg,
+    padding: tokens.spacing.md,
+  },
+  label: { fontSize: tokens.fontSize.sm, fontWeight: '600', marginBottom: 6, color: tokens.colors.text },
   input: {
     borderWidth: 1,
-    borderColor: '#e2e8f0',
-    borderRadius: 8,
+    borderColor: tokens.colors.border,
+    borderRadius: tokens.radius.sm,
     padding: 14,
-    marginBottom: 12,
-    backgroundColor: '#fff',
+    marginBottom: tokens.spacing.md,
+    backgroundColor: tokens.colors.background,
   },
-  button: { borderRadius: 8, padding: 16, alignItems: 'center', marginTop: 8 },
-  buttonText: { color: '#fff', fontWeight: '600', fontSize: 16 },
-  hint: { marginTop: 24, textAlign: 'center', color: '#94a3b8', fontSize: 12 },
+  hint: { marginTop: tokens.spacing.lg, textAlign: 'center', color: tokens.colors.textMuted, fontSize: tokens.fontSize.xs },
 });

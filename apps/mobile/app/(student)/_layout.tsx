@@ -1,14 +1,16 @@
 import { Tabs } from 'expo-router';
-import { useTheme } from '../../src/theme/ThemeProvider';
+import { tokens } from '../../src/theme/tokens';
 
 export default function StudentLayout() {
-  const theme = useTheme();
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: theme.primaryColor,
-        headerStyle: { backgroundColor: theme.primaryColor },
+        tabBarActiveTintColor: tokens.colors.primary,
+        tabBarInactiveTintColor: tokens.colors.textMuted,
+        tabBarStyle: { backgroundColor: tokens.colors.surface, borderTopColor: tokens.colors.border },
+        headerStyle: { backgroundColor: tokens.colors.primary },
         headerTintColor: '#fff',
+        headerTitleStyle: { fontWeight: '600' },
       }}
     >
       <Tabs.Screen name="index" options={{ title: 'Home' }} />
