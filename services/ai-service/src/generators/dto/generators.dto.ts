@@ -79,3 +79,17 @@ export class GenerateMockTestDto {
   @IsEnum(['easy', 'medium', 'hard'])
   difficulty?: 'easy' | 'medium' | 'hard';
 }
+
+export class EvaluateMockTestDto {
+  @ApiProperty()
+  questions!: Array<{
+    type: string;
+    stem: string;
+    options?: Array<{ label: string; isCorrect: boolean }>;
+    explanation?: string;
+    marks: number;
+  }>;
+
+  @ApiProperty({ example: { q0: '4', q1: 'True' } })
+  answers!: Record<string, string>;
+}

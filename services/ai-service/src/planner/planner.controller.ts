@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PlannerService } from './planner.service';
 import { PlannerGenerateDto } from './dto/planner.dto';
@@ -16,6 +16,13 @@ export class PlannerController {
   @RequirePermission('ai:tutor:use:own')
   async generate(@CurrentUser() user: UserContext, @Body() dto: PlannerGenerateDto) {
     const data = await this.plannerService.generate(user, dto);
+    return apiResponse(data);
+  }
+
+  @Get('plans')
+  @RequirePermission('ai:tutor:use:own')
+  async listPlans(@CurrentUser() user: UserContext) {
+    const data = await this.plannerService.listPlans(user);
     return apiResponse(data);
   }
 }

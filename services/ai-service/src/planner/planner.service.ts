@@ -32,11 +32,7 @@ export class PlannerService {
       { title: `Study plan: ${dto.subjects.join(', ')}` },
     );
 
-    await this.conversationService.saveMessage(
-      conversation.id,
-      'user',
-      JSON.stringify(dto),
-    );
+    await this.conversationService.saveMessage(conversation.id, 'user', JSON.stringify(dto));
     await this.conversationService.saveMessage(
       conversation.id,
       'assistant',
@@ -48,5 +44,35 @@ export class PlannerService {
     await this.conversationService.recordQuotaUsage(user.tenantId, user.sub, 0);
 
     return { conversationId: conversation.id, plan };
+  }
+
+  async listPlans(user: UserContext) {
+    const conversations = await this.conversationService.listByType(
+      user.tenantId,
+      user.sub,
+      'general',
+      10,
+    );
+
+    return conversations
+      .filter((c) => c.title?.startsWith('Study plan:'))
+      .map((c) => {
+        const lastAssistant = c.messages?.find((m) => m.role === 'assistant');
+        let plan = null;
+        if (lastAssistant?.content) {
+          try {
+            plan = JSON.parse(lastAssistant.content);
+          } catch {
+            plan = null;
+          }
+        }
+        return {
+          conversationId: c.id,
+          title: c.title,
+          createdAt: c.createdAt,
+          updatedAt: c.updatedAt,
+          plan,
+        };
+      });
   }
 }

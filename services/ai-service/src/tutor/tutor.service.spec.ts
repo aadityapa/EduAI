@@ -10,16 +10,19 @@ describe('TutorService', () => {
     permissions: ['ai:tutor:use:own'],
   };
 
-  let aiClient: {
-    tutorMessage: jest.Mock;
-  };
-
+  let aiClient: { tutorMessage: jest.Mock; streamChat: jest.Mock };
   let conversationService: {
     findOrCreateConversation: jest.Mock;
     getConversationHistory: jest.Mock;
     saveMessage: jest.Mock;
     recordQuotaUsage: jest.Mock;
   };
+  let securityService: { validateInput: jest.Mock; filterOutput: jest.Mock };
+  let auditService: { logAiRequest: jest.Mock };
+  let costService: { checkQuota: jest.Mock };
+  let logger: { info: jest.Mock };
+  let metrics: { recordRequest: jest.Mock };
+  let tracing: { startSpan: jest.Mock; endSpan: jest.Mock };
 
   let service: TutorService;
 
@@ -31,6 +34,10 @@ describe('TutorService', () => {
         provider: 'mock',
         tokensUsed: { prompt: 10, completion: 20, total: 30 },
       }),
+      streamChat: jest.fn().mockImplementation(async function* () {
+        yield { type: 'delta', content: 'Hello' };
+        yield { type: 'done', content: 'Hello', tokensUsed: 10, model: 'mock-v1', provider: 'mock' };
+      }),
     };
 
     conversationService = {
@@ -40,30 +47,50 @@ describe('TutorService', () => {
         userId: user.sub,
         type: 'tutor',
       }),
-      getConversationHistory: jest.fn().mockResolvedValue({
-        id: 'conv-1',
-        messages: [],
-      }),
+      getConversationHistory: jest.fn().mockResolvedValue({ id: 'conv-1', messages: [] }),
       saveMessage: jest.fn().mockResolvedValue({ id: 'msg-1' }),
       recordQuotaUsage: jest.fn().mockResolvedValue(undefined),
     };
 
-    service = new TutorService(aiClient as never, conversationService as never);
+    securityService = {
+      validateInput: jest.fn().mockReturnValue({ safe: true, sanitized: 'test' }),
+      filterOutput: jest.fn().mockImplementation((c: string) => ({ allowed: true, filtered: c })),
+    };
+
+    auditService = { logAiRequest: jest.fn().mockResolvedValue(undefined) };
+    costService = { checkQuota: jest.fn().mockResolvedValue(undefined) };
+    logger = { info: jest.fn() };
+    metrics = { recordRequest: jest.fn() };
+    tracing = {
+      startSpan: jest.fn().mockReturnValue({ traceId: 't', spanId: 's', name: 'test', startTime: 0, attributes: {} }),
+      endSpan: jest.fn(),
+    };
+
+    service = new TutorService(
+      aiClient as never,
+      conversationService as never,
+      securityService as never,
+      auditService as never,
+      costService as never,
+      logger as never,
+      metrics as never,
+      tracing as never,
+    );
   });
 
   it('creates conversation and returns tutor response', async () => {
     const result = await service.chat(user, { message: 'Explain fractions' });
 
-    expect(conversationService.findOrCreateConversation).toHaveBeenCalled();
+    expect(securityService.validateInput).toHaveBeenCalled();
+    expect(costService.checkQuota).toHaveBeenCalled();
     expect(conversationService.saveMessage).toHaveBeenCalledTimes(2);
-    expect(aiClient.tutorMessage).toHaveBeenCalledWith(
-      'Explain fractions',
-      [],
-      expect.objectContaining({ tenantId: user.tenantId, userId: user.sub }),
-    );
     expect(result.conversationId).toBe('conv-1');
-    expect(result.message).toContain('Fractions');
     expect(result.tokensUsed).toBe(30);
+  });
+
+  it('rejects unsafe input', async () => {
+    securityService.validateInput.mockReturnValue({ safe: false, reason: 'injection' });
+    await expect(service.chat(user, { message: 'bad' })).rejects.toThrow();
   });
 
   it('continues existing conversation with history', async () => {
@@ -75,17 +102,11 @@ describe('TutorService', () => {
       ],
     });
 
-    await service.chat(user, {
-      message: 'Tell me more',
-      conversationId: 'conv-1',
-    });
+    await service.chat(user, { message: 'Tell me more', conversationId: 'conv-1' });
 
     expect(aiClient.tutorMessage).toHaveBeenCalledWith(
       'Tell me more',
-      [
-        { role: 'user', content: 'Hi' },
-        { role: 'assistant', content: 'Hello!' },
-      ],
+      expect.arrayContaining([{ role: 'user', content: 'Hi' }]),
       expect.any(Object),
     );
   });

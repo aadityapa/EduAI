@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import { IsInt, IsOptional, IsString, IsUUID, Max, MaxLength, Min } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class TutorChatDto {
@@ -21,4 +21,16 @@ export class TutorChatDto {
   @IsOptional()
   @IsUUID()
   subjectId?: string;
+
+  @ApiPropertyOptional({ description: 'Student class level (1-10)' })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(10)
+  classLevel?: number;
+
+  @ApiPropertyOptional({ description: 'Response language: en, hi, mr' })
+  @IsOptional()
+  @IsString()
+  language?: string;
 }

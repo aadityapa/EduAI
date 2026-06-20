@@ -10,17 +10,24 @@ import { HomeworkModule } from './homework/homework.module';
 import { PlannerModule } from './planner/planner.module';
 import { GeneratorsModule } from './generators/generators.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { SecurityModule } from './security/security.module';
+import { ObservabilityModule } from './observability/observability.module';
+import { CostModule } from './cost/cost.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     ThrottlerModule.forRoot([
       { name: 'default', ttl: 60000, limit: 120 },
+      { name: 'ai', ttl: 60000, limit: 30 },
       { name: 'auth', ttl: 900000, limit: 20 },
     ]),
     PrismaModule,
     AuthModule,
     HealthModule,
+    SecurityModule,
+    ObservabilityModule,
+    CostModule,
     TutorModule,
     HomeworkModule,
     PlannerModule,

@@ -200,6 +200,7 @@ export const ROLE_PERMISSIONS: Record<RoleCode, string[]> = {
     'attendance:read:linked',
     'billing:manage:linked',
     'consent:manage:linked',
+    'ai:tutor:use:own',
   ],
 };
 

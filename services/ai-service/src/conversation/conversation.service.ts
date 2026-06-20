@@ -98,4 +98,20 @@ export class ConversationService {
       },
     });
   }
+
+  async listByType(
+    tenantId: string,
+    userId: string,
+    type: AiConversationType,
+    limit = 20,
+  ): Promise<Array<AiConversation & { messages: AiMessage[] }>> {
+    return this.prisma.aiConversation.findMany({
+      where: { tenantId, userId, type },
+      orderBy: { updatedAt: 'desc' },
+      take: limit,
+      include: {
+        messages: { orderBy: { createdAt: 'desc' }, take: 1 },
+      },
+    });
+  }
 }

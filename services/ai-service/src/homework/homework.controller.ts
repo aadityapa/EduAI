@@ -1,5 +1,6 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import type { Response } from 'express';
 import { HomeworkService } from './homework.service';
 import { HomeworkAnalyzeDto } from './dto/homework.dto';
 import { CurrentUser, RequirePermission } from '../common/decorators';
@@ -16,6 +17,13 @@ export class HomeworkController {
   @RequirePermission('ai:homework:use:own')
   async analyze(@CurrentUser() user: UserContext, @Body() dto: HomeworkAnalyzeDto) {
     const data = await this.homeworkService.analyze(user, dto);
+    return apiResponse(data);
+  }
+
+  @Get('history')
+  @RequirePermission('ai:homework:use:own')
+  async history(@CurrentUser() user: UserContext, @Query('limit') limit?: string) {
+    const data = await this.homeworkService.getHistory(user, Number(limit) || 20);
     return apiResponse(data);
   }
 }

@@ -1,0 +1,25 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "panels": [
+    {
+      "title": "AI Requests Total",
+      "type": "stat",
+      "targets": [{ "expr": "ai_requests_total" }]
+    },
+    {
+      "title": "AI Request Duration",
+      "type": "graph",
+      "targets": [{ "expr": "ai_request_duration_ms_sum" }]
+    },
+    {
+      "title": "Token Usage by Feature",
+      "type": "piechart",
+      "targets": [{ "expr": "ai_tokens_by_feature" }]
+    }
+  ],
+  "schemaVersion": 38,
+  "title": "EduAI AI Service",
+  "uid": "eduai-ai-service",
+  "version": 1
+}

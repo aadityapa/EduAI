@@ -17,6 +17,9 @@ const studentNav = [
   { href: '/student/dashboard', key: 'dashboard' as const },
   { href: '/student/courses', key: 'courses' as const },
   { href: '/student/hub', key: 'hub' as const },
+  { href: '/student/ai/tutor', key: 'aiTutor' as const },
+  { href: '/student/ai/homework', key: 'aiHomework' as const },
+  { href: '/student/ai/planner', key: 'aiPlanner' as const },
   { href: '/student/gamification', key: 'gamification' as const },
 ];
 
@@ -36,6 +39,9 @@ function DashboardShellInner({ title, portal, children }: DashboardShellProps) {
     dashboard: t('common.nav.dashboard'),
     courses: t('common.nav.courses'),
     hub: t('common.nav.hub'),
+    aiTutor: t('ai.nav.tutor'),
+    aiHomework: t('ai.nav.homework'),
+    aiPlanner: t('ai.nav.planner'),
     gamification: t('gamification.title'),
   };
 
@@ -89,7 +95,7 @@ function DashboardShellInner({ title, portal, children }: DashboardShellProps) {
       </header>
       <main className="mx-auto max-w-6xl p-6">{children}</main>
       <footer className="pb-6 text-center text-xs text-muted-foreground">
-        <Link href="/login">EduAI</Link> · Sprint 2 learning platform
+        <Link href="/login">EduAI</Link> · Sprint 3 AI Platform
       </footer>
     </div>
   );
