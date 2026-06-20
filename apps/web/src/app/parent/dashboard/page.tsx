@@ -73,11 +73,18 @@ export default async function ParentDashboard() {
                         {link.status}
                       </Badge>
                       {link.status === 'verified' && (
-                        <Button size="sm" asChild>
-                          <Link href={`/parent/children/${link.student.id}/report`}>
-                            View report
-                          </Link>
-                        </Button>
+                        <>
+                          <Button size="sm" asChild>
+                            <Link href={`/parent/children/${link.student.id}/dashboard`}>
+                              Dashboard
+                            </Link>
+                          </Button>
+                          <Button size="sm" variant="outline" asChild>
+                            <Link href={`/parent/children/${link.student.id}/report`}>
+                              Report
+                            </Link>
+                          </Button>
+                        </>
                       )}
                     </div>
                   </div>

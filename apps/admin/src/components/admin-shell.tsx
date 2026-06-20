@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { signOut } from 'next-auth/react';
-import { Button, Avatar, AvatarFallback } from '@eduai/ui';
+import { Button, Avatar, AvatarFallback, cn } from '@eduai/ui';
 import type { RoleCode } from '@eduai/shared';
 import { ROLE_LABELS } from '@eduai/shared';
 
@@ -15,19 +16,50 @@ interface AdminShellProps {
   children: React.ReactNode;
 }
 
+const navItems = [
+  { href: '/dashboard', label: 'Users' },
+  { href: '/dashboard/schools', label: 'Schools' },
+  { href: '/dashboard/tenants', label: 'Tenants' },
+  { href: '/dashboard/subscriptions', label: 'Subscriptions' },
+  { href: '/dashboard/billing', label: 'Revenue' },
+  { href: '/dashboard/content', label: 'Content' },
+  { href: '/dashboard/ai-analytics', label: 'AI Analytics' },
+  { href: '/dashboard/analytics', label: 'Analytics' },
+  { href: '/dashboard/leads', label: 'Leads' },
+  { href: '/dashboard/tickets', label: 'Support' },
+  { href: '/dashboard/coupons', label: 'Coupons' },
+  { href: '/dashboard/campaigns', label: 'Campaigns' },
+  { href: '/dashboard/audit-logs', label: 'Audit Logs' },
+  { href: '/dashboard/security', label: 'Security' },
+];
+
 export function AdminShell({ user, children }: AdminShellProps) {
+  const pathname = usePathname();
   const roleLabel = user.roles.map((r) => ROLE_LABELS[r]).join(', ');
 
   return (
     <div className="flex min-h-screen">
       <aside className="hidden w-64 border-r border-border bg-card p-6 md:block">
         <h2 className="text-lg font-semibold text-primary">EduAI Admin</h2>
-        <nav className="mt-8 space-y-2 text-sm">
-          <Link href="/dashboard" className="block rounded-lg bg-primary/10 px-3 py-2 font-medium text-primary">
-            Users
-          </Link>
-          <span className="block px-3 py-2 text-muted-foreground">Tenants (Sprint 3)</span>
-          <span className="block px-3 py-2 text-muted-foreground">Audit Logs (Sprint 3)</span>
+        <p className="mt-1 text-xs text-muted-foreground">Sprint 4 CRM</p>
+        <nav className="mt-8 space-y-1 text-sm">
+          {navItems.map((item) => {
+            const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'block rounded-lg px-3 py-2 transition-colors',
+                  active
+                    ? 'bg-primary/10 font-medium text-primary'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                )}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
       </aside>
       <div className="flex flex-1 flex-col">

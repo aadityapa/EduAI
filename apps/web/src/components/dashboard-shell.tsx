@@ -23,6 +23,23 @@ const studentNav = [
   { href: '/student/gamification', key: 'gamification' as const },
 ];
 
+const teacherNav = [
+  { href: '/teacher/dashboard', label: 'Dashboard' },
+  { href: '/teacher/classes', label: 'Classes' },
+  { href: '/teacher/attendance', label: 'Attendance' },
+  { href: '/teacher/assignments', label: 'Assignments' },
+  { href: '/teacher/quizzes/builder', label: 'Quiz Builder' },
+  { href: '/teacher/ai/generator', label: 'AI Generator' },
+  { href: '/teacher/reports', label: 'Reports' },
+];
+
+const parentNav = [
+  { href: '/parent/dashboard', label: 'Dashboard' },
+  { href: '/parent/fees', label: 'Fees' },
+  { href: '/parent/notifications', label: 'Notifications' },
+  { href: '/parent/ai/tutor', label: 'AI Assistant' },
+];
+
 function DashboardShellInner({ title, portal, children }: DashboardShellProps) {
   const { data: session } = useSession();
   const pathname = usePathname();
@@ -92,10 +109,54 @@ function DashboardShellInner({ title, portal, children }: DashboardShellProps) {
             })}
           </nav>
         )}
+
+        {portal === 'teacher' && (
+          <nav className="mt-4 flex flex-wrap gap-2 border-t border-border/50 pt-4">
+            {teacherNav.map((item) => {
+              const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
+                    active
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                  )}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+        )}
+
+        {portal === 'parent' && (
+          <nav className="mt-4 flex flex-wrap gap-2 border-t border-border/50 pt-4">
+            {parentNav.map((item) => {
+              const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
+                    active
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                  )}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+        )}
       </header>
       <main className="mx-auto max-w-6xl p-6">{children}</main>
       <footer className="pb-6 text-center text-xs text-muted-foreground">
-        <Link href="/login">EduAI</Link> · Sprint 3 AI Platform
+        <Link href="/login">EduAI</Link> · Sprint 4 Enterprise ERP
       </footer>
     </div>
   );
