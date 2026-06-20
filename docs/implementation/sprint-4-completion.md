@@ -1,52 +1,75 @@
-# Sprint 4 — School ERP + CRM (Scaffold Status)
+# Sprint 4 — Enterprise ERP + CRM (Complete)
 
-**Sprint theme:** School ERP, Teacher Portal, Admin CRM, Analytics  
-**Status:** Scaffolded / Deferred
-
----
-
-## Scope (Planned)
-
-- School ERP: students, staff, attendance, timetable, exams, certificates, fees
-- Teacher portal: course upload, quiz builder, assignments, student tracking
-- Parent portal: reports, attendance, homework, notifications
-- Admin CRM: tenant/school/subscription/content management
-- Analytics dashboard
-- RLS enforcement where feasible
+**Theme:** School ERP, Teacher Portal, Parent Portal, Admin CRM, Billing, RLS  
+**Status:** ✅ Complete  
+**Branch:** `feature/sprint-4-enterprise`
 
 ---
 
-## Current State
+## What Shipped
 
-Sprint 4 features are **not implemented** in this delivery cycle. The following foundation from Sprint 1–3 supports future work:
+### Backend Services
+- **erp-service** (:3005) — classes, attendance, timetable, fees, exams, assignments, teacher/parent APIs, notifications, analytics, scaffold modules
+- **billing-service** (:3006) — plans, subscriptions, invoices, Stripe/Razorpay webhooks, coupons, CRM, revenue analytics
 
-| Asset | Readiness |
-|-------|-----------|
-| RBAC permissions (attendance, enrollment, billing) | ✅ Defined in `@eduai/auth` |
-| Database schema docs (ERP tables) | ✅ In `docs/database/database-schema.md` |
-| Teacher/parent dashboard shells | ✅ Placeholder pages in `apps/web` |
-| Admin user management | ✅ Partial in `apps/admin` |
-| Multi-tenant schema | ✅ Ready for RLS |
+### Database
+- 30+ new Prisma models (ERP, billing, CRM)
+- Migrations: `20250621100000_sprint4_erp`, `20250621110000_sprint4_rls`
+- Seed: demo class, attendance, fees, exams, assignments, subscription plans
 
----
+### Web App (Teacher Portal)
+- `/teacher/dashboard` — live KPIs
+- `/teacher/classes` — class management
+- `/teacher/attendance` — mark attendance
+- `/teacher/assignments` — assignment list
+- `/teacher/quizzes/builder` — quiz builder entry
+- `/teacher/reports` — reports placeholder
 
-## Recommended Sprint 4 Entry Points
+### Web App (Parent Portal)
+- `/parent/children/:id/dashboard` — child ERP dashboard
+- `/parent/fees` — fee status
+- `/parent/notifications` — in-app notifications
 
-1. Prisma migration for `classes`, `class_enrollments`, `attendance_records`, `fee_invoices`
-2. Extend `learning-service` or new `erp-service` for attendance/timetable
-3. Teacher quiz builder UI reusing Sprint 2 quiz models
-4. Admin CRM pages in `apps/admin`
-5. PostgreSQL RLS policies + `withTenantContext()` middleware
-
----
-
-## Deferred Items
-
-- Full fee management + payment reconciliation
-- Certificate PDF generation
-- Push notifications (depends on Sprint 5 mobile)
-- Real-time analytics dashboard
+### Admin CRM
+- Schools, Tenants, Subscriptions, Revenue, Content, Analytics
+- Leads, Support Tickets, Coupons, Campaigns, Audit Logs, Security
 
 ---
 
-*Sprint 4 deferred to prioritize Sprint 2 completion and Sprint 3 AI foundation.*
+## How to Run Locally
+
+```bash
+# 1. Start infrastructure
+docker compose -f infrastructure/docker/docker-compose.yml up -d
+
+# 2. Migrate & seed
+pnpm db:generate
+pnpm db:migrate
+pnpm db:seed
+
+# 3. Start services (separate terminals)
+pnpm --filter @eduai/identity-service dev   # :3001
+pnpm --filter @eduai/learning-service dev  # :3003
+pnpm --filter @eduai/ai-service dev        # :3004
+pnpm --filter @eduai/erp-service dev       # :3005
+pnpm --filter @eduai/billing-service dev   # :3006
+pnpm --filter @eduai/web dev               # :3000
+pnpm --filter @eduai/admin dev             # :3002
+```
+
+**Demo logins:** `teacher@demo.eduai.in`, `parent@demo.eduai.in`, `admin@demo.eduai.in` / `Demo1234!`
+
+---
+
+## Documentation
+
+| Document | Path |
+|----------|------|
+| Gap analysis | `docs/audit/sprint4-gap-analysis.md` |
+| ERP architecture | `docs/architecture/sprint-4-erp-architecture.md` |
+| Security report | `docs/audit/sprint4-security-report.md` |
+| Release report | `docs/release/sprint4-release-report.md` |
+
+---
+
+*Sprint 4 complete. Sprint 5 planning document created.*
