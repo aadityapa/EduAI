@@ -14,12 +14,15 @@
     "@eduai/auth": "workspace:*",
     "@eduai/shared": "workspace:*",
     "@eduai/ui": "workspace:*",
+    "cmdk": "^1.1.1",
+    "framer-motion": "^11.15.0",
     "lucide-react": "^0.468.0",
     "next": "^15.1.0",
     "next-auth": "^5.0.0-beta.25",
     "next-themes": "^0.4.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "sonner": "^2.0.7"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
