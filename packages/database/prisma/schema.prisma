@@ -1,0 +1,742 @@
+// Prisma schema — Sprint 1: multi-tenant auth foundation (RLS-ready)
+// See docs/database/database-schema.md
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TenantType {
+  platform
+  school_group
+  white_label
+}
+
+enum SubscriptionTier {
+  free
+  starter
+  professional
+  enterprise
+}
+
+enum UserStatus {
+  active
+  inactive
+  suspended
+  pending_verification
+}
+
+enum UserGender {
+  male
+  female
+  other
+  prefer_not_to_say
+}
+
+enum LessonType {
+  video
+  text
+  interactive
+  mixed
+}
+
+enum ContentStatus {
+  draft
+  review
+  published
+  archived
+}
+
+enum LessonProgressStatus {
+  not_started
+  in_progress
+  completed
+}
+
+enum QuestionType {
+  mcq
+  multi_select
+  true_false
+  fill_blank
+  short_answer
+}
+
+enum AttemptStatus {
+  in_progress
+  submitted
+  graded
+  expired
+}
+
+enum ContentResourceType {
+  video
+  pdf
+  notes
+  worksheet
+  ebook
+}
+
+enum ParentLinkStatus {
+  pending
+  verified
+  rejected
+}
+
+enum SupportedLocale {
+  en
+  hi
+  mr
+}
+
+enum AiConversationType {
+  tutor
+  homework
+  general
+}
+
+enum AiMessageRole {
+  user
+  assistant
+  system
+}
+
+model Tenant {
+  id                    String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug                  String           @unique @db.VarChar(100)
+  name                  String           @db.VarChar(255)
+  type                  TenantType       @default(school_group)
+  subscriptionTier      SubscriptionTier @default(starter) @map("subscription_tier")
+  customDomain          String?          @map("custom_domain") @db.VarChar(255)
+  settings              Json             @default("{}")
+  aiMonthlyTokenBudget  Int              @default(1000000) @map("ai_monthly_token_budget")
+  maxStudents           Int              @default(500) @map("max_students")
+  status                String           @default("active") @db.VarChar(20)
+  createdAt             DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt             DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt             DateTime?        @map("deleted_at") @db.Timestamptz
+
+  schools            School[]
+  users              User[]
+  roles              Role[]
+  sessions           UserSession[]
+  auditLogs          AuditLog[]
+  userRoles          UserRole[]
+  courses            Course[]
+  courseEnrollments  CourseEnrollment[]
+  lessonProgress     LessonProgress[]
+  quizAttempts       QuizAttempt[]
+  parentLinks        ParentStudentLink[]
+  userXp             UserXp[]
+  userCoins          UserCoins[]
+  userBadges         UserBadge[]
+  userStreaks        UserStreak[]
+  badges             Badge[]
+  translations       Translation[]
+  aiConversations    AiConversation[]
+  aiQuotaUsage       AiQuotaUsage[]
+
+  @@map("tenants")
+}
+
+model School {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  name      String    @db.VarChar(255)
+  code      String    @db.VarChar(50)
+  boardId   String?   @map("board_id") @db.Uuid
+  address   Json      @default("{}")
+  phone     String?   @db.VarChar(20)
+  email     String?   @db.VarChar(255)
+  settings  Json      @default("{}")
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz
+
+  tenant    Tenant     @relation(fields: [tenantId], references: [id])
+  users     User[]
+  userRoles UserRole[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId], map: "idx_schools_tenant")
+  @@map("schools")
+}
+
+model User {
+  id              String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String      @map("tenant_id") @db.Uuid
+  schoolId        String?     @map("school_id") @db.Uuid
+  email           String      @db.VarChar(255)
+  passwordHash    String?     @map("password_hash") @db.VarChar(255)
+  firstName       String      @map("first_name") @db.VarChar(100)
+  lastName        String?     @map("last_name") @db.VarChar(100)
+  phone           String?     @db.VarChar(20)
+  dateOfBirth     DateTime?   @map("date_of_birth") @db.Date
+  gender          UserGender?
+  avatarUrl       String?     @map("avatar_url") @db.VarChar(500)
+  locale          String      @default("en-IN") @db.VarChar(10)
+  classLevel      Int?        @map("class_level") @db.SmallInt
+  status          UserStatus  @default(pending_verification)
+  emailVerifiedAt DateTime?   @map("email_verified_at") @db.Timestamptz
+  lastLoginAt     DateTime?   @map("last_login_at") @db.Timestamptz
+  metadata        Json        @default("{}")
+  createdAt       DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime    @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt       DateTime?   @map("deleted_at") @db.Timestamptz
+
+  tenant        Tenant        @relation(fields: [tenantId], references: [id])
+  school        School?       @relation(fields: [schoolId], references: [id])
+  userRoles     UserRole[]
+  sessions      UserSession[]
+  grantedRoles       UserRole[]           @relation("GrantedBy")
+  auditLogs          AuditLog[]           @relation("AuditActor")
+  courseEnrollments  CourseEnrollment[]
+  lessonProgress     LessonProgress[]
+  quizAttempts       QuizAttempt[]
+  parentLinksAsParent ParentStudentLink[] @relation("ParentUser")
+  parentLinksAsStudent ParentStudentLink[] @relation("StudentUser")
+  userXp             UserXp?
+  userCoins          UserCoins?
+  userBadges         UserBadge[]
+  userStreak         UserStreak?
+  aiConversations    AiConversation[]
+  aiQuotaUsage       AiQuotaUsage[]
+
+  @@unique([tenantId, email])
+  @@index([tenantId, schoolId], map: "idx_users_tenant_school")
+  @@index([tenantId, status], map: "idx_users_tenant_status")
+  @@map("users")
+}
+
+model Role {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String?   @map("tenant_id") @db.Uuid
+  code        String    @db.VarChar(50)
+  name        String    @db.VarChar(100)
+  description String?
+  isSystem    Boolean   @default(false) @map("is_system")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz
+
+  tenant          Tenant?          @relation(fields: [tenantId], references: [id])
+  rolePermissions RolePermission[]
+  userRoles       UserRole[]
+
+  @@unique([code, tenantId])
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code        String   @unique @db.VarChar(100)
+  resource    String   @db.VarChar(50)
+  action      String   @db.VarChar(50)
+  scope       String   @db.VarChar(20)
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  rolePermissions RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String @map("role_id") @db.Uuid
+  permissionId String @map("permission_id") @db.Uuid
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model UserRole {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  roleId    String    @map("role_id") @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  schoolId  String?   @map("school_id") @db.Uuid
+  classId   String?   @map("class_id") @db.Uuid
+  grantedBy String?   @map("granted_by") @db.Uuid
+  grantedAt DateTime  @default(now()) @map("granted_at") @db.Timestamptz
+  expiresAt DateTime? @map("expires_at") @db.Timestamptz
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role    Role    @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  tenant  Tenant  @relation(fields: [tenantId], references: [id])
+  school  School? @relation(fields: [schoolId], references: [id])
+  grantor User?   @relation("GrantedBy", fields: [grantedBy], references: [id])
+
+  @@unique([userId, roleId, schoolId, classId])
+  @@index([userId], map: "idx_user_roles_user")
+  @@map("user_roles")
+}
+
+model UserSession {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String   @map("tenant_id") @db.Uuid
+  userId           String   @map("user_id") @db.Uuid
+  refreshTokenHash String   @map("refresh_token_hash") @db.VarChar(255)
+  deviceInfo       Json     @default("{}") @map("device_info")
+  ipAddress        String?  @map("ip_address") @db.VarChar(45)
+  lastActiveAt     DateTime @default(now()) @map("last_active_at") @db.Timestamptz
+  expiresAt        DateTime @map("expires_at") @db.Timestamptz
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt], map: "idx_sessions_user")
+  @@map("user_sessions")
+}
+
+model AuditLog {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  actorId      String?  @map("actor_id") @db.Uuid
+  action       String   @db.VarChar(100)
+  resourceType String?  @map("resource_type") @db.VarChar(50)
+  resourceId   String?  @map("resource_id") @db.Uuid
+  metadata     Json     @default("{}")
+  ipAddress    String?  @map("ip_address") @db.VarChar(45)
+  userAgent    String?  @map("user_agent")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  actor  User?  @relation("AuditActor", fields: [actorId], references: [id])
+
+  @@index([tenantId, createdAt(sort: Desc)], map: "idx_audit_logs_tenant_date")
+  @@index([actorId, createdAt(sort: Desc)], map: "idx_audit_logs_actor")
+  @@map("audit_logs")
+}
+
+// ============================================================
+// Sprint 2: Curriculum & Learning
+// ============================================================
+
+model Board {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code      String   @unique @db.VarChar(20)
+  name      String   @db.VarChar(100)
+  country   String   @default("IN") @db.VarChar(2)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  subjects Subject[]
+  courses  Course[]
+
+  @@map("boards")
+}
+
+model Subject {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  boardId    String   @map("board_id") @db.Uuid
+  classLevel Int      @map("class_level") @db.SmallInt
+  code       String   @db.VarChar(50)
+  name       String   @db.VarChar(100)
+  iconUrl    String?  @map("icon_url") @db.VarChar(500)
+  sortOrder  Int      @default(0) @map("sort_order") @db.SmallInt
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  board    Board     @relation(fields: [boardId], references: [id])
+  chapters Chapter[]
+  courses  Course[]
+
+  @@unique([boardId, classLevel, code])
+  @@map("subjects")
+}
+
+model Chapter {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  subjectId     String    @map("subject_id") @db.Uuid
+  name          String    @db.VarChar(255)
+  chapterNumber Int       @map("chapter_number") @db.SmallInt
+  description   String?
+  sortOrder     Int       @default(0) @map("sort_order") @db.SmallInt
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt     DateTime? @map("deleted_at") @db.Timestamptz
+
+  subject Subject  @relation(fields: [subjectId], references: [id])
+  lessons Lesson[]
+
+  @@index([subjectId], map: "idx_chapters_subject")
+  @@map("chapters")
+}
+
+model Course {
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String        @map("tenant_id") @db.Uuid
+  boardId      String        @map("board_id") @db.Uuid
+  subjectId    String        @map("subject_id") @db.Uuid
+  title        String        @db.VarChar(255)
+  description  String?
+  classLevel   Int           @map("class_level") @db.SmallInt
+  thumbnailUrl String?       @map("thumbnail_url") @db.VarChar(500)
+  status       ContentStatus @default(published)
+  sortOrder    Int           @default(0) @map("sort_order") @db.SmallInt
+  createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt    DateTime?     @map("deleted_at") @db.Timestamptz
+
+  tenant      Tenant             @relation(fields: [tenantId], references: [id])
+  board       Board              @relation(fields: [boardId], references: [id])
+  subject     Subject            @relation(fields: [subjectId], references: [id])
+  enrollments CourseEnrollment[]
+
+  @@index([tenantId, status], map: "idx_courses_tenant_status")
+  @@index([boardId, classLevel], map: "idx_courses_board_class")
+  @@map("courses")
+}
+
+model Lesson {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String?       @map("tenant_id") @db.Uuid
+  chapterId       String        @map("chapter_id") @db.Uuid
+  title           String        @db.VarChar(255)
+  type            LessonType    @default(mixed)
+  durationMinutes Int?          @map("duration_minutes") @db.SmallInt
+  status          ContentStatus @default(published)
+  sortOrder       Int           @default(0) @map("sort_order") @db.SmallInt
+  metadata        Json          @default("{}")
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt       DateTime?     @map("deleted_at") @db.Timestamptz
+
+  chapter         Chapter          @relation(fields: [chapterId], references: [id])
+  contents        LessonContent[]
+  resources       ContentResource[]
+  progress        LessonProgress[]
+  quizzes         Quiz[]
+
+  @@index([chapterId, status], map: "idx_lessons_chapter")
+  @@map("lessons")
+}
+
+model LessonContent {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  lessonId  String   @map("lesson_id") @db.Uuid
+  body      String?
+  sortOrder Int      @default(0) @map("sort_order") @db.SmallInt
+  metadata  Json     @default("{}")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@map("lesson_contents")
+}
+
+model ContentResource {
+  id           String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  lessonId     String              @map("lesson_id") @db.Uuid
+  type         ContentResourceType
+  title        String              @db.VarChar(255)
+  url          String              @db.VarChar(500)
+  durationSecs Int?                @map("duration_secs")
+  sortOrder    Int                 @default(0) @map("sort_order") @db.SmallInt
+  metadata     Json                @default("{}")
+  createdAt    DateTime            @default(now()) @map("created_at") @db.Timestamptz
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@map("content_resources")
+}
+
+model CourseEnrollment {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @map("tenant_id") @db.Uuid
+  courseId   String   @map("course_id") @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  enrolledAt DateTime @default(now()) @map("enrolled_at") @db.Timestamptz
+  status     String   @default("active") @db.VarChar(20)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([tenantId, courseId, userId])
+  @@index([tenantId, userId], map: "idx_enrollments_user")
+  @@map("course_enrollments")
+}
+
+model LessonProgress {
+  id                String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String               @map("tenant_id") @db.Uuid
+  userId            String               @map("user_id") @db.Uuid
+  lessonId          String               @map("lesson_id") @db.Uuid
+  status            LessonProgressStatus @default(not_started)
+  score             Decimal?             @db.Decimal(5, 2)
+  timeSpentSeconds  Int                  @default(0) @map("time_spent_seconds")
+  startedAt         DateTime?            @map("started_at") @db.Timestamptz
+  completedAt       DateTime?            @map("completed_at") @db.Timestamptz
+  createdAt         DateTime             @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime             @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+  lesson Lesson @relation(fields: [lessonId], references: [id])
+
+  @@unique([tenantId, userId, lessonId])
+  @@index([tenantId, userId, status], map: "idx_lesson_progress_user")
+  @@map("lesson_progress")
+}
+
+// ============================================================
+// Sprint 2: Quizzes
+// ============================================================
+
+model Quiz {
+  id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String?       @map("tenant_id") @db.Uuid
+  lessonId         String?       @map("lesson_id") @db.Uuid
+  title            String        @db.VarChar(255)
+  timeLimitMinutes Int?          @map("time_limit_minutes") @db.SmallInt
+  passingScore     Decimal       @default(70) @map("passing_score") @db.Decimal(5, 2)
+  status           ContentStatus @default(published)
+  createdAt        DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt        DateTime?     @map("deleted_at") @db.Timestamptz
+
+  lesson   Lesson?       @relation(fields: [lessonId], references: [id])
+  questions Question[]
+  attempts QuizAttempt[]
+
+  @@map("quizzes")
+}
+
+model Question {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  quizId      String       @map("quiz_id") @db.Uuid
+  type        QuestionType
+  stem        String
+  explanation String?
+  marks       Decimal      @default(1) @db.Decimal(5, 2)
+  sortOrder   Int          @default(0) @map("sort_order") @db.SmallInt
+  metadata    Json         @default("{}")
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  quiz    Quiz             @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options QuestionOption[]
+
+  @@map("questions")
+}
+
+model QuestionOption {
+  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  questionId String  @map("question_id") @db.Uuid
+  label      String  @db.VarChar(500)
+  isCorrect  Boolean @default(false) @map("is_correct")
+  sortOrder  Int     @default(0) @map("sort_order") @db.SmallInt
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("question_options")
+}
+
+model QuizAttempt {
+  id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String        @map("tenant_id") @db.Uuid
+  userId           String        @map("user_id") @db.Uuid
+  quizId           String        @map("quiz_id") @db.Uuid
+  answers          Json          @default("{}")
+  score            Decimal?      @db.Decimal(5, 2)
+  timeSpentSeconds Int?          @map("time_spent_seconds")
+  status           AttemptStatus @default(in_progress)
+  startedAt        DateTime      @default(now()) @map("started_at") @db.Timestamptz
+  submittedAt      DateTime?     @map("submitted_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+  quiz   Quiz   @relation(fields: [quizId], references: [id])
+
+  @@index([tenantId, userId], map: "idx_quiz_attempts_user")
+  @@map("quiz_attempts")
+}
+
+// ============================================================
+// Sprint 2: Parent Links & Gamification
+// ============================================================
+
+model ParentStudentLink {
+  id           String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String           @map("tenant_id") @db.Uuid
+  parentId     String           @map("parent_id") @db.Uuid
+  studentId    String           @map("student_id") @db.Uuid
+  relationship String           @default("parent") @db.VarChar(50)
+  status       ParentLinkStatus @default(pending)
+  verifiedAt   DateTime?        @map("verified_at") @db.Timestamptz
+  createdAt    DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt    DateTime?        @map("deleted_at") @db.Timestamptz
+
+  tenant  Tenant @relation(fields: [tenantId], references: [id])
+  parent  User   @relation("ParentUser", fields: [parentId], references: [id])
+  student User   @relation("StudentUser", fields: [studentId], references: [id])
+
+  @@unique([tenantId, parentId, studentId])
+  @@map("parent_student_links")
+}
+
+model UserXp {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  userId       String   @unique @map("user_id") @db.Uuid
+  totalXp      Int      @default(0) @map("total_xp")
+  currentLevel Int      @default(1) @map("current_level")
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([tenantId, userId])
+  @@map("user_xp")
+}
+
+model UserCoins {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  userId    String   @unique @map("user_id") @db.Uuid
+  balance   Int      @default(0)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([tenantId, userId])
+  @@map("user_coins")
+}
+
+model Badge {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String?  @map("tenant_id") @db.Uuid
+  code        String   @db.VarChar(50)
+  name        String   @db.VarChar(100)
+  description String?
+  iconUrl     String?  @map("icon_url") @db.VarChar(500)
+  criteria    Json
+  xpReward    Int      @default(0) @map("xp_reward")
+  category    String?  @db.VarChar(50)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant     Tenant?     @relation(fields: [tenantId], references: [id])
+  userBadges UserBadge[]
+
+  @@unique([tenantId, code])
+  @@map("badges")
+}
+
+model UserBadge {
+  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId String   @map("tenant_id") @db.Uuid
+  userId   String   @map("user_id") @db.Uuid
+  badgeId  String   @map("badge_id") @db.Uuid
+  earnedAt DateTime @default(now()) @map("earned_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+  badge  Badge  @relation(fields: [badgeId], references: [id])
+
+  @@unique([tenantId, userId, badgeId])
+  @@map("user_badges")
+}
+
+model UserStreak {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId           String    @map("tenant_id") @db.Uuid
+  userId             String    @unique @map("user_id") @db.Uuid
+  currentStreak      Int       @default(0) @map("current_streak")
+  longestStreak      Int       @default(0) @map("longest_streak")
+  lastActivityDate   DateTime? @map("last_activity_date") @db.Date
+  freezeTokens       Int       @default(1) @map("freeze_tokens")
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([tenantId, userId])
+  @@map("user_streaks")
+}
+
+// ============================================================
+// Sprint 2: i18n
+// ============================================================
+
+model Translation {
+  id         String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String?         @map("tenant_id") @db.Uuid
+  namespace  String          @db.VarChar(100)
+  key        String          @db.VarChar(255)
+  locale     SupportedLocale
+  value      String
+  createdAt  DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime        @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, namespace, key, locale])
+  @@index([namespace, locale], map: "idx_translations_ns_locale")
+  @@map("translations")
+}
+
+// ============================================================
+// Sprint 3: AI Platform
+// ============================================================
+
+model AiConversation {
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String             @map("tenant_id") @db.Uuid
+  userId           String             @map("user_id") @db.Uuid
+  type             AiConversationType @default(tutor)
+  contextLessonId  String?            @map("context_lesson_id") @db.Uuid
+  contextSubjectId String?            @map("context_subject_id") @db.Uuid
+  title            String?            @db.VarChar(255)
+  expiresAt        DateTime           @default(dbgenerated("(NOW() + INTERVAL '90 days')")) @map("expires_at") @db.Timestamptz
+  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime           @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant  Tenant      @relation(fields: [tenantId], references: [id])
+  user    User        @relation(fields: [userId], references: [id])
+  messages AiMessage[]
+
+  @@index([tenantId, userId, updatedAt(sort: Desc)], map: "idx_ai_conversations_user")
+  @@map("ai_conversations")
+}
+
+model AiMessage {
+  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  conversationId String        @map("conversation_id") @db.Uuid
+  role           AiMessageRole
+  content        String
+  tokensUsed     Int           @default(0) @map("tokens_used")
+  model          String?       @db.VarChar(50)
+  metadata       Json          @default("{}")
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz
+
+  conversation AiConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt], map: "idx_ai_messages_conversation")
+  @@map("ai_messages")
+}
+
+model AiQuotaUsage {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  usageDate   DateTime @default(now()) @map("usage_date") @db.Date
+  queryCount  Int      @default(0) @map("query_count")
+  tokensUsed  Int      @default(0) @map("tokens_used")
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([tenantId, userId, usageDate], map: "uq_ai_quota")
+  @@map("ai_quota_usage")
+}

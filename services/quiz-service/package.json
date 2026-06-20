@@ -1,0 +1,12 @@
+{
+  "name": "@eduai/quiz-service",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "node ../_scaffold/main.js",
+    "dev": "node ../_scaffold/main.js",
+    "typecheck": "echo ok",
+    "lint": "echo ok",
+    "test": "echo scaffold"
+  }
+}

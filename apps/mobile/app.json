@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "EduAI",
+    "slug": "eduai-mobile",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "eduai",
+    "platforms": ["ios", "android"],
+    "plugins": ["expo-router"]
+  }
+}
