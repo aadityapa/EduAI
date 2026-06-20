@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: learning-service
+  namespace: eduai-staging
+  labels:
+    app: learning-service
+    app.kubernetes.io/name: learning-service
+    app.kubernetes.io/part-of: eduai
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: learning-service
+  template:
+    metadata:
+      labels:
+        app: learning-service
+        app.kubernetes.io/name: learning-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3003"
+        prometheus.io/path: "/api/v1/metrics"
+    spec:
+      containers:
+        - name: learning-service
+          image: ${AWS_ACCOUNT_ID}.dkr.ecr.ap-south-1.amazonaws.com/eduai/learning-service:latest-staging
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3003
+          envFrom:
+            - configMapRef:
+                name: eduai-platform-config
+          env:
+            - name: PORT
+              value: "3003"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: eduai-platform-secrets
+                  key: DATABASE_URL
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: eduai-platform-secrets
+                  key: REDIS_URL
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: eduai-platform-secrets
+                  key: JWT_SECRET
+            - name: INTERNAL_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: eduai-platform-secrets
+                  key: INTERNAL_API_KEY
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health/ready
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: learning-service
+  namespace: eduai-staging
+  labels:
+    app: learning-service
+spec:
+  type: ClusterIP
+  selector:
+    app: learning-service
+  ports:
+    - name: http
+      port: 3003
+      targetPort: http

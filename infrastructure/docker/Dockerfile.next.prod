@@ -1,0 +1,40 @@
+# Multi-stage production Dockerfile for Next.js apps (web, admin).
+# Build: docker build -f infrastructure/docker/Dockerfile.next.prod \
+#   --build-arg APP_NAME=web -t eduai/web .
+
+ARG NODE_VERSION=20-alpine
+
+FROM node:${NODE_VERSION} AS base
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+WORKDIR /app
+
+FROM base AS deps
+ARG APP_NAME
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY packages ./packages
+COPY apps/${APP_NAME}/package.json ./apps/${APP_NAME}/
+RUN pnpm install --frozen-lockfile
+
+FROM deps AS builder
+ARG APP_NAME
+COPY apps/${APP_NAME} ./apps/${APP_NAME}
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN pnpm --filter @eduai/${APP_NAME} build
+
+FROM node:${NODE_VERSION} AS production
+ARG APP_NAME
+ENV APP_NAME=${APP_NAME}
+RUN addgroup -S eduai && adduser -S eduai -G eduai
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+COPY --from=builder /app/apps/${APP_NAME}/.next/standalone ./
+COPY --from=builder /app/apps/${APP_NAME}/.next/static ./apps/${APP_NAME}/.next/static
+COPY --from=builder /app/apps/${APP_NAME}/public ./apps/${APP_NAME}/public
+
+USER eduai
+EXPOSE 3000
+
+CMD ["sh", "-c", "node apps/${APP_NAME}/server.js"]

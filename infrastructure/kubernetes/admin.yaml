@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin
+  namespace: eduai-staging
+  labels:
+    app: admin
+    app.kubernetes.io/name: admin
+    app.kubernetes.io/part-of: eduai
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: admin
+  template:
+    metadata:
+      labels:
+        app: admin
+        app.kubernetes.io/name: admin
+    spec:
+      containers:
+        - name: admin
+          image: ${AWS_ACCOUNT_ID}.dkr.ecr.ap-south-1.amazonaws.com/eduai/admin:latest-staging
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3002
+          envFrom:
+            - configMapRef:
+                name: eduai-platform-config
+          env:
+            - name: PORT
+              value: "3002"
+            - name: AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: eduai-platform-secrets
+                  key: AUTH_SECRET
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin
+  namespace: eduai-staging
+  labels:
+    app: admin
+spec:
+  type: ClusterIP
+  selector:
+    app: admin
+  ports:
+    - name: http
+      port: 3002
+      targetPort: http

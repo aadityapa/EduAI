@@ -2,10 +2,38 @@
   "expo": {
     "name": "EduAI",
     "slug": "eduai-mobile",
-    "version": "0.1.0",
+    "version": "0.9.0",
     "orientation": "portrait",
     "scheme": "eduai",
-    "platforms": ["ios", "android"],
-    "plugins": ["expo-router"]
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "in.eduai.mobile"
+    },
+    "android": {
+      "package": "in.eduai.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#6366f1"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          "color": "#6366f1"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "identityUrl": "http://localhost:3001",
+      "learningUrl": "http://localhost:3003",
+      "aiUrl": "http://localhost:3004",
+      "erpUrl": "http://localhost:3005"
+    }
   }
 }

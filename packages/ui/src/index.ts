@@ -27,3 +27,5 @@ export { CourseCard } from './components/course-card';
 export type { CourseCardProps, CourseStatus } from './components/course-card';
 export { LeaderboardRow } from './components/leaderboard-row';
 export type { LeaderboardRowProps } from './components/leaderboard-row';
+export { TenantThemeProvider, useTenantTheme } from './components/tenant-theme-provider';
+export type { TenantTheme } from './components/tenant-theme-provider';

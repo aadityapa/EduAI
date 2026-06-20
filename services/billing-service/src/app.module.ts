@@ -12,6 +12,7 @@ import { WebhooksModule } from './webhooks/webhooks.module';
 import { CouponsModule } from './coupons/coupons.module';
 import { CrmModule } from './crm/crm.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { BrandingModule } from './branding/branding.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     CouponsModule,
     CrmModule,
     AnalyticsModule,
+    BrandingModule,
   ],
   providers: [
     {

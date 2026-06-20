@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: eduai-platform-config
+  namespace: eduai-staging
+  labels:
+    app.kubernetes.io/part-of: eduai
+data:
+  NODE_ENV: "production"
+  DEFAULT_TENANT_SLUG: "demo"
+  JWT_ACCESS_EXPIRES_IN: "15m"
+  JWT_REFRESH_EXPIRES_IN: "7d"
+  NEXT_PUBLIC_WEB_URL: "https://staging.eduai.in"
+  NEXT_PUBLIC_ADMIN_URL: "https://admin.staging.eduai.in"
+  IDENTITY_SERVICE_URL: "http://identity-service:3001"
+  NEXT_PUBLIC_IDENTITY_SERVICE_URL: "https://staging.eduai.in/api/identity"
+  LEARNING_SERVICE_URL: "http://learning-service:3003"
+  NEXT_PUBLIC_LEARNING_SERVICE_URL: "https://staging.eduai.in/api/learning"
+  AI_SERVICE_URL: "http://ai-service:3004"
+  NEXT_PUBLIC_AI_SERVICE_URL: "https://staging.eduai.in/api/ai"
+  ERP_SERVICE_URL: "http://erp-service:3005"
+  NEXT_PUBLIC_ERP_SERVICE_URL: "https://staging.eduai.in/api/erp"
+  BILLING_SERVICE_URL: "http://billing-service:3006"
+  NEXT_PUBLIC_BILLING_SERVICE_URL: "https://staging.eduai.in/api/billing"
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector.eduai-monitoring.svc.cluster.local:4318"
+  OTEL_SERVICE_NAMESPACE: "eduai-staging"
+  SENTRY_ENVIRONMENT: "staging"
+  SENTRY_TRACES_SAMPLE_RATE: "0.1"

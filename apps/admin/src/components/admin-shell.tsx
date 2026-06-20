@@ -20,6 +20,7 @@ const navItems = [
   { href: '/dashboard', label: 'Users' },
   { href: '/dashboard/schools', label: 'Schools' },
   { href: '/dashboard/tenants', label: 'Tenants' },
+  { href: '/dashboard/branding', label: 'Branding' },
   { href: '/dashboard/subscriptions', label: 'Subscriptions' },
   { href: '/dashboard/billing', label: 'Revenue' },
   { href: '/dashboard/content', label: 'Content' },

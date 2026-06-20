@@ -1,0 +1,166 @@
+name: Deploy Staging
+
+on:
+  push:
+    branches: [master]
+
+env:
+  AWS_REGION: ap-south-1
+  EKS_CLUSTER_NAME: eduai-staging-eks
+  K8S_NAMESPACE: eduai-staging
+  ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-south-1.amazonaws.com
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: eduai
+          POSTGRES_PASSWORD: eduai_dev
+          POSTGRES_DB: eduai
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://eduai:eduai_dev@localhost:5432/eduai?schema=public
+      JWT_SECRET: ci-test-secret-minimum-32-characters
+      AUTH_SECRET: ci-auth-secret-minimum-32-characters
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm db:generate
+
+      - name: Run migrations
+        run: pnpm --filter @eduai/database exec prisma migrate deploy
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+  deploy-staging:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    strategy:
+      matrix:
+        service:
+          - identity-service
+          - learning-service
+          - ai-service
+          - erp-service
+          - billing-service
+          - web
+          - admin
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push service image
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          if [[ "${{ matrix.service }}" == "web" || "${{ matrix.service }}" == "admin" ]]; then
+            docker build \
+              -f infrastructure/docker/Dockerfile.next.prod \
+              --build-arg APP_NAME=${{ matrix.service }} \
+              -t $ECR_REGISTRY/eduai/${{ matrix.service }}:$IMAGE_TAG \
+              -t $ECR_REGISTRY/eduai/${{ matrix.service }}:latest-staging \
+              .
+          else
+            docker build \
+              -f infrastructure/docker/Dockerfile.prod \
+              --build-arg SERVICE_NAME=${{ matrix.service }} \
+              -t $ECR_REGISTRY/eduai/${{ matrix.service }}:$IMAGE_TAG \
+              -t $ECR_REGISTRY/eduai/${{ matrix.service }}:latest-staging \
+              .
+          fi
+          docker push $ECR_REGISTRY/eduai/${{ matrix.service }}:$IMAGE_TAG
+          docker push $ECR_REGISTRY/eduai/${{ matrix.service }}:latest-staging
+
+  apply-kubernetes:
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_REGION
+
+      - name: Apply Kubernetes manifests
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+        run: |
+          for manifest in infrastructure/kubernetes/*.yaml; do
+            envsubst < "$manifest" | kubectl apply -f -
+          done
+
+      - name: Wait for rollout
+        run: |
+          kubectl rollout status deployment/identity-service -n $K8S_NAMESPACE --timeout=5m
+          kubectl rollout status deployment/learning-service -n $K8S_NAMESPACE --timeout=5m
+          kubectl rollout status deployment/web -n $K8S_NAMESPACE --timeout=5m
+
+      - name: Smoke test staging
+        run: |
+          kubectl run smoke-test --rm -i --restart=Never -n $K8S_NAMESPACE \
+            --image=curlimages/curl:8.10.1 -- \
+            sh -c '
+              curl -fsS http://identity-service:3001/api/v1/health &&
+              curl -fsS http://learning-service:3003/api/v1/health &&
+              curl -fsS http://web:3000/
+            '

@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { SubscriptionsService } from './subscriptions.service';
 import { CurrentUser, RequireAnyPermission } from '../common/decorators';
@@ -21,5 +21,33 @@ export class SubscriptionsController {
   @RequireAnyPermission('billing:manage:tenant', 'tenants:manage:global')
   async list(@CurrentUser() user: UserContext) {
     return apiResponse(await this.subscriptionsService.listAllSubscriptions(user));
+  }
+
+  @Post('trial')
+  @RequireAnyPermission('billing:manage:tenant')
+  async startTrial(
+    @CurrentUser() user: UserContext,
+    @Body() body: { planCode: string; trialDays?: number },
+  ) {
+    return apiResponse(
+      await this.subscriptionsService.startTrial(user, body.planCode, body.trialDays),
+    );
+  }
+
+  @Post('renew')
+  @RequireAnyPermission('billing:manage:tenant')
+  async renew(@CurrentUser() user: UserContext) {
+    return apiResponse(await this.subscriptionsService.renewSubscription(user));
+  }
+
+  @Post('usage-billing')
+  @RequireAnyPermission('billing:manage:tenant')
+  async usageBilling(
+    @CurrentUser() user: UserContext,
+    @Body() body: { tokensUsed: number },
+  ) {
+    return apiResponse(
+      await this.subscriptionsService.recordUsageBilling(user, body.tokensUsed),
+    );
   }
 }

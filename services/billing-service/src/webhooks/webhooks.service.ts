@@ -35,7 +35,7 @@ export class WebhooksService {
         throw new UnauthorizedException('Missing stripe-signature header');
       }
       const stripeKey = this.config.get<string>('STRIPE_SECRET_KEY') ?? '';
-      const stripe = new Stripe(stripeKey, { apiVersion: '2024-11-20.acacia' });
+      const stripe = new Stripe(stripeKey, { apiVersion: '2025-02-24.acacia' });
       try {
         stripe.webhooks.constructEvent(rawBody, signature, secret);
       } catch {

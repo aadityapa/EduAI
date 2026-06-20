@@ -1438,16 +1438,22 @@ model ActivityLog {
 }
 
 model TenantBranding {
-  id             String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId       String  @unique @map("tenant_id") @db.Uuid
-  logoUrl        String? @map("logo_url") @db.VarChar(500)
-  primaryColor   String  @default("#6366f1") @map("primary_color") @db.VarChar(7)
-  secondaryColor String  @default("#8b5cf6") @map("secondary_color") @db.VarChar(7)
-  customCss      String? @map("custom_css")
-  faviconUrl     String? @map("favicon_url") @db.VarChar(500)
-  emailFromName  String? @map("email_from_name") @db.VarChar(100)
-  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  id                   String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId             String  @unique @map("tenant_id") @db.Uuid
+  logoUrl              String? @map("logo_url") @db.VarChar(500)
+  primaryColor         String  @default("#6366f1") @map("primary_color") @db.VarChar(7)
+  secondaryColor       String  @default("#8b5cf6") @map("secondary_color") @db.VarChar(7)
+  accentColor          String  @default("#f59e0b") @map("accent_color") @db.VarChar(7)
+  fontFamily           String  @default("Inter") @map("font_family") @db.VarChar(100)
+  customCss            String? @map("custom_css")
+  faviconUrl           String? @map("favicon_url") @db.VarChar(500)
+  emailFromName        String? @map("email_from_name") @db.VarChar(100)
+  emailHeaderHtml      String? @map("email_header_html")
+  emailFooterHtml      String? @map("email_footer_html")
+  mobileAppName        String? @map("mobile_app_name") @db.VarChar(100)
+  customDomainVerified Boolean @default(false) @map("custom_domain_verified")
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt            DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
   tenant Tenant @relation(fields: [tenantId], references: [id])
 

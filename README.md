@@ -1,37 +1,51 @@
-# EduAI — AI-Powered Digital Learning Ecosystem
+# EduAI Platform — v0.9 Beta
 
-> **Status:** Sprint 1 Complete — Monorepo foundation + Auth  
-> **Version:** 0.1.0  
+> **Status:** Sprint 5 Complete — Mobile + Production Infrastructure  
+> **Version:** 0.9.0-beta  
 > **Last Updated:** June 2025
 
-EduAI is a multi-tenant SaaS platform for AI-powered education (Classes 1–10, CBSE/ICSE/State Boards). This repository contains the **Turborepo monorepo**, documentation suite, and Sprint 1 deliverables.
+EduAI is a multi-tenant SaaS platform for AI-powered education (Classes 1–10, CBSE/ICSE/State Boards). This monorepo contains web, admin, and mobile apps, five backend microservices, shared packages, and production infrastructure.
 
 ---
 
 ## Quick Start
 
 ```bash
-# 1. Install
 cp .env.example .env
 pnpm install
-
-# 2. Start Postgres + Redis
 docker compose -f infrastructure/docker/docker-compose.yml up -d
-
-# 3. Database
-pnpm db:generate
-pnpm db:migrate
-pnpm db:seed
-
-# 4. Run (3 terminals)
-pnpm --filter @eduai/identity-service dev   # :3001
-pnpm --filter @eduai/web dev                # :3000
-pnpm --filter @eduai/admin dev              # :3002
+pnpm db:generate && pnpm db:migrate && pnpm db:seed
 ```
 
-**Demo login:** `admin@demo.eduai.in` / `Demo1234!`
+### Run Services
 
-Full details: [`docs/implementation/sprint-1-completion.md`](docs/implementation/sprint-1-completion.md)
+| Terminal | Command | Port |
+|----------|---------|------|
+| 1 | `pnpm --filter @eduai/identity-service dev` | 3001 |
+| 2 | `pnpm --filter @eduai/learning-service dev` | 3003 |
+| 3 | `pnpm --filter @eduai/ai-service dev` | 3004 |
+| 4 | `pnpm --filter @eduai/erp-service dev` | 3005 |
+| 5 | `pnpm --filter @eduai/billing-service dev` | 3006 |
+| 6 | `pnpm --filter @eduai/web dev` | 3000 |
+| 7 | `pnpm --filter @eduai/admin dev` | 3002 |
+
+**Demo login:** `*@demo.eduai.in` / `Demo1234!`
+
+---
+
+## Mobile App
+
+```bash
+pnpm --filter @eduai/mobile dev
+# Scan QR with Expo Go, or press 'a' for Android / 'i' for iOS simulator
+```
+
+Role-based navigation:
+- **Student:** courses, AI tutor, quizzes, planner, gamification, offline cache
+- **Parent:** children, fees, notifications
+- **Teacher:** classes, attendance, homework
+
+Configure API URLs in `apps/mobile/app.json` → `extra`.
 
 ---
 
@@ -39,40 +53,29 @@ Full details: [`docs/implementation/sprint-1-completion.md`](docs/implementation
 
 ```
 apps/
-  web/              Next.js 15 — learner portals + Auth.js
-  admin/            Next.js 15 — admin user management
-  mobile/           Expo scaffold (Sprint 15)
+  web/              Next.js 15 — student/teacher/parent portals
+  admin/            Next.js 15 — platform admin + CRM/billing/branding
+  mobile/           Expo 52 — student/parent/teacher apps
 packages/
-  ui/               Design system (tokens + Shadcn components)
-  auth/             Auth.js helpers + RBAC matrix
+  ui/               Design system + TenantThemeProvider
+  auth/             RBAC matrix + permissions
   database/         Prisma schema + migrations
-  shared/           Shared types and utilities
-  ai/               AI client stub
-  analytics/        Analytics stub
+  shared/           Types, JWT helpers, API utilities
+  ai/               AI client, prompt guard, content filter
+  i18n/             en/hi/mr translations
 services/
-  identity-service/ NestJS — auth + users (Sprint 1)
-  *-service/        Scaffolds for learning, content, quiz, ai, analytics, notification
+  identity-service/ Auth + users (:3001)
+  learning-service/ Courses, quizzes, gamification (:3003)
+  ai-service/       Tutor, homework, planner, generators (:3004)
+  erp-service/      School ERP — attendance, fees, exams (:3005)
+  billing-service/  Subscriptions, invoices, CRM, branding (:3006)
 infrastructure/
-  docker/           Docker Compose (PostgreSQL, Redis)
-  kubernetes/       K8s manifests (placeholder)
-  terraform/        IaC (placeholder)
-docs/               BRD, PRD, SRS, architecture, sprints, design system
+  docker/           Dev + production Docker
+  kubernetes/       K8s manifests for all services
+  terraform/        AWS ap-south-1 (VPC, EKS, RDS, Redis, S3, CloudFront)
+  monitoring/       Prometheus, Grafana, OpenTelemetry, Sentry stubs
+docs/               Audits, operations guides, release reports
 ```
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|------------|
-| Monorepo | Turborepo, pnpm workspaces |
-| Web | Next.js 15, TypeScript, Tailwind, Shadcn-style UI, Framer Motion |
-| Mobile | React Native / Expo (scaffold) |
-| API | NestJS, JWT, Swagger OpenAPI |
-| Database | PostgreSQL 16, Prisma |
-| Cache | Redis 7 (local dev) |
-| Auth | Auth.js (Next.js) + identity-service JWT |
-| CI | GitHub Actions |
 
 ---
 
@@ -80,13 +83,24 @@ docs/               BRD, PRD, SRS, architecture, sprints, design system
 
 | Command | Description |
 |---------|-------------|
-| `pnpm dev` | Start all apps in dev mode |
-| `pnpm build` | Build all packages and apps |
-| `pnpm test` | Run unit tests |
-| `pnpm lint` | Lint all packages |
-| `pnpm typecheck` | TypeScript check |
-| `pnpm db:migrate` | Run Prisma migrations |
-| `pnpm db:seed` | Seed demo tenant + users |
+| `pnpm dev` | Start all apps |
+| `pnpm build` | Build all packages |
+| `pnpm test` | Run unit tests (45+ Sprint 1–4, 50+ with Sprint 5) |
+| `pnpm db:migrate` | Apply Prisma migrations |
+| `pnpm db:seed` | Seed demo tenant |
+
+---
+
+## Production Deploy
+
+See [`docs/operations/production-deployment-guide.md`](docs/operations/production-deployment-guide.md).
+
+```bash
+cd infrastructure/terraform && terraform init && terraform apply
+kubectl apply -f infrastructure/kubernetes/
+```
+
+CI/CD: `.github/workflows/deploy.yml` — build, test, push to ECR, deploy on `master`.
 
 ---
 
@@ -94,26 +108,22 @@ docs/               BRD, PRD, SRS, architecture, sprints, design system
 
 | Document | Path |
 |----------|------|
-| Sprint 1 completion | [`docs/implementation/sprint-1-completion.md`](docs/implementation/sprint-1-completion.md) |
-| Implementation audit | [`docs/implementation/audit-report.md`](docs/implementation/audit-report.md) |
-| Sprint planning | [`docs/sprints/sprint-planning.md`](docs/sprints/sprint-planning.md) |
-| RBAC design | [`docs/architecture/rbac-design.md`](docs/architecture/rbac-design.md) |
-| Database schema | [`docs/database/database-schema.md`](docs/database/database-schema.md) |
-| API documentation | [`docs/api/api-documentation.md`](docs/api/api-documentation.md) |
-| Design system | [`docs/design/design-system.md`](docs/design/design-system.md) |
+| Pre-production audit | [`docs/audit/pre-production-audit.md`](docs/audit/pre-production-audit.md) |
+| Staging readiness | [`docs/release/staging-readiness-review.md`](docs/release/staging-readiness-review.md) |
+| Sprint 5 release | [`docs/release/sprint5-release-report.md`](docs/release/sprint5-release-report.md) |
+| Production deploy | [`docs/operations/production-deployment-guide.md`](docs/operations/production-deployment-guide.md) |
+| Beta launch | [`docs/release/beta-launch-guide.md`](docs/release/beta-launch-guide.md) |
+| App store readiness | [`docs/release/app-store-readiness.md`](docs/release/app-store-readiness.md) |
 
 ---
 
-## Roles (RBAC)
+## Roadmap
 
-| Code | Display Name |
-|------|--------------|
-| `platform_admin` | Super Admin |
-| `tenant_admin` | Admin |
-| `school_admin` | School Admin |
-| `teacher` | Teacher |
-| `student` | Student |
-| `parent` | Parent |
+| Version | Target | Focus |
+|---------|--------|-------|
+| **v0.9 Beta** | Now | Mobile apps, white-label, production infra |
+| **v1.0 Launch** | Q3 2025 | App Store release, Redis rate limiting, e2e tests |
+| **v2.0 Scale** | 2026 | OpenSearch, multi-region, franchise analytics |
 
 ---
 

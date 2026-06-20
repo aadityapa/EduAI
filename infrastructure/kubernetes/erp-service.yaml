@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: erp-service
+  namespace: eduai-staging
+  labels:
+    app: erp-service
+    app.kubernetes.io/name: erp-service
+    app.kubernetes.io/part-of: eduai
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: erp-service
+  template:
+    metadata:
+      labels:
+        app: erp-service
+        app.kubernetes.io/name: erp-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3005"
+        prometheus.io/path: "/api/v1/metrics"
+    spec:
+      containers:
+        - name: erp-service
+          image: ${AWS_ACCOUNT_ID}.dkr.ecr.ap-south-1.amazonaws.com/eduai/erp-service:latest-staging
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3005
+          envFrom:
+            - configMapRef:
+                name: eduai-platform-config
+          env:
+            - name: PORT
+              value: "3005"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: eduai-platform-secrets
+                  key: DATABASE_URL
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: eduai-platform-secrets
+                  key: JWT_SECRET
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health/ready
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: erp-service
+  namespace: eduai-staging
+  labels:
+    app: erp-service
+spec:
+  type: ClusterIP
+  selector:
+    app: erp-service
+  ports:
+    - name: http
+      port: 3005
+      targetPort: http
