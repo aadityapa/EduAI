@@ -1,10 +1,21 @@
 'use client';
 
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label } from '@eduai/ui';
-import { Palette, Upload } from 'lucide-react';
+import { AlertCircle, Palette, Upload } from 'lucide-react';
 import { PageHeader } from '@/components/page-header';
+import type { BrandingRecord } from '@/lib/admin-api';
 
-export function BrandingDashboard() {
+interface BrandingDashboardProps {
+  branding: BrandingRecord | null;
+  error?: string | null;
+}
+
+export function BrandingDashboard({ branding, error }: BrandingDashboardProps) {
+  const primary = branding?.primaryColor ?? '#6366f1';
+  const secondary = branding?.secondaryColor ?? '#8b5cf6';
+  const accent = branding?.accentColor ?? '#f59e0b';
+  const fontFamily = branding?.fontFamily ?? 'Inter';
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -13,6 +24,12 @@ export function BrandingDashboard() {
         breadcrumbs={[{ label: 'Admin', href: '/dashboard' }, { label: 'Branding' }]}
         actions={<Button size="sm">Save Changes</Button>}
       />
+
+      {error && (
+        <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+          <AlertCircle className="h-4 w-4" /> {error}
+        </div>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
@@ -26,28 +43,28 @@ export function BrandingDashboard() {
               <div>
                 <Label>Primary</Label>
                 <div className="mt-1 flex items-center gap-2">
-                  <span className="inline-block h-8 w-8 rounded-lg bg-primary" />
-                  <Input defaultValue="#6D28D9" className="font-mono text-sm" />
+                  <span className="inline-block h-8 w-8 rounded-lg" style={{ backgroundColor: primary }} />
+                  <Input defaultValue={primary} className="font-mono text-sm" />
                 </div>
               </div>
               <div>
                 <Label>Secondary</Label>
                 <div className="mt-1 flex items-center gap-2">
-                  <span className="inline-block h-8 w-8 rounded-lg bg-secondary" />
-                  <Input defaultValue="#8B5CF6" className="font-mono text-sm" />
+                  <span className="inline-block h-8 w-8 rounded-lg" style={{ backgroundColor: secondary }} />
+                  <Input defaultValue={secondary} className="font-mono text-sm" />
                 </div>
               </div>
               <div>
                 <Label>Accent</Label>
                 <div className="mt-1 flex items-center gap-2">
-                  <span className="inline-block h-8 w-8 rounded-lg bg-accent" />
-                  <Input defaultValue="#22C55E" className="font-mono text-sm" />
+                  <span className="inline-block h-8 w-8 rounded-lg" style={{ backgroundColor: accent }} />
+                  <Input defaultValue={accent} className="font-mono text-sm" />
                 </div>
               </div>
             </div>
             <div>
               <Label>Font Family</Label>
-              <Input defaultValue="Inter" className="mt-1" />
+              <Input defaultValue={fontFamily} className="mt-1" />
             </div>
           </CardContent>
         </Card>
@@ -58,15 +75,22 @@ export function BrandingDashboard() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex h-32 items-center justify-center rounded-lg border-2 border-dashed">
-              <div className="text-center">
-                <Upload className="mx-auto h-8 w-8 text-muted-foreground" />
-                <p className="mt-2 text-sm text-muted-foreground">Upload logo (SVG, PNG)</p>
-              </div>
+              {branding?.logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={branding.logoUrl} alt="Tenant logo" className="max-h-24 max-w-full object-contain" />
+              ) : (
+                <div className="text-center">
+                  <Upload className="mx-auto h-8 w-8 text-muted-foreground" />
+                  <p className="mt-2 text-sm text-muted-foreground">Upload logo (SVG, PNG)</p>
+                </div>
+              )}
             </div>
             <div>
               <Label>Custom Domain</Label>
-              <Input defaultValue="demo.eduai.in" className="mt-1" />
-              <p className="mt-1 text-xs text-muted-foreground">DNS verification required</p>
+              <Input placeholder="your-school.eduai.in" className="mt-1" />
+              <p className="mt-1 text-xs text-muted-foreground">
+                {branding?.customDomainVerified ? 'Domain verified' : 'DNS verification required'}
+              </p>
             </div>
           </CardContent>
         </Card>

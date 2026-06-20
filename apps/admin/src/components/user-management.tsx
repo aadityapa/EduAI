@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import type { ColumnDef } from '@eduai/ui';
+import { useState } from 'react';
+import type { ColumnDef, CsvColumn } from '@eduai/ui';
 import {
   Badge,
   Button,
@@ -10,53 +10,30 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  ActivityFeed,
-  toast,
 } from '@eduai/ui';
-import { Download, MoreHorizontal, UserPlus } from 'lucide-react';
+import { AlertCircle, MoreHorizontal, UserPlus } from 'lucide-react';
 import { ROLE_LABELS } from '@eduai/shared';
 import type { RoleCode } from '@eduai/shared';
 import { PageHeader } from './page-header';
-import { mockAuditLogs, mockUsers } from '@/lib/mock-data';
 
 interface UserRow {
   id: string;
   email: string;
   first_name: string;
-  last_name?: string;
+  last_name?: string | null;
   roles: RoleCode[];
   status: string;
 }
 
-export function UserManagement({ accessToken }: { accessToken?: string }) {
-  const [users, setUsers] = useState<UserRow[]>([]);
-  const [loading, setLoading] = useState(true);
+interface UserManagementProps {
+  users: UserRow[] | null;
+  error?: string | null;
+}
+
+export function UserManagement({ users, error }: UserManagementProps) {
+  const items = users ?? [];
   const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-
-  useEffect(() => {
-    async function load() {
-      if (!accessToken) {
-        setUsers(mockUsers as UserRow[]);
-        setLoading(false);
-        return;
-      }
-      try {
-        const base = process.env.NEXT_PUBLIC_IDENTITY_SERVICE_URL ?? 'http://localhost:3001';
-        const res = await fetch(`${base}/api/v1/users?page_size=50`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        if (!res.ok) throw new Error('Failed');
-        const json = await res.json();
-        setUsers(json.data?.length ? json.data : mockUsers);
-      } catch {
-        setUsers(mockUsers as UserRow[]);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, [accessToken]);
 
   const columns: ColumnDef<UserRow>[] = [
     {
@@ -104,6 +81,14 @@ export function UserManagement({ accessToken }: { accessToken?: string }) {
     },
   ];
 
+  const exportColumns: CsvColumn<UserRow>[] = [
+    { header: 'First Name', accessor: (row) => row.first_name },
+    { header: 'Last Name', accessor: (row) => row.last_name ?? '' },
+    { header: 'Email', accessor: (row) => row.email },
+    { header: 'Roles', accessor: (row) => row.roles.join(', ') },
+    { header: 'Status', accessor: (row) => row.status },
+  ];
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -114,25 +99,27 @@ export function UserManagement({ accessToken }: { accessToken?: string }) {
           { label: 'Users' },
         ]}
         actions={
-          <>
-            <Button variant="outline" size="sm" onClick={() => toast.success('Export started', { description: 'CSV will download shortly' })}>
-              <Download className="mr-2 h-4 w-4" />
-              Export
-            </Button>
-            <Button size="sm">
-              <UserPlus className="mr-2 h-4 w-4" />
-              Add User
-            </Button>
-          </>
+          <Button size="sm">
+            <UserPlus className="mr-2 h-4 w-4" />
+            Add User
+          </Button>
         }
       />
 
+      {error && (
+        <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+          <AlertCircle className="h-4 w-4" /> {error}
+        </div>
+      )}
+
       <DataTable
         columns={columns}
-        data={users}
+        data={items}
         searchKey="email"
         searchPlaceholder="Search by email…"
-        loading={loading}
+        exportable
+        exportFilename="users"
+        exportColumns={exportColumns}
         onRowClick={(row) => {
           setSelectedUser(row);
           setDrawerOpen(true);
@@ -155,7 +142,7 @@ export function UserManagement({ accessToken }: { accessToken?: string }) {
               </dl>
               <div>
                 <h4 className="mb-3 text-sm font-semibold">Activity Timeline</h4>
-                <ActivityFeed items={mockAuditLogs.slice(0, 3)} />
+                <p className="text-sm text-muted-foreground">Activity logs available in Audit Center.</p>
               </div>
             </div>
           )}
