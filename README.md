@@ -8,14 +8,24 @@ EduAI is a multi-tenant SaaS platform for AI-powered education (Classes 1–10, 
 
 ---
 
-## Quick Start
+## Quick Start (MVP)
 
 ```bash
 cp .env.example .env
 pnpm install
 docker compose -f infrastructure/docker/docker-compose.yml up -d
 pnpm db:generate && pnpm db:migrate && pnpm db:seed
+pnpm mvp:dev   # starts all backend + web + admin (see docs/release/mvp-quickstart.md)
 ```
+
+**Demo login:** `*@demo.eduai.in` / `Demo1234!`  
+**Admin:** http://localhost:3002 · **Web:** http://localhost:3000
+
+Full MVP guide: [`docs/release/mvp-quickstart.md`](docs/release/mvp-quickstart.md)
+
+---
+
+## Quick Start (Manual)
 
 ### Run Services
 

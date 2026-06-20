@@ -19,7 +19,9 @@
     "db:studio": "pnpm --filter @eduai/database studio",
     "validate:billing": "node scripts/billing-validation.mjs",
     "validate:dr": "node scripts/dr-test-checklist.mjs",
-    "load:test": "k6 run tests/load/k6-student-journey.js"
+    "load:test": "k6 run tests/load/k6-student-journey.js",
+    "mvp:setup": "docker compose -f infrastructure/docker/docker-compose.yml up -d && pnpm db:generate && pnpm db:migrate && pnpm db:seed",
+    "mvp:dev": "turbo run dev --parallel --filter=@eduai/identity-service --filter=@eduai/learning-service --filter=@eduai/ai-service --filter=@eduai/erp-service --filter=@eduai/billing-service --filter=@eduai/web --filter=@eduai/admin"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

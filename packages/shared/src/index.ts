@@ -133,6 +133,20 @@ export function resolveJwtSecret(envValue?: string): string {
   return DEV_JWT_SECRET;
 }
 
+const DEV_AUTH_SECRET = 'eduai-local-dev-auth-secret-32chars!!';
+
+/** Auth.js requires AUTH_SECRET (min 32 chars). Uses dev fallback when unset. */
+export function resolveAuthSecret(envValue?: string): string {
+  const secret = envValue ?? process.env.AUTH_SECRET;
+  if (secret && secret.length >= 32) return secret;
+  if (process.env.NODE_ENV === 'production') {
+    console.warn(
+      '[EduAI] AUTH_SECRET is missing or too short. Set AUTH_SECRET (32+ chars) before production deploy.',
+    );
+  }
+  return DEV_AUTH_SECRET;
+}
+
 /** Roles allowed on public self-registration */
 export const SELF_REGISTER_ROLES: RoleCode[] = ['student', 'parent'];
 
