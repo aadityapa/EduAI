@@ -68,6 +68,7 @@ jobs:
 
   deploy-staging:
     needs: build-and-test
+    if: ${{ secrets.AWS_DEPLOY_ROLE_ARN != '' && secrets.AWS_ACCOUNT_ID != '' }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -124,6 +125,7 @@ jobs:
 
   apply-kubernetes:
     needs: deploy-staging
+    if: ${{ secrets.AWS_DEPLOY_ROLE_ARN != '' && secrets.AWS_ACCOUNT_ID != '' }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write

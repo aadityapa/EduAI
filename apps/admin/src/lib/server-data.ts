@@ -63,6 +63,22 @@ export async function getAiAnalyticsPageData() {
   return wrap(() => aiAdminApi.getDashboard());
 }
 
+export async function getBrandingPageData() {
+  return wrap(() => billingApi.getBranding());
+}
+
+export async function getTenantsPageData() {
+  return wrap(() => billingApi.getSubscriptions());
+}
+
+export async function getSchoolsPageData() {
+  return wrap(() => erpApi.getSchools());
+}
+
+export async function getUsersPageData() {
+  return wrap(() => identityApi.getUsers({ page: 1, page_size: 100 }));
+}
+
 export async function requireAdminSession() {
   const session = await auth();
   if (!session?.user?.accessToken) return null;

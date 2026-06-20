@@ -108,6 +108,8 @@ export {
 } from './components/command';
 export { DataTable } from './components/data-table';
 export type { DataTableProps } from './components/data-table';
+export { exportToCsv } from './lib/export-csv';
+export type { CsvColumn } from './lib/export-csv';
 export type { ColumnDef } from '@tanstack/react-table';
 export {
   ChartContainer,

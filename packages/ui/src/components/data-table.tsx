@@ -13,8 +13,9 @@ import {
   type SortingState,
   type VisibilityState,
 } from '@tanstack/react-table';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { exportToCsv, type CsvColumn } from '../lib/export-csv';
 import { Button } from './button';
 import { Input } from './input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
@@ -30,6 +31,9 @@ export interface DataTableProps<TData, TValue> {
   onRowClick?: (row: TData) => void;
   pageSize?: number;
   className?: string;
+  exportable?: boolean;
+  exportFilename?: string;
+  exportColumns?: CsvColumn<TData>[];
 }
 
 export function DataTable<TData, TValue>({
@@ -42,6 +46,9 @@ export function DataTable<TData, TValue>({
   onRowClick,
   pageSize = 10,
   className,
+  exportable,
+  exportFilename = 'export',
+  exportColumns,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -75,7 +82,27 @@ export function DataTable<TData, TValue>({
             aria-label={searchPlaceholder}
           />
         )}
-        {toolbar}
+        <div className="flex items-center gap-2">
+          {exportable && exportColumns && exportColumns.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                exportToCsv(
+                  table.getFilteredRowModel().rows.map((r) => r.original),
+                  exportColumns,
+                  exportFilename,
+                )
+              }
+              disabled={loading || data.length === 0}
+              aria-label="Download CSV"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Download
+            </Button>
+          )}
+          {toolbar}
+        </div>
       </div>
 
       <div className="rounded-lg border">

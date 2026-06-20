@@ -17,6 +17,7 @@ import { ParentErpModule } from './parent-erp/parent-erp.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ScaffoldModule } from './scaffold/scaffold.module';
+import { SchoolsModule } from './schools/schools.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ScaffoldModule } from './scaffold/scaffold.module';
     NotificationsModule,
     AnalyticsModule,
     ScaffoldModule,
+    SchoolsModule,
   ],
   providers: [
     {

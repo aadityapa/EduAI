@@ -39,17 +39,92 @@ async function fetchService<T>(baseUrl: string, path: string): Promise<T> {
   return json.data;
 }
 
+export interface CouponRecord {
+  code: string;
+  discountPct: number | { toNumber?: () => number };
+  usedCount: number;
+  maxUses: number;
+  isActive: boolean;
+  validFrom: string;
+  validUntil: string;
+}
+
+export interface CampaignRecord {
+  id: string;
+  name: string;
+  channel: string;
+  status: string;
+  budget?: number | { toNumber?: () => number } | null;
+  metadata?: Record<string, unknown>;
+  startsAt?: string | null;
+  endsAt?: string | null;
+}
+
+export interface SubscriptionRecord {
+  id: string;
+  status: string;
+  tenant: { id: string; slug: string; name: string };
+  plan: { name: string; priceMonthly: number | { toNumber?: () => number } };
+}
+
+export interface BrandingRecord {
+  primaryColor?: string;
+  secondaryColor?: string;
+  accentColor?: string;
+  fontFamily?: string;
+  logoUrl?: string | null;
+  customDomainVerified?: boolean;
+}
+
+export interface AiDashboardRecord {
+  totalTokens: number;
+  totalQueries: number;
+  estimatedCostUsd: number;
+  topUsers: Array<{ userId: string; tokensUsed: number; queryCount: number; estimatedCostUsd: number }>;
+  featureUsage: Array<{ type: string; _count: { id: number } }>;
+}
+
+export interface SchoolRecord {
+  id: string;
+  name: string;
+  code: string;
+  address?: Record<string, unknown>;
+  userCount: number;
+  classCount: number;
+  students: number;
+  teachers: number;
+}
+
+export interface ClassRecord {
+  id: string;
+  name?: string;
+  classLevel?: number;
+  section?: string;
+  school?: { id: string; name: string; code: string };
+  _count?: { enrollments: number };
+}
+
+export interface UserRecord {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name?: string | null;
+  roles: string[];
+  status: string;
+}
+
 export const billingApi = {
   getRevenue: () => fetchService<Record<string, number>>(BILLING_URL, '/analytics/revenue'),
   getPlans: () => fetchService<unknown[]>(BILLING_URL, '/plans'),
-  getSubscriptions: () => fetchService<unknown[]>(BILLING_URL, '/subscriptions'),
+  getSubscriptions: () => fetchService<SubscriptionRecord[]>(BILLING_URL, '/subscriptions'),
   getInvoices: () => fetchService<unknown[]>(BILLING_URL, '/invoices'),
-  getCoupons: () => fetchService<unknown[]>(BILLING_URL, '/coupons'),
+  getCoupons: () => fetchService<CouponRecord[]>(BILLING_URL, '/coupons'),
   getLeads: () => fetchService<LeadRecord[]>(BILLING_URL, '/crm/leads'),
   getTickets: () => fetchService<TicketRecord[]>(BILLING_URL, '/crm/tickets'),
-  getCampaigns: () => fetchService<unknown[]>(BILLING_URL, '/crm/campaigns'),
+  getCampaigns: () => fetchService<CampaignRecord[]>(BILLING_URL, '/crm/campaigns'),
   getAuditLogs: () => fetchService<AuditRecord[]>(BILLING_URL, '/crm/audit-logs'),
   getActivityLogs: () => fetchService<ActivityRecord[]>(BILLING_URL, '/crm/activity-logs'),
+  getBranding: () => fetchService<BrandingRecord>(BILLING_URL, '/branding'),
 };
 
 export const identityApi = {
@@ -60,12 +135,12 @@ export const identityApi = {
     if (query?.role) params.set('role', query.role);
     if (query?.status) params.set('status', query.status);
     const qs = params.toString();
-    return fetchService<unknown[]>(IDENTITY_URL, `/users${qs ? `?${qs}` : ''}`);
+    return fetchService<UserRecord[]>(IDENTITY_URL, `/users${qs ? `?${qs}` : ''}`);
   },
 };
 
 export const aiAdminApi = {
-  getDashboard: () => fetchService<Record<string, unknown>>(AI_URL, '/analytics/dashboard'),
+  getDashboard: () => fetchService<AiDashboardRecord>(AI_URL, '/analytics/dashboard'),
 };
 
 export interface LeadRecord {
@@ -103,4 +178,6 @@ export interface ActivityRecord {
 
 export const erpApi = {
   getAnalytics: () => fetchService<Record<string, unknown>>(ERP_URL, '/analytics/tenant'),
+  getClasses: () => fetchService<ClassRecord[]>(ERP_URL, '/classes'),
+  getSchools: () => fetchService<SchoolRecord[]>(ERP_URL, '/schools'),
 };
