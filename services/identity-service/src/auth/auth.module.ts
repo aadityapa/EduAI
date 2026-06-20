@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { resolveJwtSecret } from '@eduai/shared';
 import { JwtStrategy } from './jwt.strategy';
 import { JwtAuthGuard, PermissionGuard } from '../common/guards';
 
@@ -15,7 +16,7 @@ import { JwtAuthGuard, PermissionGuard } from '../common/guards';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('JWT_SECRET') ?? 'change-me-in-production',
+        secret: resolveJwtSecret(config.get<string>('JWT_SECRET')),
         signOptions: {
           expiresIn: config.get('JWT_ACCESS_EXPIRES_IN') ?? '15m',
         },

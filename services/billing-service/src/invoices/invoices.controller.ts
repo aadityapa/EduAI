@@ -19,7 +19,7 @@ export class InvoicesController {
 
   @Get()
   @RequireAnyPermission('billing:manage:tenant', 'tenants:manage:global')
-  async list() {
-    return apiResponse(await this.invoicesService.listAllInvoices());
+  async list(@CurrentUser() user: UserContext) {
+    return apiResponse(await this.invoicesService.listAllInvoices(user));
   }
 }

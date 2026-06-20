@@ -122,6 +122,20 @@ export const DASHBOARD_ROUTES: Record<RoleCode, string> = {
   parent: '/parent/dashboard',
 };
 
+/** Dev-only fallback; production requires JWT_SECRET env var */
+export const DEV_JWT_SECRET = 'change-me-in-production';
+
+export function resolveJwtSecret(envValue?: string): string {
+  if (envValue) return envValue;
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('JWT_SECRET environment variable is required in production');
+  }
+  return DEV_JWT_SECRET;
+}
+
+/** Roles allowed on public self-registration */
+export const SELF_REGISTER_ROLES: RoleCode[] = ['student', 'parent'];
+
 export function getDashboardRoute(roles: RoleCode[]): string {
   const priority: RoleCode[] = [
     ROLES.PLATFORM_ADMIN,

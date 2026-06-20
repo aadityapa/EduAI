@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import type { JwtClaims } from '@eduai/shared';
+import { resolveJwtSecret } from '@eduai/shared';
 import type { UserContext } from '../common/decorators';
 
 @Injectable()
@@ -11,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: config.get<string>('JWT_SECRET') ?? 'change-me-in-production',
+      secretOrKey: resolveJwtSecret(config.get<string>('JWT_SECRET')),
     });
   }
 

@@ -16,8 +16,10 @@ export class SubscriptionsService {
     return sub;
   }
 
-  async listAllSubscriptions() {
+  async listAllSubscriptions(user: UserContext) {
+    const isGlobal = user.permissions.includes('tenants:manage:global');
     return this.prisma.tenantSubscription.findMany({
+      where: isGlobal ? undefined : { tenantId: user.tenantId },
       include: {
         plan: true,
         tenant: { select: { id: true, slug: true, name: true } },

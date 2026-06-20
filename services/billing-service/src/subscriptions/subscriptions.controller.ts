@@ -20,6 +20,6 @@ export class SubscriptionsController {
   @Get()
   @RequireAnyPermission('billing:manage:tenant', 'tenants:manage:global')
   async list(@CurrentUser() user: UserContext) {
-    return apiResponse(await this.subscriptionsService.listAllSubscriptions());
+    return apiResponse(await this.subscriptionsService.listAllSubscriptions(user));
   }
 }

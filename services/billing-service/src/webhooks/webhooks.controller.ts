@@ -1,5 +1,6 @@
-import { Body, Controller, Headers, Post } from '@nestjs/common';
+import { Body, Controller, Headers, Post, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import type { Request } from 'express';
 import { WebhooksService } from './webhooks.service';
 import { Public } from '../common/decorators';
 import { apiResponse } from '../common/response.util';
@@ -12,15 +13,32 @@ export class WebhooksController {
   @Post('stripe')
   @Public()
   async stripe(
+    @Req() req: Request,
     @Body() body: Record<string, unknown>,
     @Headers('stripe-signature') signature: string,
   ) {
-    return apiResponse(await this.webhooksService.handleStripeWebhook(body, signature ?? ''));
+    const rawBody =
+      typeof req.body === 'string'
+        ? req.body
+        : JSON.stringify(body);
+    return apiResponse(
+      await this.webhooksService.handleStripeWebhook(rawBody, body, signature ?? ''),
+    );
   }
 
   @Post('razorpay')
   @Public()
-  async razorpay(@Body() body: Record<string, unknown>) {
-    return apiResponse(await this.webhooksService.handleRazorpayWebhook(body));
+  async razorpay(
+    @Req() req: Request,
+    @Body() body: Record<string, unknown>,
+    @Headers('x-razorpay-signature') signature: string,
+  ) {
+    const rawBody =
+      typeof req.body === 'string'
+        ? req.body
+        : JSON.stringify(body);
+    return apiResponse(
+      await this.webhooksService.handleRazorpayWebhook(rawBody, body, signature ?? ''),
+    );
   }
 }

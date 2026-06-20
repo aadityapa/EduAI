@@ -13,8 +13,10 @@ export class InvoicesService {
     });
   }
 
-  async listAllInvoices() {
+  async listAllInvoices(user: UserContext) {
+    const isGlobal = user.permissions.includes('tenants:manage:global');
     return this.prisma.billingInvoice.findMany({
+      where: isGlobal ? undefined : { tenantId: user.tenantId },
       include: { tenant: { select: { slug: true, name: true } } },
       orderBy: { createdAt: 'desc' },
       take: 100,

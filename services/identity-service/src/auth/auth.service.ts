@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -9,7 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 import { getPermissionsForRoles } from '@eduai/auth';
-import type { JwtClaims, RoleCode } from '@eduai/shared';
+import { SELF_REGISTER_ROLES, type JwtClaims, type RoleCode } from '@eduai/shared';
 import { Prisma } from '@eduai/database';
 import type { LoginDto, RegisterDto } from './dto/auth.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -89,6 +90,11 @@ export class AuthService {
     }
 
     const roleCode = (dto.role ?? 'student') as RoleCode;
+    if (!SELF_REGISTER_ROLES.includes(roleCode)) {
+      throw new BadRequestException(
+        'Self-registration is limited to student and parent roles',
+      );
+    }
     const role = await this.prisma.role.findFirst({
       where: { tenantId, code: roleCode },
     });
