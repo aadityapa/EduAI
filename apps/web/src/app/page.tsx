@@ -1,10 +1,11 @@
 import { redirect } from 'next/navigation';
-import { auth, getDashboardRoute } from '@/auth';
+import { auth } from '@/auth';
+import { resolvePostLoginDestination } from '@eduai/shared';
 
 export default async function HomePage() {
   const session = await auth();
   if (session?.user) {
-    redirect(getDashboardRoute(session.user.roles));
+    redirect(resolvePostLoginDestination(session.user.roles));
   }
   redirect('/login');
 }

@@ -1,30 +1,26 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../src/auth/AuthContext';
 import { fetchGamification, fetchHub } from '../../src/api/services';
 import { cacheGet, cacheSet } from '../../src/auth/storage';
-import { useTheme } from '../../src/theme/ThemeProvider';
-import { registerForPushNotifications, scheduleStudyReminder } from '../../src/notifications/setup';
+import { Card, KpiCard, PortalBadge, PrimaryButton, Screen, tokens } from '../../src/components/ui';
+import { registerForPushNotifications } from '../../src/notifications/setup';
 
 export default function StudentHome() {
-  const { tokens } = useAuth();
-  const theme = useTheme();
+  const { tokens: auth } = useAuth();
   const [hub, setHub] = useState<Record<string, unknown> | null>(null);
   const [xp, setXp] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
   const [offline, setOffline] = useState(false);
 
   useEffect(() => {
-    if (!tokens) return;
-    const token = tokens.accessToken;
+    if (!auth) return;
+    const token = auth.accessToken;
 
     async function load() {
       try {
-        const [hubData, xpData] = await Promise.all([
-          fetchHub(token),
-          fetchGamification(token),
-        ]);
+        const [hubData, xpData] = await Promise.all([fetchHub(token), fetchGamification(token)]);
         setHub(hubData);
         setXp(xpData);
         await cacheSet('student_hub', hubData);
@@ -32,78 +28,77 @@ export default function StudentHome() {
         setOffline(false);
         await registerForPushNotifications();
       } catch {
-        const cachedHub = await cacheGet<Record<string, unknown>>('student_hub');
-        const cachedXp = await cacheGet<Record<string, unknown>>('student_xp');
-        setHub(cachedHub);
-        setXp(cachedXp);
+        setHub(await cacheGet('student_hub'));
+        setXp(await cacheGet('student_xp'));
         setOffline(true);
       } finally {
         setLoading(false);
       }
     }
     load();
-  }, [tokens]);
+  }, [auth]);
 
   if (loading) {
     return (
-      <View style={styles.center}>
-        <ActivityIndicator color={theme.primaryColor} />
-      </View>
+      <Screen style={styles.center}>
+        <ActivityIndicator color={tokens.colors.primary} size="large" />
+      </Screen>
     );
   }
 
+  const streak = (xp as { currentStreak?: number })?.currentStreak ?? 0;
+  const level = (xp as { currentLevel?: number })?.currentLevel ?? 1;
+  const totalXp = (xp as { totalXp?: number })?.totalXp ?? 0;
+  const courses = (hub as { enrollments?: unknown[] })?.enrollments?.length ?? 0;
+
   return (
-    <ScrollView style={styles.container}>
-      {offline && (
-        <View style={styles.offlineBanner}>
-          <Text style={styles.offlineText}>Offline mode — showing cached data</Text>
+    <Screen>
+      <ScrollView contentContainerStyle={styles.scroll}>
+        {offline && (
+          <View style={styles.offlineBanner}>
+            <Text style={styles.offlineText}>Offline — cached data</Text>
+          </View>
+        )}
+        <PortalBadge label="Student Portal" color={tokens.colors.primary} />
+        <Text style={styles.greeting}>Hello, {auth?.user.firstName}! 👋</Text>
+
+        <View style={styles.kpiRow}>
+          <KpiCard label="Streak" value={`${streak}d`} accent={tokens.colors.warning} />
+          <KpiCard label="Level" value={level} accent={tokens.colors.primary} />
         </View>
-      )}
-      <Text style={[styles.greeting, { color: theme.primaryColor }]}>
-        Hello, {tokens?.user.firstName}!
-      </Text>
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Learning Hub</Text>
-        <Text style={styles.cardBody}>
-          Streak: {(xp as { currentStreak?: number })?.currentStreak ?? 0} days
-        </Text>
-        <Text style={styles.cardBody}>
-          Level: {(xp as { currentLevel?: number })?.currentLevel ?? 1} · XP:{' '}
-          {(xp as { totalXp?: number })?.totalXp ?? 0}
-        </Text>
-        <Text style={styles.cardBody}>
-          Courses in progress: {(hub as { enrollments?: unknown[] })?.enrollments?.length ?? 0}
-        </Text>
-      </View>
-      <Pressable
-        style={[styles.cta, { backgroundColor: theme.primaryColor }]}
-        onPress={() => router.push('/(student)/courses')}
-      >
-        <Text style={styles.ctaText}>Continue Learning</Text>
-      </Pressable>
-      <Pressable
-        style={[styles.ctaOutline, { borderColor: theme.accentColor }]}
-        onPress={() => scheduleStudyReminder('Study time!', 'Review your lessons today', 60)}
-      >
-        <Text style={[styles.ctaOutlineText, { color: theme.accentColor }]}>
-          Schedule Study Reminder
-        </Text>
-      </Pressable>
-    </ScrollView>
+        <View style={styles.kpiRow}>
+          <KpiCard label="XP" value={totalXp} accent={tokens.colors.secondary} />
+          <KpiCard label="Courses" value={courses} accent={tokens.colors.success} />
+        </View>
+
+        <Card>
+          <Text style={styles.cardTitle}>Today&apos;s focus</Text>
+          <Text style={styles.cardBody}>Complete 1 lesson and 1 quiz to keep your streak.</Text>
+        </Card>
+
+        <PrimaryButton label="Continue Learning" onPress={() => router.push('/(student)/courses')} />
+        <PrimaryButton
+          label="Ask AI Tutor"
+          variant="outline"
+          onPress={() => router.push('/(student)/tutor')}
+        />
+      </ScrollView>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#f8fafc' },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  offlineBanner: { backgroundColor: '#fef3c7', padding: 8, borderRadius: 6, marginBottom: 12 },
-  offlineText: { color: '#92400e', fontSize: 12, textAlign: 'center' },
-  greeting: { fontSize: 24, fontWeight: '700', marginBottom: 16 },
-  card: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 16 },
-  cardTitle: { fontSize: 16, fontWeight: '600', marginBottom: 8 },
-  cardBody: { color: '#64748b', marginBottom: 4 },
-  cta: { borderRadius: 8, padding: 16, alignItems: 'center', marginBottom: 12 },
-  ctaText: { color: '#fff', fontWeight: '600' },
-  ctaOutline: { borderWidth: 1, borderRadius: 8, padding: 16, alignItems: 'center' },
-  ctaOutlineText: { fontWeight: '600' },
+  center: { justifyContent: 'center', alignItems: 'center' },
+  scroll: { padding: tokens.spacing.md },
+  offlineBanner: {
+    backgroundColor: '#FEF3C7',
+    padding: 8,
+    borderRadius: tokens.radius.sm,
+    marginBottom: tokens.spacing.sm,
+  },
+  offlineText: { color: '#92400E', fontSize: tokens.fontSize.xs, textAlign: 'center' },
+  greeting: { fontSize: tokens.fontSize.xl, fontWeight: '700', color: tokens.colors.text, marginBottom: tokens.spacing.md },
+  kpiRow: { flexDirection: 'row', gap: tokens.spacing.sm, marginBottom: tokens.spacing.sm },
+  cardTitle: { fontSize: tokens.fontSize.md, fontWeight: '600', marginBottom: 6 },
+  cardBody: { color: tokens.colors.textMuted, lineHeight: 20 },
 });

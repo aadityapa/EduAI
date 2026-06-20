@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getDashboardRoute } from '@eduai/shared';
+import { isExternalUrl, resolvePostLoginDestination } from '@eduai/shared';
 
 const protectedPrefixes = ['/dashboard', '/student', '/teacher', '/parent', '/admin'];
 
@@ -15,7 +15,11 @@ export default auth((req) => {
   }
 
   if (pathname === '/login' && isLoggedIn && req.auth?.user) {
-    return NextResponse.redirect(new URL(getDashboardRoute(req.auth.user.roles), req.url));
+    const dest = resolvePostLoginDestination(req.auth.user.roles);
+    if (isExternalUrl(dest)) {
+      return NextResponse.redirect(dest);
+    }
+    return NextResponse.redirect(new URL(dest, req.url));
   }
 
   return NextResponse.next();

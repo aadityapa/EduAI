@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-import { buildThrottlerModule } from '@eduai/nest-common';
+import { buildThrottlerModule, rootConfigModuleOptions } from '@eduai/nest-common';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
@@ -17,7 +17,7 @@ import { CostModule } from './cost/cost.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot(rootConfigModuleOptions),
     buildThrottlerModule([{ name: 'ai', ttl: 60000, limit: 30 }], process.env.REDIS_URL),
     PrismaModule,
     AuthModule,

@@ -16,12 +16,20 @@ import {
   Label,
 } from '@eduai/ui';
 type LoginMode = 'email' | 'otp';
+type Portal = 'student' | 'teacher' | 'parent';
+
+const PORTALS: { id: Portal; label: string; email: string }[] = [
+  { id: 'student', label: 'Student', email: 'student@demo.eduai.in' },
+  { id: 'teacher', label: 'Teacher', email: 'teacher@demo.eduai.in' },
+  { id: 'parent', label: 'Parent', email: 'parent@demo.eduai.in' },
+];
 
 export default function LoginPage() {
   const router = useRouter();
+  const [portal, setPortal] = useState<Portal>('student');
   const [mode, setMode] = useState<LoginMode>('email');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('student@demo.eduai.in');
+  const [password, setPassword] = useState('Demo1234!');
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -63,9 +71,28 @@ export default function LoginPage() {
               <Sparkles className="h-6 w-6" />
             </div>
             <CardTitle className="text-2xl">Welcome to EduAI</CardTitle>
-            <CardDescription>Sign in to continue learning</CardDescription>
+            <CardDescription>Student · Teacher · Parent — Port 3000</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="flex gap-2">
+              {PORTALS.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => {
+                    setPortal(p.id);
+                    setEmail(p.email);
+                  }}
+                  className={`flex-1 rounded-lg border py-2 text-sm font-medium transition-colors ${
+                    portal === p.id
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border text-muted-foreground hover:bg-muted'
+                  }`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
             <div className="flex rounded-lg bg-muted p-1">
               <button
                 type="button"
@@ -169,7 +196,17 @@ export default function LoginPage() {
             </div>
 
             <p className="text-center text-xs text-muted-foreground">
-              Demo: admin@demo.eduai.in / Demo1234!
+              Demo password: Demo1234!
+              <br />
+              Admin CRM:{' '}
+              <a
+                href={process.env.NEXT_PUBLIC_ADMIN_URL ?? 'http://localhost:3002'}
+                className="text-primary underline"
+              >
+                localhost:3002
+              </a>
+              {' · '}
+              Mobile: Expo port 8081
             </p>
           </CardContent>
         </Card>

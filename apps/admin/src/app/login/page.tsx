@@ -6,7 +6,7 @@ import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label } from '
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('admin@demo.eduai.in');
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState('Demo1234!');
   const [error, setError] = useState('');
 
   async function onSubmit(e: React.FormEvent) {
@@ -36,6 +36,9 @@ export default function AdminLoginPage() {
               <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
+            <p className="text-xs text-muted-foreground">
+              Demo: admin@demo.eduai.in / Demo1234!
+            </p>
             <Button type="submit" className="w-full">Sign in</Button>
           </form>
         </CardContent>

@@ -133,10 +133,25 @@ export function resolveJwtSecret(envValue?: string): string {
   return DEV_JWT_SECRET;
 }
 
+const DEV_AUTH_SECRET = 'eduai-local-dev-auth-secret-32chars!!';
+
+/** Auth.js requires AUTH_SECRET (min 32 chars). Uses dev fallback when unset. */
+export function resolveAuthSecret(envValue?: string): string {
+  const secret = envValue ?? process.env.AUTH_SECRET;
+  if (secret && secret.length >= 32) return secret;
+  if (process.env.NODE_ENV === 'production') {
+    console.warn(
+      '[EduAI] AUTH_SECRET is missing or too short. Set AUTH_SECRET (32+ chars) before production deploy.',
+    );
+  }
+  return DEV_AUTH_SECRET;
+}
+
 /** Roles allowed on public self-registration */
 export const SELF_REGISTER_ROLES: RoleCode[] = ['student', 'parent'];
 
 export { withTimeout, DB_QUERY_TIMEOUT_MS } from './timeout.js';
+export { PORTS, FRONTEND_APPS, BACKEND_SERVICES, serviceUrl } from './ports.js';
 
 export function getDashboardRoute(roles: RoleCode[]): string {
   const priority: RoleCode[] = [
@@ -153,4 +168,28 @@ export function getDashboardRoute(roles: RoleCode[]): string {
     }
   }
   return '/dashboard';
+}
+
+/** Admin CRM runs on a separate Next.js app (default :3002). */
+export function getAdminPortalUrl(): string {
+  const url = process.env.NEXT_PUBLIC_ADMIN_URL ?? 'http://localhost:3002';
+  return url.replace(/\/$/, '');
+}
+
+const ADMIN_DASHBOARD_ROLES: RoleCode[] = [
+  ROLES.PLATFORM_ADMIN,
+  ROLES.TENANT_ADMIN,
+  ROLES.SCHOOL_ADMIN,
+];
+
+/** Post-login destination — absolute URL for admin portal, path for web app. */
+export function resolvePostLoginDestination(roles: RoleCode[]): string {
+  if (roles.some((r) => ADMIN_DASHBOARD_ROLES.includes(r))) {
+    return `${getAdminPortalUrl()}/dashboard`;
+  }
+  return getDashboardRoute(roles);
+}
+
+export function isExternalUrl(url: string): boolean {
+  return url.startsWith('http://') || url.startsWith('https://');
 }

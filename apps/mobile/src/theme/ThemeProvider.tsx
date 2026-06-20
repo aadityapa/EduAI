@@ -10,9 +10,9 @@ export interface TenantTheme {
 }
 
 const DEFAULT_THEME: TenantTheme = {
-  primaryColor: '#6366f1',
-  secondaryColor: '#8b5cf6',
-  accentColor: '#f59e0b',
+  primaryColor: '#6D28D9',
+  secondaryColor: '#8B5CF6',
+  accentColor: '#22C55E',
   fontFamily: 'System',
   appName: 'EduAI',
 };

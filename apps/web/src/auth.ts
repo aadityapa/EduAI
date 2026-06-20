@@ -2,13 +2,13 @@ import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
 import Apple from 'next-auth/providers/apple';
-import type { RoleCode } from '@eduai/shared';
-import { getDashboardRoute } from '@eduai/shared';
+import { getDashboardRoute, resolveAuthSecret, type RoleCode } from '@eduai/shared';
 
 const identityUrl = process.env.NEXT_PUBLIC_IDENTITY_SERVICE_URL ?? 'http://localhost:3001';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  secret: process.env.AUTH_SECRET,
+  secret: resolveAuthSecret(),
+  trustHost: true,
   session: { strategy: 'jwt', maxAge: 7 * 24 * 60 * 60 },
   pages: {
     signIn: '/login',
