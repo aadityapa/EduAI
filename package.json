@@ -16,7 +16,10 @@
     "db:generate": "pnpm --filter @eduai/database generate",
     "db:migrate": "pnpm --filter @eduai/database migrate:dev",
     "db:seed": "pnpm --filter @eduai/database seed",
-    "db:studio": "pnpm --filter @eduai/database studio"
+    "db:studio": "pnpm --filter @eduai/database studio",
+    "validate:billing": "node scripts/billing-validation.mjs",
+    "validate:dr": "node scripts/dr-test-checklist.mjs",
+    "load:test": "k6 run tests/load/k6-student-journey.js"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

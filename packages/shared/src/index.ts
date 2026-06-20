@@ -136,6 +136,8 @@ export function resolveJwtSecret(envValue?: string): string {
 /** Roles allowed on public self-registration */
 export const SELF_REGISTER_ROLES: RoleCode[] = ['student', 'parent'];
 
+export { withTimeout, DB_QUERY_TIMEOUT_MS } from './timeout.js';
+
 export function getDashboardRoute(roles: RoleCode[]): string {
   const priority: RoleCode[] = [
     ROLES.PLATFORM_ADMIN,

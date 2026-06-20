@@ -1,3 +1,4 @@
+import { CircuitBreaker } from './circuit-breaker.js';
 import { GeminiProvider } from './providers/gemini.js';
 import { MockAiProvider } from './providers/mock.js';
 import { OpenAiProvider } from './providers/openai.js';
@@ -22,6 +23,7 @@ export interface AiRouterConfig {
 export class AiRouter {
   private readonly providers: AiProvider[];
   private readonly orderedProviders: AiProvider[];
+  private readonly breakers = new Map<string, CircuitBreaker>();
 
   constructor(config: AiRouterConfig = {}) {
     const openai = new OpenAiProvider({
@@ -60,13 +62,27 @@ export class AiRouter {
     let lastError: Error | undefined;
 
     for (const provider of this.orderedProviders) {
+      const breaker = this.getBreaker(provider.name);
       try {
-        return await provider.complete(messages, options);
+        return await breaker.execute(() => provider.complete(messages, options));
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
       }
     }
 
     throw lastError ?? new Error('All AI providers failed');
+  }
+
+  private getBreaker(providerName: string): CircuitBreaker {
+    let breaker = this.breakers.get(providerName);
+    if (!breaker) {
+      breaker = new CircuitBreaker({
+        name: providerName,
+        failureThreshold: 5,
+        resetTimeoutMs: 30_000,
+      });
+      this.breakers.set(providerName, breaker);
+    }
+    return breaker;
   }
 }

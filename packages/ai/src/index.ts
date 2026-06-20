@@ -1,3 +1,4 @@
+export { CircuitBreaker, type CircuitBreakerOptions, type CircuitState } from './circuit-breaker.js';
 export { AiClient, createAiClient, type AiClientConfig, type ChatContext } from './client.js';
 export { AiRouter, type AiRouterConfig, type ProviderName } from './router.js';
 export {

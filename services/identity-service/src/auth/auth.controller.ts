@@ -58,6 +58,7 @@ export class AuthController {
   @Public()
   @Post('refresh')
   @HttpCode(200)
+  @Throttle({ auth: { limit: 20, ttl: 900000 } })
   async refresh(@Body() dto: RefreshTokenDto) {
     const data = await this.authService.refresh(dto.refreshToken);
     return apiResponse(data);

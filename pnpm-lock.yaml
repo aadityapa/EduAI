@@ -260,6 +260,37 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@25.9.4)(lightningcss@1.27.0)(terser@5.48.0)
 
+  packages/nest-common:
+    dependencies:
+      '@eduai/shared':
+        specifier: workspace:*
+        version: link:../shared
+      '@nestjs/common':
+        specifier: ^10.4.15
+        version: 10.4.22(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/core':
+        specifier: ^10.4.15
+        version: 10.4.22(@nestjs/common@10.4.22(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@10.4.22)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/swagger':
+        specifier: ^8.1.0
+        version: 8.1.1(@nestjs/common@10.4.22(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@10.4.22)(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)
+      '@nestjs/throttler':
+        specifier: ^6.3.0
+        version: 6.5.0(@nestjs/common@10.4.22(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@10.4.22)(reflect-metadata@0.2.2)
+      helmet:
+        specifier: ^8.0.0
+        version: 8.2.0
+      ioredis:
+        specifier: ^5.4.2
+        version: 5.11.1
+    devDependencies:
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@25.9.4)(lightningcss@1.27.0)(terser@5.48.0)
+
   packages/shared:
     devDependencies:
       typescript:
@@ -317,6 +348,9 @@ importers:
       '@eduai/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@eduai/nest-common':
+        specifier: workspace:*
+        version: link:../../packages/nest-common
       '@eduai/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -414,6 +448,9 @@ importers:
       '@eduai/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@eduai/nest-common':
+        specifier: workspace:*
+        version: link:../../packages/nest-common
       '@eduai/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -507,6 +544,9 @@ importers:
       '@eduai/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@eduai/nest-common':
+        specifier: workspace:*
+        version: link:../../packages/nest-common
       '@eduai/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -595,6 +635,9 @@ importers:
       '@eduai/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@eduai/nest-common':
+        specifier: workspace:*
+        version: link:../../packages/nest-common
       '@eduai/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -695,6 +738,9 @@ importers:
       '@eduai/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@eduai/nest-common':
+        specifier: workspace:*
+        version: link:../../packages/nest-common
       '@eduai/shared':
         specifier: workspace:*
         version: link:../../packages/shared
