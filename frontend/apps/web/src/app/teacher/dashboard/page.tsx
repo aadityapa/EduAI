@@ -5,7 +5,7 @@ import { DashboardShell } from '@/components/dashboard-shell';
 import { ApiError } from '@/components/api-error';
 import { PageMotion } from '@/components/page-motion';
 import { getTeacherDashboard, ErpApiError } from '@/lib/erp-api';
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from '@eduai/ui';
+import { Button, Card, CardContent, CardHeader, CardTitle } from '@eduai/ui';
 
 export default async function TeacherDashboard() {
   const session = await auth();

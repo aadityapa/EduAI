@@ -173,6 +173,54 @@
       0 4px 12px hsl(217 89% 51% / 0.08);
   }
 
+  .stitch-welcome-banner {
+    background: linear-gradient(135deg, hsl(217 89% 51%) 0%, hsl(217 89% 45%) 40%, hsl(142 71% 42%) 100%);
+  }
+
+  .stitch-welcome-banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 80% 20%, hsl(0 0% 100% / 0.2) 0%, transparent 45%);
+    pointer-events: none;
+  }
+
+  .stitch-ai-promo {
+    background: linear-gradient(135deg, hsl(270 70% 50%) 0%, hsl(217 89% 51%) 100%);
+    box-shadow: 0 8px 24px hsl(270 70% 50% / 0.25);
+  }
+
+  .stitch-nav-active {
+    @apply bg-primary/10 text-primary font-medium;
+  }
+
+  .stitch-card {
+    @apply rounded-2xl border border-border bg-card shadow-sm;
+  }
+
+  /* Stitch admin CRM — dark sidebar + light content */
+  .stitch-admin-sidebar {
+    background: hsl(224 12% 16%);
+    color: hsl(210 20% 92%);
+    border-color: hsl(224 10% 22%);
+  }
+
+  .stitch-admin-sidebar .stitch-admin-nav-link {
+    @apply text-white/60 transition-colors;
+  }
+
+  .stitch-admin-sidebar .stitch-admin-nav-link:hover {
+    @apply bg-white/10 text-white;
+  }
+
+  .stitch-admin-sidebar .stitch-admin-nav-active {
+    @apply bg-primary text-primary-foreground shadow-sm;
+  }
+
+  .stitch-command-search {
+    @apply h-10 rounded-full border-0 bg-muted/80 pl-10 text-sm shadow-none focus-visible:ring-2 focus-visible:ring-primary;
+  }
+
   .glass-card {
     background: hsl(var(--glass-bg));
     backdrop-filter: blur(var(--glass-blur));

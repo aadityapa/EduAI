@@ -17,6 +17,7 @@ export { StatCard } from './components/stat-card';
 export type { StatCardProps } from './components/stat-card';
 export { KpiCard } from './components/kpi-card';
 export type { KpiCardProps } from './components/kpi-card';
+export { StitchWelcomeBanner, StitchAiPromo } from './components/stitch-layout';
 export { StreakBadge } from './components/streak-badge';
 export type { StreakBadgeProps } from './components/streak-badge';
 export { XpBadge } from './components/xp-badge';

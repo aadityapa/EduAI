@@ -32,14 +32,12 @@ const LocaleContext = createContext<LocaleContextValue | null>(null);
 export function LocaleProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState<SupportedLocale>(DEFAULT_LOCALE);
   const [transitioning, setTransitioning] = useState(false);
-  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY) as SupportedLocale | null;
     if (stored && SUPPORTED_LOCALES.includes(stored)) {
       setLocaleState(stored);
     }
-    setReady(true);
   }, []);
 
   const setLocale = useCallback(
@@ -56,10 +54,6 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
   );
 
   const t = useMemo(() => createTranslator(locale), [locale]);
-
-  if (!ready) {
-    return <div className="min-h-screen portal-background">{children}</div>;
-  }
 
   return (
     <LocaleContext.Provider value={{ locale, setLocale, t, transitioning }}>

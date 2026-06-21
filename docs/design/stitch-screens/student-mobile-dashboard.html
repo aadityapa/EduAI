@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduAI Student Dashboard</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface": "#1F1F1F",
+                    "secondary-fixed": "#89fa9b",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed-variant": "#005320",
+                    "on-primary-fixed": "#001a41",
+                    "on-tertiary-container": "#0b001a",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed-variant": "#004493",
+                    "on-surface-variant": "#414754",
+                    "on-primary-container": "#041E49",
+                    "error": "#D93025",
+                    "background": "#F8FAFD",
+                    "tertiary-container": "#a145f4",
+                    "surface-bright": "#f9f9ff",
+                    "on-primary": "#FFFFFF",
+                    "surface-container": "#ecedf7",
+                    "on-tertiary-fixed": "#2c0050",
+                    "inverse-surface": "#2d3038",
+                    "inverse-on-surface": "#eff0fa",
+                    "on-secondary-fixed": "#002108",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-container": "#86f898",
+                    "on-background": "#191c23",
+                    "surface-container-low": "#f2f3fd",
+                    "secondary": "#006e2c",
+                    "inverse-primary": "#adc7ff",
+                    "surface-variant": "#e0e2ec",
+                    "tertiary-fixed-dim": "#deb7ff",
+                    "surface": "#F8FAFD",
+                    "primary": "#005bbf",
+                    "tertiary": "#8621d9",
+                    "on-error": "#ffffff",
+                    "surface-tint": "#005bc0",
+                    "primary-container": "#1a73e8",
+                    "tertiary-fixed": "#f0dbff",
+                    "outline": "#DADCE0",
+                    "on-secondary-container": "#00722f",
+                    "primary-fixed": "#d8e2ff",
+                    "secondary-fixed-dim": "#6ddd81",
+                    "surface-container-highest": "#e0e2ec",
+                    "outline-variant": "#c1c6d6",
+                    "error-container": "#ffdad6",
+                    "surface-dim": "#d8d9e3",
+                    "primary-fixed-dim": "#adc7ff",
+                    "on-tertiary-fixed-variant": "#6900b2",
+                    "surface-container-high": "#e6e8f2",
+                    "on-tertiary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sidebar-admin": "260px",
+                    "xl": "32px",
+                    "xs": "4px",
+                    "md": "16px",
+                    "sm": "8px",
+                    "max-width": "1280px",
+                    "2xl": "48px",
+                    "lg": "24px",
+                    "gutter": "16px",
+                    "sidebar-web": "240px"
+            },
+            "fontFamily": {
+                    "display-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
+                    "body-md": ["Roboto", "sans-serif"],
+                    "title-md": ["Google Sans Flex", "sans-serif"],
+                    "headline-md": ["Google Sans Flex", "sans-serif"],
+                    "display-lg": ["Google Sans Flex", "sans-serif"],
+                    "label-md": ["Roboto", "sans-serif"],
+                    "body-lg": ["Roboto", "sans-serif"]
+            },
+            "fontSize": {
+                    "display-lg-mobile": ["36px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "title-md": ["20px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "headline-md": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                    "body-lg": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Roboto', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-40 bg-background flex justify-between items-center px-md py-sm transition-colors duration-200">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img class="w-full h-full object-cover" data-alt="A friendly and professional studio portrait of a young Indian male student smiling warmly, wearing a neat navy blue polo shirt. The lighting is bright and optimistic, typical of a modern educational platform. The background is a soft, out-of-focus academic setting with clean white walls and a hint of a bookshelf." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJPCrPdHn_KS5oLkIAJTUWX_7oj6xHeK4pMUTgKSFgGFH0feR26XxydGcFCfpzqV-pVb0wts_cuJ9ZRnvnCcU1RNcRJ4C0RkdDCq-fn_GddlwnVfT4oY748ZcIaaHJ8u5X9Gk_Lwp2l_UZ8IzjmvIJK20cS0NzQcZ_LO4uGZ-L0FzE9JjncjAxiwgWVdiripq68oic4TquaY5aiEQqngPtpSDT_HfRLYJzOoISb5gUpg6_gxgFVQkHJtZKIHNZDyjTJfTgx9Sp1fQ"/>
+</div>
+<div>
+<h1 class="font-title-md text-title-md font-bold text-primary">EduAI Portal</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Good morning, Arjun!</p>
+</div>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-all active:scale-95">
+<span class="material-symbols-outlined text-primary">settings</span>
+</button>
+</header>
+<main class="px-md mt-sm space-y-lg max-w-md mx-auto">
+<!-- Metric Chips Section -->
+<section class="flex gap-sm">
+<div class="flex-1 bg-surface-container-lowest p-sm px-md rounded-xl flex items-center gap-sm shadow-sm border border-outline-variant/30 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">stars</span>
+<div>
+<p class="font-title-md text-title-md text-on-surface font-bold">2,450</p>
+<p class="font-label-md text-label-md text-on-surface-variant">Total XP</p>
+</div>
+</div>
+<div class="flex-1 bg-surface-container-lowest p-sm px-md rounded-xl flex items-center gap-sm shadow-sm border border-outline-variant/30 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<div>
+<p class="font-title-md text-title-md text-on-surface font-bold">15 Day</p>
+<p class="font-label-md text-label-md text-on-surface-variant">Streak</p>
+</div>
+</div>
+</section>
+<!-- AI Tutor Feature Card -->
+<section>
+<div class="relative overflow-hidden rounded-2xl h-44 flex flex-col justify-end p-lg bg-tertiary shadow-lg group active:scale-[0.98] transition-all">
+<!-- Background Image Reference -->
+<div class="absolute inset-0 z-0 opacity-40 mix-blend-overlay">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtLwde-zvqTO6ki06WKjJY2hy2TjBzmtTf7dWXlzJQrMU8L1OAVgPN_Zvq9070VkPMPiOT_qFqAynLRovHJ7mMF-iEwp8J2knMY1k3CQtyEtbNPwK6b54Lkx8-ajPpYf6nFIMpqki43YOFiQSRpfLbaiUF2NmG13B9duDnjQKfxEWg7Z5Az9sim9h3sOnMquJctIlOiQdGSx5gF4ppD8vQZhhKB4t7vANunNBfMBnmLKFd5QpkZz4R7IQ"/>
+</div>
+<!-- Animated Decoration -->
+<div class="absolute -top-10 -right-10 w-40 h-40 bg-tertiary-container rounded-full blur-3xl opacity-50 animate-pulse"></div>
+<div class="relative z-10 space-y-sm">
+<div class="flex items-center gap-sm">
+<div class="bg-surface-container-lowest p-sm rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<h2 class="font-headline-md text-on-tertiary text-white">Ask your AI Tutor</h2>
+</div>
+<p class="font-body-md text-white/80 leading-snug">Stuck on a problem? Get instant personalized help with your homework.</p>
+</div>
+<button class="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-sm rounded-full text-white">
+<span class="material-symbols-outlined">arrow_forward_ios</span>
+</button>
+</div>
+</section>
+<!-- Active Courses Section -->
+<section class="space-y-md">
+<div class="flex justify-between items-center">
+<h2 class="font-title-md text-title-md font-bold text-on-surface">Active Courses</h2>
+<button class="text-primary font-label-md text-label-md">View All</button>
+</div>
+<div class="flex gap-md overflow-x-auto no-scrollbar py-2 -mx-md px-md">
+<!-- Course Card 1: Math -->
+<div class="min-w-[160px] bg-surface-container-lowest p-md rounded-2xl shadow-sm border border-outline-variant/50 flex flex-col gap-md">
+<div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">functions</span>
+</div>
+<div>
+<p class="font-title-md text-sm font-bold text-on-surface mb-sm">Mathematics</p>
+<div class="w-full bg-surface-variant rounded-full h-1.5 mb-xs">
+<div class="bg-primary h-1.5 rounded-full" style="width: 85%"></div>
+</div>
+<p class="font-label-md text-[10px] text-on-surface-variant">85% Complete</p>
+</div>
+</div>
+<!-- Course Card 2: Science -->
+<div class="min-w-[160px] bg-surface-container-lowest p-md rounded-2xl shadow-sm border border-outline-variant/50 flex flex-col gap-md">
+<div class="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">science</span>
+</div>
+<div>
+<p class="font-title-md text-sm font-bold text-on-surface mb-sm">Science</p>
+<div class="w-full bg-surface-variant rounded-full h-1.5 mb-xs">
+<div class="bg-secondary h-1.5 rounded-full" style="width: 42%"></div>
+</div>
+<p class="font-label-md text-[10px] text-on-surface-variant">42% Complete</p>
+</div>
+</div>
+<!-- Course Card 3: History -->
+<div class="min-w-[160px] bg-surface-container-lowest p-md rounded-2xl shadow-sm border border-outline-variant/50 flex flex-col gap-md">
+<div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary">history_edu</span>
+</div>
+<div>
+<p class="font-title-md text-sm font-bold text-on-surface mb-sm">History</p>
+<div class="w-full bg-surface-variant rounded-full h-1.5 mb-xs">
+<div class="bg-tertiary h-1.5 rounded-full" style="width: 90%"></div>
+</div>
+<p class="font-label-md text-[10px] text-on-surface-variant">90% Complete</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Recent Activity Bento -->
+<section class="grid grid-cols-2 gap-sm pb-8">
+<div class="col-span-2 bg-primary-container p-lg rounded-2xl text-on-primary-container flex justify-between items-center">
+<div>
+<h3 class="font-title-md text-title-md font-bold">Upcoming Exam</h3>
+<p class="font-body-md opacity-90">Bio-Sciences, Tomorrow 9:00 AM</p>
+</div>
+<span class="material-symbols-outlined text-4xl opacity-50">event_note</span>
+</div>
+<div class="bg-surface-container-high p-md rounded-2xl flex flex-col gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant">forum</span>
+<p class="font-label-md font-bold">Social Hub</p>
+<p class="font-label-md text-on-surface-variant text-[10px]">3 new messages</p>
+</div>
+<div class="bg-surface-container-high p-md rounded-2xl flex flex-col gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant">workspace_premium</span>
+<p class="font-label-md font-bold">Rewards</p>
+<p class="font-label-md text-on-surface-variant text-[10px]">New badge available!</p>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 pb-4 pt-2 bg-surface-container shadow-sm border-t border-outline-variant">
+<!-- Dashboard (Active) -->
+<button class="flex flex-col items-center justify-center transition-all duration-300 ease-in-out active:scale-90 bg-secondary-container text-on-secondary-container rounded-full px-4 py-1">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</button>
+<!-- Courses -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-variant transition-colors duration-200">
+<span class="material-symbols-outlined">school</span>
+<span class="font-label-md text-label-md">Courses</span>
+</button>
+<!-- AI Hub -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-variant transition-colors duration-200">
+<span class="material-symbols-outlined text-tertiary">auto_awesome</span>
+<span class="font-label-md text-label-md">AI Hub</span>
+</button>
+<!-- Social -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-variant transition-colors duration-200">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-md text-label-md">Social</span>
+</button>
+<!-- Rewards -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-variant transition-colors duration-200">
+<span class="material-symbols-outlined">workspace_premium</span>
+<span class="font-label-md text-label-md">Rewards</span>
+</button>
+</nav>
+<!-- Floating Action Button (Contextual for Home/AI) -->
+<button class="fixed right-6 bottom-24 w-14 h-14 rounded-2xl bg-primary text-white shadow-xl flex items-center justify-center active:scale-90 transition-transform z-40">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<script>
+        // Simple micro-interactions
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('touchstart', () => {
+                button.style.transform = 'scale(0.95)';
+            });
+            button.addEventListener('touchend', () => {
+                button.style.transform = 'scale(1)';
+            });
+        });
+
+        // Horizontal scroll fade effect simulation
+        const carousel = document.querySelector('.no-scrollbar');
+        if(carousel) {
+            carousel.addEventListener('scroll', () => {
+                // Potential scroll logic for opacity/shadows
+            });
+        }
+    </script>
+</body></html>

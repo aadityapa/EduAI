@@ -1,10 +1,9 @@
-import Link from 'next/link';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { DashboardShell } from '@/components/dashboard-shell';
 import { ApiError } from '@/components/api-error';
-import { getParentFees, getMyNotifications, ErpApiError } from '@/lib/erp-api';
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from '@eduai/ui';
+import { getParentFees, ErpApiError } from '@/lib/erp-api';
+import { Card, CardContent, CardHeader, CardTitle } from '@eduai/ui';
 
 export default async function ParentFeesPage() {
   const session = await auth();

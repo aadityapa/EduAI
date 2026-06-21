@@ -120,10 +120,10 @@ export function AdminShell({ user, children }: AdminShellProps) {
       <Link
         href={item.href}
         className={cn(
-          'group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all',
+          'group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all',
           active
-            ? 'bg-sidebar-accent text-sidebar-accent-foreground shadow-sm'
-            : 'text-sidebar-foreground/70 hover:bg-sidebar-muted hover:text-sidebar-foreground',
+            ? 'stitch-admin-nav-active'
+            : 'stitch-admin-nav-link',
           collapsed && 'justify-center px-2',
         )}
         aria-current={active ? 'page' : undefined}
@@ -152,17 +152,17 @@ export function AdminShell({ user, children }: AdminShellProps) {
           initial={false}
           animate={{ width: collapsed ? 72 : 260 }}
           transition={{ duration: 0.2, ease: 'easeInOut' }}
-          className="fixed inset-y-0 left-0 z-30 flex flex-col border-r border-sidebar-border sidebar-gradient"
+          className="fixed inset-y-0 left-0 z-30 flex flex-col border-r stitch-admin-sidebar"
         >
-          <div className={cn('flex h-16 items-center border-b border-sidebar-border px-4', collapsed && 'justify-center px-2')}>
+          <div className={cn('flex h-16 items-center border-b border-white/10 px-4', collapsed && 'justify-center px-2')}>
             {!collapsed ? (
               <Link href="/dashboard" className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/90 text-primary-foreground">
                   <Sparkles className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold">EduAI</p>
-                  <p className="text-[10px] text-muted-foreground">Admin Console</p>
+                  <p className="text-sm font-semibold text-white">EduAI</p>
+                  <p className="text-[10px] text-white/50">Admin CRM</p>
                 </div>
               </Link>
             ) : (
@@ -173,14 +173,14 @@ export function AdminShell({ user, children }: AdminShellProps) {
           </div>
 
           {!collapsed && (
-            <div className="border-b border-sidebar-border p-3">
+            <div className="border-b border-white/10 p-3">
               <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-white/40" />
                 <Input
                   placeholder="Search nav…"
                   value={navSearch}
                   onChange={(e) => setNavSearch(e.target.value)}
-                  className="h-9 pl-8 text-sm"
+                  className="h-9 border-white/10 bg-white/5 pl-8 text-sm text-white placeholder:text-white/40"
                   aria-label="Search navigation"
                 />
               </div>
@@ -190,7 +190,7 @@ export function AdminShell({ user, children }: AdminShellProps) {
           <ScrollArea className="flex-1 px-3 py-4">
             {!collapsed && !navSearch && (
               <div className="mb-4">
-                <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-white/40">
                   Favorites
                 </p>
                 <div className="space-y-0.5">
@@ -201,7 +201,7 @@ export function AdminShell({ user, children }: AdminShellProps) {
 
             {!collapsed && !navSearch && (
               <div className="mb-4">
-                <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-white/40">
                   Recent
                 </p>
                 <div className="space-y-0.5">
@@ -213,7 +213,7 @@ export function AdminShell({ user, children }: AdminShellProps) {
             {sections.map((section) => (
               <div key={section} className="mb-4">
                 {!collapsed && (
-                  <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-white/40">
                     {section}
                   </p>
                 )}
@@ -222,11 +222,11 @@ export function AdminShell({ user, children }: AdminShellProps) {
             ))}
           </ScrollArea>
 
-          <div className="border-t border-sidebar-border p-3">
+          <div className="border-t border-white/10 p-3">
             <Button
               variant="ghost"
               size={collapsed ? 'icon' : 'sm'}
-              className={cn('w-full', !collapsed && 'justify-start')}
+              className={cn('w-full text-white/70 hover:bg-white/10 hover:text-white', !collapsed && 'justify-start')}
               onClick={() => setCollapsed(!collapsed)}
               aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
@@ -236,7 +236,17 @@ export function AdminShell({ user, children }: AdminShellProps) {
         </motion.aside>
 
         <div className={cn('flex flex-1 flex-col transition-all duration-200', collapsed ? 'ml-[72px]' : 'ml-[260px]')}>
-          <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b bg-background/80 px-6 backdrop-blur-md">
+          <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-4 border-b bg-background/95 px-6 backdrop-blur-md">
+            <div className="relative hidden max-w-xl flex-1 md:block">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search tenants, schools, or users…"
+                className="stitch-command-search w-full"
+                onFocus={() => setCommandOpen(true)}
+                readOnly
+                aria-label="Global search"
+              />
+            </div>
             <div className="flex items-center gap-4">
               <Button
                 variant="outline"

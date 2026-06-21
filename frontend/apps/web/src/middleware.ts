@@ -1,6 +1,5 @@
 import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 import { isExternalUrl, resolvePostLoginDestination } from '@eduai/shared';
 
 const protectedPrefixes = ['/dashboard', '/student', '/teacher', '/parent', '/admin'];

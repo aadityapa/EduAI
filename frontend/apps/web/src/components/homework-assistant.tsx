@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@eduai/ui';
-import { FileText, Image, Loader2, Upload } from 'lucide-react';
+import { FileText, Image as ImageIcon, Loader2, Upload } from 'lucide-react';
 import { useLocale } from '@/components/locale-provider';
 
 const AI_BASE = process.env.NEXT_PUBLIC_AI_SERVICE_URL ?? 'http://localhost:3004';
@@ -94,7 +94,7 @@ export function HomeworkAssistant() {
             className="w-full rounded-lg border border-border bg-background p-3 text-sm"
           />
           <div className="flex items-center gap-2">
-            <Image className="h-4 w-4 text-muted-foreground" />
+            <ImageIcon className="h-4 w-4 text-muted-foreground" />
             <input
               type="url"
               value={imageUrl}

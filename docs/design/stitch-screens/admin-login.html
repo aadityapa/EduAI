@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduAI Admin Login Portal</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "background": "#f7f9ff",
+                      "inverse-primary": "#adc7ff",
+                      "secondary-container": "#4d8efe",
+                      "on-tertiary-fixed-variant": "#005320",
+                      "outline-variant": "#c1c6d6",
+                      "on-surface-variant": "#414754",
+                      "tertiary": "#006d2c",
+                      "on-background": "#181c20",
+                      "surface-container": "#ebeef4",
+                      "inverse-surface": "#2d3135",
+                      "secondary-fixed": "#d8e2ff",
+                      "surface-variant": "#dfe3e8",
+                      "surface-container-highest": "#dfe3e8",
+                      "surface-tint": "#005bc0",
+                      "primary-container": "#1a73e8",
+                      "on-secondary-fixed": "#001a41",
+                      "on-error-container": "#93000a",
+                      "surface-container-low": "#f1f4fa",
+                      "on-primary-fixed-variant": "#004493",
+                      "surface-bright": "#f7f9ff",
+                      "on-tertiary-container": "#ffffff",
+                      "surface-container-high": "#e5e8ee",
+                      "primary-fixed-dim": "#adc7ff",
+                      "on-primary": "#ffffff",
+                      "outline": "#727785",
+                      "surface": "#f7f9ff",
+                      "error": "#ba1a1a",
+                      "on-surface": "#181c20",
+                      "on-error": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "tertiary-fixed-dim": "#6ddd81",
+                      "primary": "#005bbf",
+                      "tertiary-container": "#008939",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-fixed": "#89fa9b",
+                      "secondary": "#005ac1",
+                      "surface-dim": "#d7dae0",
+                      "on-secondary-fixed-variant": "#004494",
+                      "on-primary-container": "#ffffff",
+                      "primary-fixed": "#d8e2ff",
+                      "inverse-on-surface": "#eef1f7",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-fixed-dim": "#adc6ff",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed": "#002108",
+                      "on-secondary-container": "#00285c",
+                      "on-primary-fixed": "#001a41"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "sidebar-width": "280px",
+                      "md": "16px",
+                      "sm": "8px",
+                      "margin-mobile": "16px",
+                      "lg": "24px",
+                      "xl": "32px",
+                      "margin-desktop": "32px",
+                      "gutter": "24px",
+                      "base": "4px"
+              },
+              "fontFamily": {
+                      "label-md": ["Inter"],
+                      "body-md": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-lg": ["Plus Jakarta Sans"],
+                      "body-sm": ["Inter"],
+                      "headline-sm": ["Plus Jakarta Sans"],
+                      "display-lg": ["Plus Jakarta Sans"],
+                      "headline-md": ["Plus Jakarta Sans"],
+                      "data-mono": ["JetBrains Mono"]
+              },
+              "fontSize": {
+                      "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                      "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "display-lg": ["44px", {"lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "data-mono": ["13px", {"lineHeight": "16px", "fontWeight": "500"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .vibrant-gradient {
+            background: linear-gradient(135deg, #1a73e8 0%, #008939 100%);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen selection:bg-primary-container selection:text-on-primary-container">
+<main class="flex min-h-screen">
+<!-- Left Side: Hero Section (Desktop Only Hidden on Mobile if needed, but Split 50/50 implies Desktop focus) -->
+<section class="hidden lg:flex w-1/2 vibrant-gradient relative overflow-hidden flex-col justify-between p-xl">
+<!-- Decorative Elements -->
+<div class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-white/10 rounded-full blur-3xl"></div>
+<div class="absolute bottom-[-5%] left-[-5%] w-[300px] h-[300px] bg-tertiary-fixed-dim/20 rounded-full blur-2xl"></div>
+<!-- Logo -->
+<div class="relative z-10 flex items-center gap-sm">
+<div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-primary text-[28px]" style="font-variation-settings: 'FILL' 1;">school</span>
+</div>
+<span class="font-headline-md text-white tracking-tight">EduAI</span>
+</div>
+<!-- Hero Content -->
+<div class="relative z-10 max-w-lg">
+<h1 class="font-display-lg text-white mb-lg">Admin CRM for modern schools</h1>
+<p class="font-body-lg text-white/80 mb-xl">Manage student cycles, institutional growth, and administrative workflows with the power of artificial intelligence.</p>
+<!-- Mockup Illustration Card -->
+<div class="glass-panel p-lg rounded-xl shadow-2xl transform hover:scale-[1.02] transition-transform duration-500">
+<div class="flex items-center gap-md mb-md">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-white/20 bg-surface-container-highest"></div>
+<div class="w-8 h-8 rounded-full border-2 border-white/20 bg-surface-container-high"></div>
+<div class="w-8 h-8 rounded-full border-2 border-white/20 bg-surface-container"></div>
+</div>
+<span class="text-white font-label-md">1.2k+ Active Educators</span>
+</div>
+<div class="h-48 w-full rounded-lg bg-white/10 flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover opacity-90" data-alt="A sophisticated data visualization dashboard showing school performance metrics with glowing blue and green lines and semi-transparent UI elements. The style is ultra-modern, enterprise-grade, featuring clean sans-serif typography and a soft cinematic blur in the background. High-fidelity rendering with a focus on institutional intelligence and systematic order." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCm0oo6fOEhZzaTzXlZIFB-w6ok2Oq3ha7WFOWlPfrA7wANQaMxef52mfTLnVpji0R45_KJ1-Vv3yCHVLYWs6tr3g466lPSUv5AonoPJt7NA7-cEwLZon3TezbaZAoqSuVIIOvlGYGs4u9OrVP0MNIC78uid_2gWagjQaUe3t9EuI3dnU_K59UCxi-6NESwhir0JggoKa66Dw6wgOrpKK_NEer-FoEj4aV-R_3Ut3DZm4BkbMSqduD0XlwbuUUu7xeju6gVHVE_Z7Q"/>
+</div>
+</div>
+</div>
+<!-- Footer Text -->
+<div class="relative z-10">
+<p class="text-white/60 font-label-md">© 2024 EduAI Enterprise Suite. All rights reserved.</p>
+</div>
+</section>
+<!-- Right Side: Sign-In Form -->
+<section class="w-full lg:w-1/2 flex flex-col justify-center items-center bg-surface p-margin-mobile md:p-margin-desktop relative">
+<div class="w-full max-w-md">
+<!-- Mobile Logo -->
+<div class="lg:hidden flex items-center gap-sm mb-xl">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[20px]" style="font-variation-settings: 'FILL' 1;">school</span>
+</div>
+<span class="font-headline-sm text-on-surface">EduAI Admin</span>
+</div>
+<div class="mb-xl">
+<h2 class="font-headline-lg text-on-surface mb-xs">Sign In</h2>
+<p class="text-on-surface-variant font-body-md">Access your administrator dashboard</p>
+</div>
+<!-- Form -->
+<form class="space-y-lg" onsubmit="event.preventDefault();">
+<!-- Email Field -->
+<div class="group">
+<label class="block font-label-md text-on-surface-variant mb-xs" for="email">Email Address</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">mail</span>
+<input class="w-full pl-xl pr-md py-3 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-outline-variant text-on-surface" id="email" placeholder="admin@eduai.com" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="group">
+<div class="flex justify-between items-center mb-xs">
+<label class="block font-label-md text-on-surface-variant" for="password">Password</label>
+<a class="text-primary font-label-md hover:underline" href="#">Forgot password?</a>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">lock</span>
+<input class="w-full pl-xl pr-xl py-3 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-outline-variant text-on-surface" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute right-md top-1/2 -translate-y-1/2 text-outline hover:text-on-surface-variant transition-colors" onclick="togglePassword()" type="button">
+<span class="material-symbols-outlined" id="toggle-icon">visibility</span>
+</button>
+</div>
+</div>
+<!-- Remember Me -->
+<div class="flex items-center">
+<input class="w-5 h-5 text-primary border-outline-variant rounded focus:ring-primary focus:ring-offset-background cursor-pointer" id="remember" type="checkbox"/>
+<label class="ml-sm font-body-md text-on-surface-variant cursor-pointer select-none" for="remember">Remember me</label>
+</div>
+<!-- Demo Hint Box -->
+<div class="bg-surface-container-low border border-outline-variant border-dashed p-md rounded-lg flex items-start gap-md">
+<span class="material-symbols-outlined text-secondary-container mt-xs">info</span>
+<div>
+<p class="font-label-md text-on-surface">Demo hint</p>
+<p class="text-body-sm text-on-surface-variant">Try our demo with <code class="bg-surface-container-highest px-1 rounded text-primary">admin@eduai.com</code> / <code class="bg-surface-container-highest px-1 rounded text-primary">admin123</code></p>
+</div>
+</div>
+<!-- Continue Button -->
+<button class="w-full bg-primary-container hover:bg-primary text-on-primary-container font-label-md py-4 rounded-xl flex items-center justify-center gap-sm group transition-all active:scale-[0.98] shadow-sm hover:shadow-md">
+                        Continue
+                        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</form>
+<!-- Footer Links -->
+<div class="mt-xl pt-xl border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-md">
+<div class="flex gap-lg">
+<a class="text-on-surface-variant font-label-md hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant font-label-md hover:text-primary transition-colors" href="#">Terms of Service</a>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant font-label-md">
+<span class="material-symbols-outlined text-[16px]">language</span>
+                        English (US)
+                    </div>
+</div>
+</div>
+</section>
+</main>
+<script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggle-icon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = 'visibility_off';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.textContent = 'visibility';
+            }
+        }
+
+        // Simple focus animation for inputs
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.parentElement.classList.add('scale-[1.01]');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.parentElement.classList.remove('scale-[1.01]');
+            });
+        });
+    </script>
+</body></html>

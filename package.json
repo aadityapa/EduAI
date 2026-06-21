@@ -26,7 +26,12 @@
     "dev:mobile": "pnpm --filter @eduai/mobile dev",
     "clean:next": "node -e \"const fs=require('fs');['frontend/apps/web','frontend/apps/admin'].forEach(p=>{try{fs.rmSync(p+'/.next',{recursive:true,force:true})}catch{}});console.log('Cleaned .next caches')\"",
     "mvp:dev": "pnpm clean:next && turbo run dev --parallel --filter=@eduai/identity-service --filter=@eduai/learning-service --filter=@eduai/ai-service --filter=@eduai/erp-service --filter=@eduai/billing-service --filter=@eduai/web --filter=@eduai/admin",
-    "dev:lan": "powershell -ExecutionPolicy Bypass -File scripts/dev-lan.ps1"
+    "dev:lan": "powershell -ExecutionPolicy Bypass -File scripts/dev-lan.ps1",
+    "stitch:sync": "node scripts/stitch-sync.mjs all",
+    "stitch:generate": "node scripts/stitch-sync.mjs generate",
+    "stitch:generate:next": "node scripts/stitch-sync.mjs generate:next",
+    "stitch:fetch": "node scripts/stitch-sync.mjs fetch",
+    "stitch:backfill": "node scripts/stitch-sync.mjs backfill"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

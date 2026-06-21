@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button, Card, CardContent, CardHeader, CardTitle, ProgressBar } from '@eduai/ui';
 import { Calendar, Loader2, Sparkles } from 'lucide-react';
@@ -36,11 +36,7 @@ export function StudyPlanner() {
     Array<{ conversationId: string; title: string | null; plan: StudyPlan | null }>
   >([]);
 
-  useEffect(() => {
-    loadPlans();
-  }, [session?.user?.accessToken]);
-
-  async function loadPlans() {
+  const loadPlans = useCallback(async () => {
     if (!session?.user?.accessToken) return;
     const res = await fetch(`${AI_BASE}/api/v1/planner/plans`, {
       headers: { Authorization: `Bearer ${session.user.accessToken}` },
@@ -49,7 +45,11 @@ export function StudyPlanner() {
       const json = await res.json();
       setSavedPlans(json.data ?? []);
     }
-  }
+  }, [session?.user?.accessToken]);
+
+  useEffect(() => {
+    void loadPlans();
+  }, [loadPlans]);
 
   async function generate() {
     if (!session?.user?.accessToken) return;
@@ -71,7 +71,7 @@ export function StudyPlanner() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error?.message ?? 'Failed');
       setPlan(json.data.plan);
-      loadPlans();
+      void loadPlans();
     } catch {
       setPlan(null);
     } finally {

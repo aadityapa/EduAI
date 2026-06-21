@@ -40,7 +40,7 @@ export function KpiCard({
   const trendPositive = trend && trend.value >= 0;
 
   return (
-    <Card className={cn('group overflow-hidden transition-shadow hover:shadow-md', className)} {...props}>
+    <Card className={cn('stitch-card group overflow-hidden transition-shadow hover:shadow-md', className)} {...props}>
       <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">

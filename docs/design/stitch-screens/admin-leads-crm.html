@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduAdmin CRM - Leads Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Theme Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#6ddd81",
+                    "on-surface-variant": "#414754",
+                    "inverse-primary": "#adc7ff",
+                    "primary": "#005bbf",
+                    "tertiary": "#006d2c",
+                    "on-tertiary-container": "#ffffff",
+                    "surface-dim": "#d7dae0",
+                    "outline-variant": "#c1c6d6",
+                    "on-tertiary-fixed-variant": "#005320",
+                    "on-primary-fixed-variant": "#004493",
+                    "surface-container-low": "#f1f4fa",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-container": "#00285c",
+                    "on-primary-container": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "on-error-container": "#93000a",
+                    "on-background": "#181c20",
+                    "on-secondary-fixed-variant": "#004494",
+                    "error": "#ba1a1a",
+                    "primary-fixed": "#d8e2ff",
+                    "surface-container-highest": "#dfe3e8",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "on-primary-fixed": "#001a41",
+                    "primary-fixed-dim": "#adc7ff",
+                    "tertiary-fixed": "#89fa9b",
+                    "surface-tint": "#005bc0",
+                    "on-secondary-fixed": "#001a41",
+                    "secondary-fixed": "#d8e2ff",
+                    "on-surface": "#181c20",
+                    "surface-container": "#ebeef4",
+                    "on-error": "#ffffff",
+                    "outline": "#727785",
+                    "background": "#f7f9ff",
+                    "secondary": "#005ac1",
+                    "surface-bright": "#f7f9ff",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#008939",
+                    "on-tertiary-fixed": "#002108",
+                    "secondary-container": "#4d8efe",
+                    "surface-variant": "#dfe3e8",
+                    "on-secondary": "#ffffff",
+                    "surface-container-high": "#e5e8ee",
+                    "surface": "#f7f9ff",
+                    "primary-container": "#1a73e8",
+                    "inverse-surface": "#2d3135",
+                    "inverse-on-surface": "#eef1f7"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "8px",
+                    "sidebar-width": "280px",
+                    "base": "4px",
+                    "margin-mobile": "16px",
+                    "md": "16px",
+                    "lg": "24px",
+                    "gutter": "24px",
+                    "xs": "4px",
+                    "xl": "32px",
+                    "margin-desktop": "32px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "data-mono": ["JetBrains Mono"],
+                    "headline-sm": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-lg": ["44px", {"lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "data-mono": ["13px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f7f9ff; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #dfe3e8; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #c1c6d6; }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- SideNavBar (Dark Admin Sidebar) -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-inverse-surface dark:bg-on-background flex flex-col py-6 shadow-sm border-r border-outline-variant z-50">
+<div class="px-6 mb-8">
+<h1 class="text-headline-md font-headline-md font-bold text-primary-fixed-dim">EduAdmin</h1>
+<p class="text-label-md font-label-md text-surface-variant opacity-70">Enterprise Suite</p>
+</div>
+<nav class="flex-1 space-y-1 overflow-y-auto px-4">
+<!-- Navigation Items Mapping -->
+<a class="flex items-center text-surface-variant hover:text-white px-4 py-2 hover:bg-surface-variant/10 transition-colors duration-150 rounded-lg group" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center text-surface-variant hover:text-white px-4 py-2 hover:bg-surface-variant/10 transition-colors duration-150 rounded-lg group" href="#">
+<span class="material-symbols-outlined mr-3">domain</span>
+<span class="text-label-md font-label-md">Tenants</span>
+</a>
+<a class="flex items-center text-surface-variant hover:text-white px-4 py-2 hover:bg-surface-variant/10 transition-colors duration-150 rounded-lg group" href="#">
+<span class="material-symbols-outlined mr-3">school</span>
+<span class="text-label-md font-label-md">Schools</span>
+</a>
+<a class="flex items-center text-surface-variant hover:text-white px-4 py-2 hover:bg-surface-variant/10 transition-colors duration-150 rounded-lg group" href="#">
+<span class="material-symbols-outlined mr-3">group</span>
+<span class="text-label-md font-label-md">Users</span>
+</a>
+<a class="flex items-center text-surface-variant hover:text-white px-4 py-2 hover:bg-surface-variant/10 transition-colors duration-150 rounded-lg group" href="#">
+<span class="material-symbols-outlined mr-3">payments</span>
+<span class="text-label-md font-label-md">Billing</span>
+</a>
+<!-- Active State: Leads -->
+<a class="flex items-center bg-secondary-container text-on-secondary-container rounded-lg mx-2 my-1 px-4 py-2 scale-95 duration-150" href="#">
+<span class="material-symbols-outlined mr-3" style="font-variation-settings: 'FILL' 1;">leaderboard</span>
+<span class="text-label-md font-label-md">Leads</span>
+</a>
+<a class="flex items-center text-surface-variant hover:text-white px-4 py-2 hover:bg-surface-variant/10 transition-colors duration-150 rounded-lg group" href="#">
+<span class="material-symbols-outlined mr-3">confirmation_number</span>
+<span class="text-label-md font-label-md">Tickets</span>
+</a>
+<a class="flex items-center text-surface-variant hover:text-white px-4 py-2 hover:bg-surface-variant/10 transition-colors duration-150 rounded-lg group" href="#">
+<span class="material-symbols-outlined mr-3">analytics</span>
+<span class="text-label-md font-label-md">Analytics</span>
+</a>
+</nav>
+<div class="px-4 mt-auto border-t border-white/10 pt-4">
+<a class="flex items-center text-surface-variant hover:text-white px-4 py-2 hover:bg-surface-variant/10 transition-colors duration-150 rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+<a class="flex items-center text-surface-variant hover:text-white px-4 py-2 hover:bg-surface-variant/10 transition-colors duration-150 rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3">logout</span>
+<span class="text-label-md font-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Shell -->
+<main class="ml-[280px] min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 left-[280px] h-16 bg-surface border-b border-outline-variant flex justify-between items-center px-lg z-40">
+<div class="flex items-center w-1/3">
+<div class="relative w-full max-w-md focus-within:ring-2 focus-within:ring-primary rounded-full bg-surface-container-high px-4 py-1.5 flex items-center transition-all duration-200">
+<span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 w-full text-body-md font-body-md placeholder-on-surface-variant/50" placeholder="Search leads, schools, or owners..." type="text"/>
+<kbd class="text-xs text-on-surface-variant/40 bg-white px-1.5 rounded border border-outline-variant font-mono">/</kbd>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<div class="flex space-x-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+<div class="h-8 w-px bg-outline-variant mx-2"></div>
+<button class="text-label-md font-label-md text-primary hover:bg-primary/5 px-3 py-1.5 rounded transition-all">Support</button>
+<button class="bg-primary text-on-primary text-label-md font-label-md px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary-container transition-all active:scale-95 duration-150">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                    New Entry
+                </button>
+<img class="w-8 h-8 rounded-full border border-outline-variant object-cover" data-alt="A professional headshot of a female education administrator in a bright, modern office setting. She has a confident smile and is wearing smart-casual business attire. The lighting is soft and professional, reflecting a high-trust corporate environment with blue and white accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3w0vHOk-tR1J819ox_2VbSssRoQDkUCXTx_e-iqHUvBZNc6PjroBd1-HFibJ9UNZAweuKNKnkOmyp9IqGJRiS40itHLxkaifXKsNPuANLKNq1vix04oo6ji5FFoQlFyauAVFnFt1xf4daC-dGMyHZavIsYXbl5dRoR0FAr4jREhzGsvwTCJhb0RCYX9OkDOdBsmQEFIWuwsl8q-Kp8_VpxxKoeQiU2odE9PWKGcdDcPJB5XIyBH18GbM-ATwOaR18YQJ6tvsnx6g"/>
+</div>
+</header>
+<!-- Page Content Canvas -->
+<section class="mt-16 p-xl flex flex-col gap-lg max-w-[1600px] mx-auto w-full">
+<!-- Command Bar -->
+<div class="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-outline-variant">
+<div class="flex items-center gap-3">
+<h2 class="text-headline-sm font-headline-sm text-on-background mr-4">Lead Pipeline</h2>
+<div class="flex bg-surface-container rounded-lg p-1">
+<button class="px-4 py-1.5 bg-white shadow-sm rounded-md text-label-md font-label-md text-primary">List View</button>
+<button class="px-4 py-1.5 text-label-md font-label-md text-on-surface-variant hover:text-on-surface transition-colors">Kanban</button>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                        Filter
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-[18px]">ios_share</span>
+                        Export
+                    </button>
+<div class="w-px h-8 bg-outline-variant mx-1"></div>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg text-label-md font-label-md hover:shadow-lg transition-all">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+                        New Lead
+                    </button>
+</div>
+</div>
+<!-- KPI Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<div class="bg-white p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary/10 text-primary rounded-lg">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<span class="flex items-center gap-1 text-label-md text-tertiary font-label-md bg-tertiary-fixed-dim/20 px-2 py-1 rounded-full">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+                            12%
+                        </span>
+</div>
+<p class="text-on-surface-variant text-label-md font-label-md uppercase tracking-wider">Total Pipeline Value</p>
+<h3 class="text-headline-md font-headline-md font-bold mt-1 text-on-background">$2.48M</h3>
+</div>
+<div class="bg-white p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-secondary/10 text-secondary rounded-lg">
+<span class="material-symbols-outlined">group</span>
+</div>
+<span class="flex items-center gap-1 text-label-md text-tertiary font-label-md bg-tertiary-fixed-dim/20 px-2 py-1 rounded-full">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+                            8%
+                        </span>
+</div>
+<p class="text-on-surface-variant text-label-md font-label-md uppercase tracking-wider">Active Leads</p>
+<h3 class="text-headline-md font-headline-md font-bold mt-1 text-on-background">142</h3>
+</div>
+<div class="bg-white p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-tertiary/10 text-tertiary rounded-lg">
+<span class="material-symbols-outlined">trending_up</span>
+</div>
+<span class="flex items-center gap-1 text-label-md text-error font-label-md bg-error-container/40 px-2 py-1 rounded-full">
+<span class="material-symbols-outlined text-[14px]">arrow_downward</span>
+                            2%
+                        </span>
+</div>
+<p class="text-on-surface-variant text-label-md font-label-md uppercase tracking-wider">Conversion Rate</p>
+<h3 class="text-headline-md font-headline-md font-bold mt-1 text-on-background">24.5%</h3>
+</div>
+<div class="bg-white p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary-fixed-dim text-on-primary-fixed-variant rounded-lg">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<span class="flex items-center gap-1 text-label-md text-tertiary font-label-md bg-tertiary-fixed-dim/20 px-2 py-1 rounded-full">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+                            5%
+                        </span>
+</div>
+<p class="text-on-surface-variant text-label-md font-label-md uppercase tracking-wider">Avg. Deal Size</p>
+<h3 class="text-headline-md font-headline-md font-bold mt-1 text-on-background">$17.5K</h3>
+</div>
+</div>
+<!-- Leads Table -->
+<div class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
+<h3 class="text-headline-sm font-headline-sm text-on-background">Recent Activity</h3>
+<button class="text-primary text-label-md font-label-md hover:underline">View All Leads</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-6 py-3 text-label-md font-label-md text-on-surface-variant">School Name</th>
+<th class="px-6 py-3 text-label-md font-label-md text-on-surface-variant">Stage</th>
+<th class="px-6 py-3 text-label-md font-label-md text-on-surface-variant">ARR Potential</th>
+<th class="px-6 py-3 text-label-md font-label-md text-on-surface-variant">Owner</th>
+<th class="px-6 py-3 text-label-md font-label-md text-on-surface-variant">Next Action</th>
+<th class="px-6 py-3 text-label-md font-label-md text-on-surface-variant">Last Contact</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container transition-colors group cursor-pointer">
+<td class="px-6 py-4">
+<div class="font-bold text-body-md text-on-surface">St. Mary's Academy</div>
+<div class="text-body-sm text-on-surface-variant">Los Angeles, CA</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-label-md font-label-md">Qualified</span>
+</td>
+<td class="px-6 py-4 font-data-mono text-data-mono">$45,000</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<img class="w-7 h-7 rounded-full border border-outline-variant" data-alt="A circular headshot profile picture of a young male account executive with glasses, wearing a white button-down shirt. The background is a clean, out-of-focus modern office space with minimalist design and cool lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUGhh636zzzZ27GGbaQbF5X4WLpnGzuY9unsMJhkqb5d136fykjxWAQ5pZxCM6zABMA6_xRpqNUo7gBhu04hUvMUOE2xKX2AAeB-woA6ai9obPjFA7VLWeDNQTIOdWNnf5UDix69M4ote0pCVG3d98dYshi-mNLX9nwyLBS3_bwa7o05NJPEwYAxvSS-M8eksxU1jcsJzZAkSvgGwwXGaatigfjJse7b8Z6vQ4BAHmQl8emQCuGQUqmVpLEMNJECJ_oxH2MPWIULM"/>
+<span class="text-body-md font-body-md">Alex Chen</span>
+</div>
+</td>
+<td class="px-6 py-4 text-body-md text-on-surface-variant">Send Proposal Draft</td>
+<td class="px-6 py-4 text-body-md text-on-surface-variant">2h ago</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container transition-colors group cursor-pointer">
+<td class="px-6 py-4">
+<div class="font-bold text-body-md text-on-surface">Evergreen Heights Intl</div>
+<div class="text-body-sm text-on-surface-variant">Seattle, WA</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-tertiary/10 text-tertiary px-3 py-1 rounded-full text-label-md font-label-md">Negotiation</span>
+</td>
+<td class="px-6 py-4 font-data-mono text-data-mono">$120,000</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<img class="w-7 h-7 rounded-full border border-outline-variant" data-alt="A professional profile photo of a middle-aged female sales leader with blonde hair and a navy blue blazer. She is smiling naturally in a high-end corporate setting with soft daylight and clean architectural lines." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByjSG_AIQ71NRlvCkL0P7IndKVFgSTADHSphgKKXRxpc20WospkGO_ohEPrlkuaxDLib1AcT1w4DOrI98GgOJAT3uihixHAOcS67cl5tpUlwdvNDDQANdUpEqDl9GbLHjti7KiaBS85Cxl7tRSN_R2MsiNJubNNXkU7O8qKFNAZv0R9TgBEQE0YMAMrXeWtV6O4FT2FeDSoifzGa7xTU_4RssYYrPQ6KzLbjI4VzZvJVTTyE5Rgx6yXEQXd_uCc0NPj99q_iBTDbA"/>
+<span class="text-body-md font-body-md">Sarah Jenkins</span>
+</div>
+</td>
+<td class="px-6 py-4 text-body-md text-on-surface-variant">Contract Review</td>
+<td class="px-6 py-4 text-body-md text-on-surface-variant">Yesterday</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container transition-colors group cursor-pointer">
+<td class="px-6 py-4">
+<div class="font-bold text-body-md text-on-surface">Lincoln Charter School</div>
+<div class="text-body-sm text-on-surface-variant">Chicago, IL</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-secondary-container/20 text-on-secondary-container px-3 py-1 rounded-full text-label-md font-label-md">Discovery</span>
+</td>
+<td class="px-6 py-4 font-data-mono text-data-mono">$12,500</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<img class="w-7 h-7 rounded-full border border-outline-variant" data-alt="A portrait of a male corporate professional of Hispanic descent, wearing a modern gray suit and light blue shirt. He looks professional and approachable against a backdrop of a minimalist, high-tech office environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3w_NW0ePd5gutn2I4R6WrKXBGr8ariWwEyMy9PlIU2NFF7rwjAvcjKk8v1hGuW4YsoxMM0BkV2tij1JKGUZf8hkEir4bccfYN39yzIfTqwd59nzP6tXT1yLTYiRRRJEWckSiRtXgtQ-5ITCko5NNdke7TPbjIbN8WlOThveJm3_105sWIWiA4c-WC3ew-dZkqdqU1KQUTqrd2rcXVDtm6FUBFQTND17CTES4598U9FwwMaY7p59T4y0OkY9WxAwqKWDzrM5TF2lA"/>
+<span class="text-body-md font-body-md">Marcus Rivera</span>
+</div>
+</td>
+<td class="px-6 py-4 text-body-md text-on-surface-variant">Intro Call</td>
+<td class="px-6 py-4 text-body-md text-on-surface-variant">3 days ago</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Kanban Pipeline Preview -->
+<div class="mt-4">
+<h3 class="text-headline-sm font-headline-sm text-on-background mb-4 px-2">Pipeline Preview</h3>
+<div class="flex gap-gutter overflow-x-auto pb-6 custom-scrollbar">
+<!-- Column: Discovery -->
+<div class="min-w-[320px] bg-surface-container-low rounded-xl p-4 flex flex-col gap-4 border border-outline-variant">
+<div class="flex justify-between items-center mb-2">
+<h4 class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider flex items-center gap-2">
+                                Discovery <span class="bg-surface-container-high px-2 py-0.5 rounded text-xs text-on-surface">12</span>
+</h4>
+<span class="text-body-sm font-data-mono text-on-surface-variant">$145k</span>
+</div>
+<div class="bg-white p-4 rounded-lg shadow-sm border border-outline-variant space-y-3 cursor-grab active:cursor-grabbing hover:border-primary transition-all">
+<div class="text-body-md font-bold text-on-surface">Oakwood Secondary</div>
+<div class="flex items-center justify-between text-body-sm text-on-surface-variant">
+<span>ARR: $12k</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">event</span> 2d</span>
+</div>
+<div class="flex items-center gap-2 pt-2 border-t border-surface-variant">
+<img class="w-5 h-5 rounded-full" data-alt="Small circular headshot of a professional user." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEMZqkj2BwmR6rUu_Ao8kv_jhpYRvWyIRMVeIMU4D5LZzNYaDoQzwdZI7I5qu_8Yzeu25N1JFiBE3vT7s6JufrJtlRFkw9Do8vVvgwrKSMHOtrvAIW1LflQGLn4eAL3gJzRyZW1_6-B6d66R2bX6PtWFtBRH39F8NrDg0FNGlpiIfepy1XaPmF3B8FJAQEzKOwskPYROvpptW5CB1zmObAH2iJU6de9jXv4jD3vQzBmrLiV0torQ9PsQm7UKa37GPr_cS9G1Oo7O4"/>
+<span class="text-[11px] font-medium text-on-surface-variant">Marcus Rivera</span>
+</div>
+</div>
+<div class="bg-white p-4 rounded-lg shadow-sm border border-outline-variant space-y-3 cursor-grab active:cursor-grabbing hover:border-primary transition-all">
+<div class="text-body-md font-bold text-on-surface">Riverbend District</div>
+<div class="flex items-center justify-between text-body-sm text-on-surface-variant">
+<span>ARR: $45k</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">event</span> 4d</span>
+</div>
+<div class="flex items-center gap-2 pt-2 border-t border-surface-variant">
+<img class="w-5 h-5 rounded-full" data-alt="Small circular headshot of a professional user." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsIjUHHMJwDH7XD4RCp_zfZbaw9pB8cHdv-2t9lToWNPUgtocH9bDN05boFUqyl4cUPTtxhA6L_DSKuUo85QgO0yI6wSDXIo1peP5X__zkV6wE-kgaQv1caTR2VUSfMGUaJSh_DBhdDWrOwPR5sfvtiqPCSNB9M6H9rojqheDjVcB3lZC2Z_zHNvMfJSDfFGJ2f7l_bl9B-LGtIkmGnq38OHkR5XxCjqmQJViv1y_RgYuCb3TIwOySeixulYuwM5eWJHIrlCiGXdA"/>
+<span class="text-[11px] font-medium text-on-surface-variant">Alex Chen</span>
+</div>
+</div>
+</div>
+<!-- Column: Qualified -->
+<div class="min-w-[320px] bg-surface-container-low rounded-xl p-4 flex flex-col gap-4 border border-outline-variant">
+<div class="flex justify-between items-center mb-2">
+<h4 class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider flex items-center gap-2">
+                                Qualified <span class="bg-surface-container-high px-2 py-0.5 rounded text-xs text-on-surface">8</span>
+</h4>
+<span class="text-body-sm font-data-mono text-on-surface-variant">$280k</span>
+</div>
+<div class="bg-white p-4 rounded-lg shadow-sm border border-outline-variant space-y-3 cursor-grab active:cursor-grabbing hover:border-primary transition-all">
+<div class="text-body-md font-bold text-on-surface">St. Mary's Academy</div>
+<div class="flex items-center justify-between text-body-sm text-on-surface-variant">
+<span>ARR: $45k</span>
+<span class="flex items-center gap-1 text-tertiary"><span class="material-symbols-outlined text-[14px]">check_circle</span> Hot</span>
+</div>
+<div class="flex items-center gap-2 pt-2 border-t border-surface-variant">
+<img class="w-5 h-5 rounded-full" data-alt="Small circular headshot of a professional user." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBACC00J_8uan-sAb7K4CnRuuS9SjW-cJEiJnQokf9JuMzQhkLgjBDg158V5_locETRhrnNg4I2lBEVFO5oVtzcukZ5a57Bq3v7GK974T9OvAKhqW3qTCOKNj1jJch_lKZtYhrzpEtw2t_6CJfDjmBnweaUEIi4aEFr3pak6UJSuW7xhw8KyJzAa_Qlb5mXmibomC1ChMWSHEP1U6ppSF5jyTOB9EyJ2FCsr5azPE5oL1kJxj3ZiDmTlz1e-HrQjllkkJFKnsf-VNU"/>
+<span class="text-[11px] font-medium text-on-surface-variant">Alex Chen</span>
+</div>
+</div>
+</div>
+<!-- Column: Proposal -->
+<div class="min-w-[320px] bg-surface-container-low rounded-xl p-4 flex flex-col gap-4 border border-outline-variant">
+<div class="flex justify-between items-center mb-2">
+<h4 class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider flex items-center gap-2">
+                                Proposal <span class="bg-surface-container-high px-2 py-0.5 rounded text-xs text-on-surface">5</span>
+</h4>
+<span class="text-body-sm font-data-mono text-on-surface-variant">$510k</span>
+</div>
+<div class="bg-white p-4 rounded-lg shadow-sm border border-outline-variant space-y-3 cursor-grab active:cursor-grabbing hover:border-primary transition-all">
+<div class="text-body-md font-bold text-on-surface">Global Prep Network</div>
+<div class="flex items-center justify-between text-body-sm text-on-surface-variant">
+<span>ARR: $190k</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">event</span> 1d</span>
+</div>
+<div class="flex items-center gap-2 pt-2 border-t border-surface-variant">
+<img class="w-5 h-5 rounded-full" data-alt="Small circular headshot of a professional user." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6Zmb1QcueXQR-_bC-pPkAvXfr5d7ftBAKZC5SdckYCP35Pzd65ZHJREsU2BmUNDICnsD-FBss1PvPgiaqXU3rXgLkYa89AnAcucLfwUVBntWWmVpelcgkF1UEkA86xwys7txg4zCqdtNS1HPFRBF5q-6NeydwMnOAe3rLDb1qzTVFZh-yPAxp1MjUMSn7VyKl1ZJszWbOcBMtaQR_6kRQaPwBX8A6xuKHUkYo10NeqneBWgBS0wXNHvH6wtAjyLzV99peFLWug_A"/>
+<span class="text-[11px] font-medium text-on-surface-variant">Sarah Jenkins</span>
+</div>
+</div>
+</div>
+<!-- Column: Negotiation -->
+<div class="min-w-[320px] bg-surface-container-low rounded-xl p-4 flex flex-col gap-4 border border-outline-variant">
+<div class="flex justify-between items-center mb-2">
+<h4 class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider flex items-center gap-2">
+                                Negotiation <span class="bg-surface-container-high px-2 py-0.5 rounded text-xs text-on-surface">3</span>
+</h4>
+<span class="text-body-sm font-data-mono text-on-surface-variant">$420k</span>
+</div>
+<div class="bg-white p-4 rounded-lg shadow-sm border border-outline-variant space-y-3 cursor-grab active:cursor-grabbing hover:border-primary transition-all">
+<div class="text-body-md font-bold text-on-surface">Evergreen Heights Intl</div>
+<div class="flex items-center justify-between text-body-sm text-on-surface-variant">
+<span>ARR: $120k</span>
+<span class="flex items-center gap-1 text-primary"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span> High</span>
+</div>
+<div class="flex items-center gap-2 pt-2 border-t border-surface-variant">
+<img class="w-5 h-5 rounded-full" data-alt="Small circular headshot of a professional user." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8eqTfOyRqEpkHeQl03ftmz6rI2yUkTc1KPoBZORglVfOjxAt7goufT18EQ1-V1saa0LmIpViWjbGylXKhKW49JNirodo-3ZRb6A2n1EW__xFwryv0mQ-mmjHa9Ub_B9I7m_CaAPuaikyaxxHsPg6aWxKm2dJGCaDQORKSCiLMUTtnkXikb_5Yv2LsT1qvmojY6LuUGGaxvH4reUH9S5i3pjguWx3gvuQPt9NJafNWlCMt3WY5f3Y5T6zkp9R_VLW9-og8Nr7r9Z4"/>
+<span class="text-[11px] font-medium text-on-surface-variant">Sarah Jenkins</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Micro-interaction Scripts -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Global Search Keyboard Shortcut
+            document.addEventListener('keydown', (e) => {
+                if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+                    e.preventDefault();
+                    document.querySelector('input[type="text"]').focus();
+                }
+            });
+
+            // Tab selection simulation
+            const tabButtons = document.querySelectorAll('.flex.bg-surface-container button');
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabButtons.forEach(b => {
+                        b.classList.remove('bg-white', 'shadow-sm', 'text-primary');
+                        b.classList.add('text-on-surface-variant');
+                    });
+                    btn.classList.add('bg-white', 'shadow-sm', 'text-primary');
+                    btn.classList.remove('text-on-surface-variant');
+                });
+            });
+
+            // Table row click simulation
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                row.addEventListener('click', () => {
+                    row.classList.add('bg-primary/5');
+                    setTimeout(() => row.classList.remove('bg-primary/5'), 300);
+                });
+            });
+        });
+    </script>
+</body></html>

@@ -32,7 +32,7 @@ export function AiChat({ portal, subjectId, lessonId, classLevel }: AiChatProps)
   const [conversationId, setConversationId] = useState<string>();
   const [loading, setLoading] = useState(false);
   const [streaming, setStreaming] = useState(false);
-  const [useStreaming, setUseStreaming] = useState(true);
+  const useStreaming = true;
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

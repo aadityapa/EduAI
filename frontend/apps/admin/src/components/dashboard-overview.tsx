@@ -26,7 +26,6 @@ import {
   Building2,
   CreditCard,
   GraduationCap,
-  Repeat,
   School,
   Users,
 } from 'lucide-react';
@@ -86,18 +85,21 @@ export function DashboardOverview({ overview }: { overview: Overview }) {
       )}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard icon={<CreditCard className="h-5 w-5" />} label="MRR" value={formatCurrency(mrr)} trend={{ value: 12, label: 'vs last month' }} />
+        <KpiCard icon={<Building2 className="h-5 w-5" />} label="Active Tenants" value={formatNumber(subs)} />
+        <KpiCard icon={<Users className="h-5 w-5" />} label="Total Users" value={formatNumber(students + teachers)} />
+        <KpiCard icon={<Brain className="h-5 w-5" />} label="AI Cost (est.)" value={formatCurrency(aiRequests * 0.02)} description={`${formatNumber(aiRequests)} queries`} />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard icon={<GraduationCap className="h-5 w-5" />} label="Students (tenant)" value={formatNumber(students)} />
         <KpiCard icon={<Users className="h-5 w-5" />} label="Teachers" value={formatNumber(teachers)} />
         <KpiCard icon={<School className="h-5 w-5" />} label="Active Classes" value={formatNumber(classes)} />
-        <KpiCard icon={<CreditCard className="h-5 w-5" />} label="MRR" value={formatCurrency(mrr)} />
         <KpiCard icon={<Activity className="h-5 w-5" />} label="Attendance Today" value={`${(overview.erp.data as { attendance?: { rate?: number } })?.attendance?.rate ?? 0}%`} />
-        <KpiCard icon={<Brain className="h-5 w-5" />} label="AI Queries" value={formatNumber(aiRequests)} />
-        <KpiCard icon={<Building2 className="h-5 w-5" />} label="Subscriptions" value={subs} />
-        <KpiCard icon={<Repeat className="h-5 w-5" />} label="Retention" value={`${((1 - (revenue?.churnRate ?? 0)) * 100).toFixed(1)}%`} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
+        <Card className="stitch-card">
           <CardHeader>
             <CardTitle className="text-base">User Growth</CardTitle>
           </CardHeader>
@@ -115,7 +117,7 @@ export function DashboardOverview({ overview }: { overview: Overview }) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="stitch-card">
           <CardHeader>
             <CardTitle className="text-base">Revenue (MRR)</CardTitle>
           </CardHeader>
@@ -132,7 +134,7 @@ export function DashboardOverview({ overview }: { overview: Overview }) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="stitch-card">
           <CardHeader>
             <CardTitle className="text-base">AI Usage (Weekly)</CardTitle>
           </CardHeader>
@@ -149,7 +151,7 @@ export function DashboardOverview({ overview }: { overview: Overview }) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="stitch-card">
           <CardHeader>
             <CardTitle className="text-base">Course Completion by Subject</CardTitle>
           </CardHeader>
@@ -166,7 +168,7 @@ export function DashboardOverview({ overview }: { overview: Overview }) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="stitch-card">
           <CardHeader>
             <CardTitle className="text-base">Engagement Trends</CardTitle>
           </CardHeader>
@@ -183,7 +185,7 @@ export function DashboardOverview({ overview }: { overview: Overview }) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="stitch-card">
           <CardHeader>
             <CardTitle className="text-base">Top Schools by Revenue</CardTitle>
           </CardHeader>

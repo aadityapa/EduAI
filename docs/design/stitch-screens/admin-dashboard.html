@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduAI Admin CRM Dashboard</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;family=Roboto+Flex:opsz,wght@8..144,100..1000&amp;family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#727785",
+                    "sidebar-dark": "#1C1B1D",
+                    "background": "#fdf8fb",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed": "#e7deff",
+                    "on-tertiary": "#ffffff",
+                    "surface-dim": "#ddd9db",
+                    "on-secondary-fixed-variant": "#4b21bd",
+                    "primary-fixed-dim": "#adc7ff",
+                    "tertiary-container": "#7c63d9",
+                    "surface-container-low": "#f7f2f5",
+                    "secondary-container": "#7a5aed",
+                    "on-primary-container": "#ffffff",
+                    "on-tertiary-container": "#ffffff",
+                    "secondary-fixed": "#e7deff",
+                    "secondary": "#613ed3",
+                    "surface-container": "#f1edef",
+                    "on-tertiary-fixed": "#1e0060",
+                    "surface-container-highest": "#e6e1e4",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed": "#1e0061",
+                    "surface": "#fdf8fb",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#6349bf",
+                    "primary": "#005bbf",
+                    "on-surface": "#1c1b1d",
+                    "surface-container-high": "#ebe7e9",
+                    "surface-bright": "#fdf8fb",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-tint": "#005bc0",
+                    "on-primary-fixed": "#001a41",
+                    "inverse-on-surface": "#f4eff2",
+                    "surface-variant": "#e6e1e4",
+                    "on-error": "#ffffff",
+                    "primary-container": "#1a73e8",
+                    "on-secondary-container": "#fffbff",
+                    "tertiary-fixed-dim": "#ccbeff",
+                    "on-surface-variant": "#414754",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed-variant": "#004493",
+                    "on-background": "#1c1b1d",
+                    "on-primary": "#ffffff",
+                    "primary-fixed": "#d8e2ff",
+                    "inverse-surface": "#313032",
+                    "on-tertiary-fixed-variant": "#4b2ea6",
+                    "sidebar-text": "#FEFBFF",
+                    "outline-variant": "#c1c6d6",
+                    "inverse-primary": "#adc7ff",
+                    "secondary-fixed-dim": "#cbbeff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit-x-large": "32px",
+                    "gutter": "24px",
+                    "unit-medium": "16px",
+                    "unit-small": "8px",
+                    "unit-x-small": "4px",
+                    "base": "8px",
+                    "container-max-width": "1600px",
+                    "sidebar-width": "280px",
+                    "unit-large": "24px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Roboto Flex"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "label-lg": ["Roboto Flex"],
+                    "headline-sm": ["Hanken Grotesk"],
+                    "body-lg": ["Roboto Flex"],
+                    "label-sm": ["Roboto Flex"],
+                    "title-lg": ["Hanken Grotesk"],
+                    "title-md": ["Hanken Grotesk"],
+                    "data-mono": ["jetbrainsMono"],
+                    "body-md": ["Roboto Flex"],
+                    "display-lg": ["Hanken Grotesk"]
+            },
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #fdf8fb;
+            font-family: 'Roboto Flex', sans-serif;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+        .scroll-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .chart-bar {
+            transition: height 1s ease-out;
+        }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-sidebar-dark flex flex-col py-unit-medium z-50">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container">school</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm text-sidebar-text font-bold leading-tight">EduAI Admin</h1>
+<p class="text-label-sm text-sidebar-text opacity-60">Enterprise CRM</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<!-- Dashboard Active -->
+<a class="flex items-center gap-3 h-12 mx-2 px-4 bg-secondary-container text-on-secondary-container rounded-full transition-colors font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 h-12 mx-2 px-4 text-sidebar-text opacity-70 hover:bg-surface-variant/10 hover:opacity-100 transition-colors font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="domain">domain</span>
+<span>Tenants</span>
+</a>
+<a class="flex items-center gap-3 h-12 mx-2 px-4 text-sidebar-text opacity-70 hover:bg-surface-variant/10 hover:opacity-100 transition-colors font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+<span>Schools</span>
+</a>
+<a class="flex items-center gap-3 h-12 mx-2 px-4 text-sidebar-text opacity-70 hover:bg-surface-variant/10 hover:opacity-100 transition-colors font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span>Users</span>
+</a>
+<a class="flex items-center gap-3 h-12 mx-2 px-4 text-sidebar-text opacity-70 hover:bg-surface-variant/10 hover:opacity-100 transition-colors font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span>Billing</span>
+</a>
+<a class="flex items-center gap-3 h-12 mx-2 px-4 text-sidebar-text opacity-70 hover:bg-surface-variant/10 hover:opacity-100 transition-colors font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+<span>Leads</span>
+</a>
+<a class="flex items-center gap-3 h-12 mx-2 px-4 text-sidebar-text opacity-70 hover:bg-surface-variant/10 hover:opacity-100 transition-colors font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="confirmation_number">confirmation_number</span>
+<span>Tickets</span>
+</a>
+<a class="flex items-center gap-3 h-12 mx-2 px-4 text-sidebar-text opacity-70 hover:bg-surface-variant/10 hover:opacity-100 transition-colors font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analytics</span>
+</a>
+</nav>
+<div class="mt-auto px-2 space-y-1">
+<button class="w-full flex items-center justify-between gap-3 h-12 px-4 bg-primary/10 text-primary-fixed-dim rounded-xl border border-primary/20 mb-4">
+<span class="text-label-lg font-medium">System Status</span>
+<span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+</button>
+<a class="flex items-center gap-3 h-12 px-4 text-sidebar-text opacity-70 hover:opacity-100 transition-colors font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-3 h-12 px-4 text-error opacity-70 hover:opacity-100 transition-colors font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[280px] min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="docked full-width top-0 sticky z-40 bg-surface dark:bg-surface-dim flex justify-between items-center h-16 px-gutter">
+<div class="flex items-center gap-unit-large flex-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">EduAI Dashboard</h2>
+<div class="max-w-md w-full relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container border-none rounded-full text-body-md focus:ring-2 focus:ring-primary transition-all" placeholder="Search tenants, schools, or users..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-unit-medium">
+<button class="w-10 h-10 rounded-full hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="w-10 h-10 rounded-full hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-3 pl-2">
+<div class="text-right">
+<p class="font-label-lg text-label-lg text-on-surface">Alex Rivera</p>
+<p class="text-label-sm text-on-surface-variant">System Admin</p>
+</div>
+<img class="w-10 h-10 rounded-full object-cover border-2 border-primary-container" data-alt="A professional headshot of a Hispanic male system administrator in his late 30s, wearing a clean white shirt and dark blazer. The portrait is taken in a brightly lit, modern office environment with soft-focus background of tech gadgets. The lighting is high-key and flattering, reflecting a sophisticated corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_a3Q5wCyjJ9_C7effwV352CMdxEJrUV6NAZMxlVQMb7JprBgNeen-4pgf3NDRVaZ6n1HFIy1n_irJYprAajrhOTXhMKgAw6rTj-_CytI5DYtTvvkfab8Qud-fGaXdbT1faNJZIj3D0plKXBIc6qGLhPhwDktlMIbbL4UgXCjohLbd7gzfqdSMMI6MvIYvdbtF-KA9JOhIFu-16GbrXCkq0Fu5Gr375OAmUHg8r1p8ch6u8etJsnobxoYKifA0yY4ZVthfGbDw1WM"/>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="p-gutter space-y-gutter flex-1 max-w-[1600px] mx-auto w-full">
+<!-- KPI Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 p-unit-medium rounded-xl flex flex-col gap-2 group hover:border-primary/50 transition-colors">
+<div class="flex justify-between items-start">
+<span class="text-label-lg text-on-surface-variant">Monthly Recurring Revenue</span>
+<div class="p-2 bg-primary/10 text-primary rounded-lg">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+</div>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm font-bold">$245,000</h3>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-green-600 text-sm" style="font-variation-settings: 'wght' 700">trending_up</span>
+<span class="text-label-sm text-green-600 font-bold">+12% growth</span>
+<span class="text-label-sm text-on-surface-variant ml-1">vs last month</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 p-unit-medium rounded-xl flex flex-col gap-2 group hover:border-primary/50 transition-colors">
+<div class="flex justify-between items-start">
+<span class="text-label-lg text-on-surface-variant">Active Tenants</span>
+<div class="p-2 bg-secondary/10 text-secondary rounded-lg">
+<span class="material-symbols-outlined" data-icon="domain">domain</span>
+</div>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm font-bold">1,240</h3>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'wght' 700">add_circle</span>
+<span class="text-label-sm text-primary font-bold">52 new</span>
+<span class="text-label-sm text-on-surface-variant ml-1">this week</span>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 p-unit-medium rounded-xl flex flex-col gap-2 group hover:border-primary/50 transition-colors">
+<div class="flex justify-between items-start">
+<span class="text-label-lg text-on-surface-variant">Total Users</span>
+<div class="p-2 bg-tertiary/10 text-tertiary rounded-lg">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+</div>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm font-bold">156,000</h3>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">bolt</span>
+<span class="text-label-sm text-on-surface-variant font-bold">88% active</span>
+<span class="text-label-sm text-on-surface-variant ml-1">daily usage</span>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 p-unit-medium rounded-xl flex flex-col gap-2 group hover:border-primary/50 transition-colors">
+<div class="flex justify-between items-start">
+<span class="text-label-lg text-on-surface-variant">AI Operational Cost</span>
+<div class="p-2 bg-error/10 text-error rounded-lg">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+</div>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm font-bold">$12,400</h3>
+<div class="flex items-center gap-1 mt-1">
+<span class="text-label-sm text-error font-bold">3.2% of revenue</span>
+<span class="text-label-sm text-on-surface-variant ml-1">optimized -5%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Revenue Growth Chart Section -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl overflow-hidden">
+<div class="p-unit-large flex justify-between items-end border-b border-outline-variant/10">
+<div>
+<h3 class="font-title-lg text-title-lg text-on-surface">Revenue Growth Trend</h3>
+<p class="text-body-md text-on-surface-variant">Consolidated monthly revenue across all service tiers</p>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-2 rounded-full bg-surface-container-high text-label-lg">6 Months</button>
+<button class="px-4 py-2 rounded-full hover:bg-surface-container-high text-label-lg transition-colors">1 Year</button>
+</div>
+</div>
+<div class="p-unit-large h-[400px] flex items-end justify-between gap-4">
+<!-- Fake Chart Bars -->
+<div class="flex-1 flex flex-col items-center gap-4 group">
+<div class="w-full bg-primary/20 rounded-t-lg relative flex items-end overflow-hidden group-hover:bg-primary/30 transition-all cursor-pointer h-40">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent"></div>
+</div>
+<span class="text-label-sm text-on-surface-variant">Jan</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-4 group">
+<div class="w-full bg-primary/20 rounded-t-lg relative flex items-end overflow-hidden group-hover:bg-primary/30 transition-all cursor-pointer h-56">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent"></div>
+</div>
+<span class="text-label-sm text-on-surface-variant">Feb</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-4 group">
+<div class="w-full bg-primary/20 rounded-t-lg relative flex items-end overflow-hidden group-hover:bg-primary/30 transition-all cursor-pointer h-48">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent"></div>
+</div>
+<span class="text-label-sm text-on-surface-variant">Mar</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-4 group">
+<div class="w-full bg-primary/20 rounded-t-lg relative flex items-end overflow-hidden group-hover:bg-primary/30 transition-all cursor-pointer h-72">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent"></div>
+</div>
+<span class="text-label-sm text-on-surface-variant">Apr</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-4 group">
+<div class="w-full bg-primary/20 rounded-t-lg relative flex items-end overflow-hidden group-hover:bg-primary/30 transition-all cursor-pointer h-64">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent"></div>
+</div>
+<span class="text-label-sm text-on-surface-variant">May</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-4 group">
+<div class="w-full bg-primary rounded-t-lg relative flex items-end overflow-hidden shadow-lg h-80">
+<div class="absolute inset-0 bg-gradient-to-t from-primary-container/50 to-transparent"></div>
+</div>
+<span class="text-label-sm text-on-surface-variant font-bold">Jun</span>
+</div>
+</div>
+</div>
+<!-- Bottom Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Recent Leads Table (Span 2) -->
+<div class="lg:col-span-2 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl overflow-hidden flex flex-col">
+<div class="p-6 border-b border-outline-variant/10 flex justify-between items-center">
+<h3 class="font-title-lg text-title-lg">Recent Leads</h3>
+<button class="text-primary font-label-lg hover:underline transition-all">View All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant/10">
+<th class="p-4 font-label-lg text-label-lg text-on-surface-variant">Name</th>
+<th class="p-4 font-label-lg text-label-lg text-on-surface-variant">School</th>
+<th class="p-4 font-label-lg text-label-lg text-on-surface-variant">Status</th>
+<th class="p-4 font-label-lg text-label-lg text-on-surface-variant text-right">Value</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="p-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-fixed-dim text-on-primary-fixed flex items-center justify-center text-xs font-bold">JD</div>
+<span class="text-body-md font-medium">Jane Doe</span>
+</td>
+<td class="p-4 text-body-md text-on-surface-variant">Horizon Heights Academy</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-green-100 text-green-700">Qualified</span>
+</td>
+<td class="p-4 text-body-md text-right font-mono">$12,500</td>
+</tr>
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="p-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed-dim text-on-secondary-fixed flex items-center justify-center text-xs font-bold">MS</div>
+<span class="text-body-md font-medium">Mark Smith</span>
+</td>
+<td class="p-4 text-body-md text-on-surface-variant">Oakwood Technical</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-orange-100 text-orange-700">In Contact</span>
+</td>
+<td class="p-4 text-body-md text-right font-mono">$8,200</td>
+</tr>
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="p-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed-dim text-on-tertiary-fixed flex items-center justify-center text-xs font-bold">LA</div>
+<span class="text-body-md font-medium">Linda Andrews</span>
+</td>
+<td class="p-4 text-body-md text-on-surface-variant">St. Jude Collegiate</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700">New</span>
+</td>
+<td class="p-4 text-body-md text-right font-mono">$15,000</td>
+</tr>
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="p-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-fixed-dim text-on-primary-fixed flex items-center justify-center text-xs font-bold">TB</div>
+<span class="text-body-md font-medium">Tom Baker</span>
+</td>
+<td class="p-4 text-body-md text-on-surface-variant">Global Arts Institute</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-green-100 text-green-700">Qualified</span>
+</td>
+<td class="p-4 text-body-md text-right font-mono">$5,400</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Support Tickets Kanban Preview -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl flex flex-col h-full">
+<div class="p-6 border-b border-outline-variant/10">
+<h3 class="font-title-lg text-title-lg">Support Queue</h3>
+</div>
+<div class="p-6 flex flex-col gap-6 overflow-y-auto scroll-hide">
+<!-- Column: Backlog -->
+<div class="space-y-3">
+<div class="flex justify-between items-center px-1">
+<span class="text-label-lg font-bold text-on-surface-variant flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+                                    Backlog
+                                </span>
+<span class="text-label-sm text-outline">12</span>
+</div>
+<div class="p-3 bg-surface-container border border-outline-variant/20 rounded-lg shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-label-sm px-2 py-0.5 bg-error/10 text-error rounded">Critical</span>
+<span class="text-label-sm text-outline">#4402</span>
+</div>
+<p class="text-body-md font-medium leading-tight">API authentication failure for Tenant #102</p>
+<p class="text-label-sm text-on-surface-variant mt-2">2h ago</p>
+</div>
+</div>
+<!-- Column: In Progress -->
+<div class="space-y-3">
+<div class="flex justify-between items-center px-1">
+<span class="text-label-lg font-bold text-primary flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                                    In Progress
+                                </span>
+<span class="text-label-sm text-primary">4</span>
+</div>
+<div class="p-3 bg-primary/5 border border-primary/20 rounded-lg shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-label-sm px-2 py-0.5 bg-primary/10 text-primary rounded">Medium</span>
+<span class="text-label-sm text-primary/60">#4398</span>
+</div>
+<p class="text-body-md font-medium leading-tight">Billing dashboard data sync lag reported</p>
+<div class="flex items-center gap-2 mt-3">
+<img class="w-6 h-6 rounded-full" data-alt="A small circular avatar of a tech support specialist, a woman with glasses and short brown hair, looking focused. High resolution, professional profile photo with soft studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFNUE-WsL3LWdgM1iZ0CfzYmAKfJzGEGpLNK07qhx3TPQ2C9i0lv2925iAiEebU0jCHJPzxMXZmatb99mGLA45rmjYBRAOP-dxdbNdk8MO5BOORwz7Ou_kUaCgCsyJoV8c33iq52eCDN5-nOr2AyVfyCur6p9BoXzgpo9NDwEPQkZT0WZ434LM1zKejtu__X0wRO5A_dr1Wslgt5jHmN4xAs9M_TnD4lqzEEvMt5JcC0fFnrNu06z7P0QXnhoPN0HmpuFtspOM_3U"/>
+<span class="text-label-sm text-on-surface-variant">Assigned to Sarah</span>
+</div>
+</div>
+</div>
+<!-- Column: Resolved -->
+<div class="space-y-3">
+<div class="flex justify-between items-center px-1">
+<span class="text-label-lg font-bold text-green-600 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-600"></span>
+                                    Resolved
+                                </span>
+<span class="text-label-sm text-green-600">84</span>
+</div>
+<div class="p-3 bg-green-50/50 border border-green-200 rounded-lg opacity-70">
+<p class="text-body-md font-medium leading-tight line-through text-green-900/50">Update school branding assets</p>
+<p class="text-label-sm text-green-600 mt-2">Closed 15m ago</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Interactive Layer: Simple JS for tooltips or state -->
+<script>
+        // Simple scale effect for nav items
+        document.querySelectorAll('nav a').forEach(item => {
+            item.addEventListener('mousedown', () => {
+                item.classList.add('scale-95');
+            });
+            item.addEventListener('mouseup', () => {
+                item.classList.remove('scale-95');
+            });
+        });
+
+        // Search bar focus interaction
+        const searchBar = document.querySelector('input[type="text"]');
+        searchBar.addEventListener('focus', () => {
+            searchBar.parentElement.classList.add('shadow-lg');
+        });
+        searchBar.addEventListener('blur', () => {
+            searchBar.parentElement.classList.remove('shadow-lg');
+        });
+    </script>
+</body></html>

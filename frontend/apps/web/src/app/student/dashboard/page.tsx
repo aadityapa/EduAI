@@ -13,6 +13,8 @@ import {
   LearningApiError,
 } from '@/lib/learning-api';
 import {
+  StitchWelcomeBanner,
+  StitchAiPromo,
   Badge,
   Card,
   CardContent,
@@ -57,10 +59,18 @@ export default async function StudentDashboard() {
     <DashboardShell title="Student Dashboard" portal="student">
       <PageMotion>
         <div className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-semibold">Welcome back, {firstName}</h2>
-            <p className="text-sm text-muted-foreground">Continue your learning journey</p>
-          </div>
+          <StitchWelcomeBanner
+            title={`Welcome back, ${firstName}`}
+            description="Continue your learning journey — courses, quizzes, and AI tutor await."
+            action={
+              <Link
+                href="/student/ai/tutor"
+                className="inline-flex h-10 items-center rounded-full bg-white px-5 text-sm font-medium text-primary shadow-sm transition hover:bg-white/90"
+              >
+                Ask AI Tutor
+              </Link>
+            }
+          />
 
           {loadError && <ApiError message={loadError} />}
 
@@ -117,7 +127,7 @@ export default async function StudentDashboard() {
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <Card className="glass-card">
+            <Card className="stitch-card">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-lg">My Courses</CardTitle>
                 <Link href="/student/courses" className="text-sm text-primary hover:underline">
@@ -153,7 +163,7 @@ export default async function StudentDashboard() {
               </CardContent>
             </Card>
 
-            <Card className="glass-card">
+            <Card className="stitch-card">
               <CardHeader>
                 <CardTitle className="text-lg">Continue Learning</CardTitle>
               </CardHeader>
@@ -192,6 +202,13 @@ export default async function StudentDashboard() {
               </CardContent>
             </Card>
           </div>
+
+          <StitchAiPromo
+            title="Need help with homework?"
+            description="Get step-by-step explanations tailored to your class and board."
+            href="/student/ai/homework"
+            linkLabel="Open Homework Assistant"
+          />
 
           {suggested.length > 0 && (
             <div className="space-y-4">
