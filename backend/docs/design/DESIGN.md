@@ -1,22 +1,28 @@
 ---
 name: EduAI Platform
 colors:
-  primary: '#1A73E8'
+  primary: '#6D28D9'
   on-primary: '#FFFFFF'
-  primary-container: '#D3E3FD'
-  on-primary-container: '#041E49'
-  secondary: '#34A853'
+  primary-container: '#EDE9FE'
+  on-primary-container: '#2E1065'
+  secondary: '#8B5CF6'
   on-secondary: '#FFFFFF'
-  tertiary: '#9334E6'
-  surface: '#F8FAFD'
+  tertiary: '#A855F7'
+  surface: '#F8FAFC'
   surface-container: '#FFFFFF'
-  surface-container-high: '#EEF2F7'
-  on-surface: '#1F1F1F'
-  on-surface-variant: '#5F6368'
-  outline: '#DADCE0'
-  error: '#D93025'
-  background: '#F8FAFD'
-  on-background: '#1F1F1F'
+  surface-container-high: '#F1F5F9'
+  on-surface: '#0F172A'
+  on-surface-variant: '#475569'
+  outline: '#E2E8F0'
+  success: '#22C55E'
+  warning: '#F59E0B'
+  error: '#EF4444'
+  background: '#F8FAFC'
+  on-background: '#0F172A'
+  dark-background: '#0B1020'
+  ai-violet: '#A855F7'
+  xp-gold: '#FACC15'
+  streak-flame: '#F97316'
 typography:
   display-lg:
     fontFamily: Google Sans Flex
@@ -64,9 +70,48 @@ spacing:
   2xl: 48px
 ---
 
-# EduAI Platform — Stitch Design System
+# EduAI Platform — Next-Generation Stitch Design System
 
-> AI-powered education SaaS for CBSE/ICSE schools (Classes 1–10)
+> AI-powered learning experience platform for CBSE/ICSE schools (Classes 1–10)
+
+## Product Direction
+
+EduAI must feel like Netflix + Duolingo + ChatGPT + Coursera + Apple.
+
+Do not generate generic dashboards, ERP screens, CRUD pages, or administrative software unless the screen is explicitly an admin enterprise command surface.
+
+Every generated screen must include:
+
+- One primary action
+- One secondary action
+- A visible progress indicator
+- Personalization
+- Gamification where appropriate
+- Contextual AI assistance
+- Mobile-first behavior
+- Accessible focus and contrast
+
+Prefer these product nouns:
+
+- Home
+- Continue Learning
+- Journey
+- Mission
+- Challenge
+- Growth
+- Insights
+- AI Tutor
+- AI Copilot
+- Command Center
+
+Avoid these product nouns for learner and parent experiences:
+
+- Dashboard
+- ERP
+- CRUD
+- Widget
+- Records
+- Management
 
 ## Brand
 
