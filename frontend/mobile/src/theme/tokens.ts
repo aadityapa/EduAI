@@ -1,17 +1,24 @@
-/** EduAI mobile design tokens — aligned with frontend/shared-ui/ui design system v2 */
+/** EduAI mobile design tokens — aligned with Stitch (frontend/design/stitch) */
 export const tokens = {
   colors: {
-    primary: '#6D28D9',
-    primaryLight: '#8B5CF6',
-    secondary: '#8B5CF6',
-    success: '#22C55E',
+    primary: '#005bbf',
+    primaryBright: '#1A73E8',
+    primaryContainer: '#D3E3FD',
+    tertiary: '#8621d9',
+    tertiaryContainer: '#a145f4',
+    secondary: '#006e2c',
+    secondaryContainer: '#86f898',
+    onSecondaryContainer: '#00722f',
+    success: '#006e2c',
     warning: '#F59E0B',
-    error: '#EF4444',
-    background: '#F8FAFC',
+    error: '#D93025',
+    background: '#F8FAFD',
     surface: '#FFFFFF',
-    text: '#0F172A',
-    textMuted: '#64748B',
-    border: '#E2E8F0',
+    surfaceHigh: '#e6e8f2',
+    text: '#1F1F1F',
+    textMuted: '#5F6368',
+    border: '#DADCE0',
+    outlineVariant: '#c1c6d6',
   },
   spacing: {
     xs: 4,
@@ -24,6 +31,7 @@ export const tokens = {
     sm: 8,
     md: 12,
     lg: 16,
+    xl: 20,
     full: 9999,
   },
   fontSize: {

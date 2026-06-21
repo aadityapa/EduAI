@@ -17,7 +17,23 @@ export { StatCard } from './components/stat-card';
 export type { StatCardProps } from './components/stat-card';
 export { KpiCard } from './components/kpi-card';
 export type { KpiCardProps } from './components/kpi-card';
-export { StitchWelcomeBanner, StitchAiPromo } from './components/stitch-layout';
+export { StitchWelcomeBanner, StitchAiPromo, StitchRecentCourseCard } from './components/stitch-layout';
+export { STITCH_IMAGES, STITCH_TERTIARY } from './stitch/assets';
+export {
+  StitchTaskList,
+  StitchInsightPanel,
+  StitchPageHeader,
+  StitchSlaBanner,
+  StitchScheduleCarousel,
+  StitchToGradeList,
+  StitchTeacherAiPromo,
+  StitchParentKpiCard,
+  StitchProgressTimeline,
+} from './stitch/widgets';
+export type { StitchTaskItem, StitchInsightItem, StitchScheduleItem, StitchGradeItem, StitchTimelineItem } from './stitch/widgets';
+export { StitchQuizBuilderWizard } from './stitch/quiz-builder';
+export { StitchTutorShell } from './stitch/tutor-shell';
+export { StitchMobileBottomNav } from './stitch/mobile-nav';
 export { StreakBadge } from './components/streak-badge';
 export type { StreakBadgeProps } from './components/streak-badge';
 export { XpBadge } from './components/xp-badge';

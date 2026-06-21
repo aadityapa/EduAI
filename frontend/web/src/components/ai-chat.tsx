@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button, Card, CardContent, CardHeader, CardTitle, cn } from '@eduai/ui';
+import { Button, cn, StitchTutorShell } from '@eduai/ui';
 import { Bot, Loader2, Send, User } from 'lucide-react';
 import { useLocale } from '@/components/locale-provider';
 
@@ -176,20 +176,20 @@ export function AiChat({ portal, subjectId, lessonId, classLevel }: AiChatProps)
     t,
   ]);
 
-  return (
-    <Card className="glass-card flex h-[calc(100vh-220px)] flex-col">
-      <CardHeader className="flex-shrink-0 border-b border-border/50 pb-4">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Bot className="h-5 w-5 text-primary" />
-            {t('ai.tutor.title')}
-          </CardTitle>
-          <span className="text-xs text-muted-foreground capitalize">{portal}</span>
-        </div>
-        <p className="text-sm text-muted-foreground">{t('ai.tutor.subtitle')}</p>
-      </CardHeader>
+  const resetChat = useCallback(() => {
+    setMessages([]);
+    setConversationId(undefined);
+    setInput('');
+  }, []);
 
-      <CardContent className="flex flex-1 flex-col overflow-hidden p-0">
+  return (
+    <StitchTutorShell onNewChat={resetChat} className="h-[calc(100vh-8rem)]">
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <div className="border-b px-4 py-3">
+          <p className="font-semibold">{t('ai.tutor.title')}</p>
+          <p className="text-sm text-muted-foreground">{t('ai.tutor.subtitle')}</p>
+        </div>
+
         <div className="flex-1 space-y-4 overflow-y-auto p-4">
           {messages.length === 0 && (
             <p className="text-center text-sm text-muted-foreground">{t('ai.tutor.empty')}</p>
@@ -248,7 +248,7 @@ export function AiChat({ portal, subjectId, lessonId, classLevel }: AiChatProps)
           <div ref={bottomRef} />
         </div>
 
-        <div className="border-t border-border/50 p-4">
+        <div className="border-t p-4">
           <div className="flex gap-2">
             <input
               type="text"
@@ -257,14 +257,14 @@ export function AiChat({ portal, subjectId, lessonId, classLevel }: AiChatProps)
               onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
               placeholder={t('ai.tutor.placeholder')}
               disabled={loading}
-              className="flex-1 rounded-lg border border-border bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="flex-1 rounded-full border border-border bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
             />
-            <Button onClick={sendMessage} disabled={loading || !input.trim()} size="icon">
+            <Button onClick={sendMessage} disabled={loading || !input.trim()} size="icon" className="rounded-full">
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             </Button>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </StitchTutorShell>
   );
 }

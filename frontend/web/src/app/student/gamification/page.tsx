@@ -12,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
   LeaderboardRow,
+  StitchPageHeader,
   StatCard,
   StreakBadge,
   XpBadge,
@@ -36,6 +37,7 @@ export default async function GamificationPage() {
     <DashboardShell title="Achievements" portal="student">
       <PageMotion>
         <div className="space-y-6">
+          <StitchPageHeader title="Achievements & Leaderboard" description="Track XP, streaks, badges, and rank." />
           {loadError && <ApiError message={loadError} />}
 
           <div className="grid gap-4 md:grid-cols-3">
@@ -66,7 +68,7 @@ export default async function GamificationPage() {
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <Card className="glass-card">
+            <Card className="stitch-card">
               <CardHeader>
                 <CardTitle>Badges</CardTitle>
               </CardHeader>
@@ -99,7 +101,7 @@ export default async function GamificationPage() {
               </CardContent>
             </Card>
 
-            <Card className="glass-card">
+            <Card className="stitch-card">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Leaderboard</CardTitle>
                 {gamification && <XpBadge xp={gamification.xp.totalXp} size="sm" />}

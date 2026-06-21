@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native';
 import { router } from 'expo-router';
+import Constants from 'expo-constants';
 import { useAuth } from '../src/auth/AuthContext';
 import { PrimaryButton, tokens } from '../src/components/ui';
 
@@ -91,7 +92,9 @@ export default function LoginScreen() {
           <PrimaryButton label="Sign In" onPress={handleLogin} loading={loading} />
         </View>
 
-        <Text style={styles.hint}>Backend API :3001 · Web :3000 · Admin :3002</Text>
+        <Text style={styles.hint}>
+          API {Constants.expoConfig?.extra?.identityUrl ?? 'http://localhost:3001'} · Expo LAN ready
+        </Text>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -111,21 +114,26 @@ const styles = StyleSheet.create({
     marginBottom: tokens.spacing.sm,
   },
   logoText: { color: '#fff', fontSize: 28, fontWeight: '800' },
-  title: { fontSize: tokens.fontSize.xxl, fontWeight: '800', color: tokens.colors.text },
+  title: { fontSize: tokens.fontSize.xxl, fontWeight: '800', color: tokens.colors.primaryBright },
   subtitle: { fontSize: tokens.fontSize.sm, color: tokens.colors.textMuted, marginTop: 4 },
-  portalRow: { flexDirection: 'row', gap: 8, marginBottom: tokens.spacing.lg },
+  portalRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: tokens.spacing.lg,
+    backgroundColor: '#e8eaed',
+    padding: 4,
+    borderRadius: tokens.radius.full,
+  },
   pill: {
     flex: 1,
     paddingVertical: 10,
-    borderRadius: tokens.radius.sm,
-    borderWidth: 1.5,
-    borderColor: tokens.colors.border,
+    borderRadius: tokens.radius.full,
     alignItems: 'center',
-    backgroundColor: tokens.colors.surface,
+    backgroundColor: 'transparent',
   },
-  pillActive: { borderColor: tokens.colors.primary, backgroundColor: tokens.colors.primary + '15' },
+  pillActive: { backgroundColor: tokens.colors.primaryBright },
   pillText: { fontWeight: '600', color: tokens.colors.textMuted, fontSize: tokens.fontSize.sm },
-  pillTextActive: { color: tokens.colors.primary },
+  pillTextActive: { color: '#fff' },
   form: {
     backgroundColor: tokens.colors.surface,
     borderRadius: tokens.radius.lg,

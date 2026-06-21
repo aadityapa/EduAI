@@ -7,7 +7,7 @@ import { ApiError } from '@/components/api-error';
 import { HubFilters } from '@/components/hub-filters';
 import { PageMotion } from '@/components/page-motion';
 import { getHub, LearningApiError } from '@/lib/learning-api';
-import { Badge, Card, CardContent, CardHeader, CardTitle } from '@eduai/ui';
+import { Badge, Card, CardContent, CardHeader, CardTitle, StitchPageHeader } from '@eduai/ui';
 
 interface HubPageProps {
   searchParams: Promise<{
@@ -46,6 +46,7 @@ export default async function HubPage({ searchParams }: HubPageProps) {
     <DashboardShell title="Learning Hub" portal="student">
       <PageMotion>
         <div className="space-y-6">
+          <StitchPageHeader title="Learning Hub" description="Browse boards, subjects, chapters, and lessons." />
           <p className="text-sm text-muted-foreground">
             Browse curriculum by board, class, subject, and chapter.
           </p>

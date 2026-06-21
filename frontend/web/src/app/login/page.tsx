@@ -14,6 +14,7 @@ import {
   CardTitle,
   Input,
   Label,
+  STITCH_IMAGES,
 } from '@eduai/ui';
 type LoginMode = 'email' | 'otp';
 type Portal = 'student' | 'teacher' | 'parent';
@@ -59,7 +60,14 @@ export default function LoginPage() {
 
   return (
     <div className="stitch-auth-page">
-      <div className="stitch-auth-hero hidden lg:flex">
+      <div
+        className="stitch-auth-hero-image hidden lg:flex"
+        style={{
+          backgroundImage: `url(${STITCH_IMAGES.loginClassroom})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
         <div className="relative z-10">
           <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
             <Sparkles className="h-7 w-7" />
@@ -99,7 +107,7 @@ export default function LoginPage() {
             <CardDescription>Student · Teacher · Parent</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex gap-2">
+            <div className="flex rounded-full border bg-muted p-1">
               {PORTALS.map((p) => (
                 <button
                   key={p.id}
@@ -108,10 +116,10 @@ export default function LoginPage() {
                     setPortal(p.id);
                     setEmail(p.email);
                   }}
-                  className={`flex-1 rounded-lg border py-2 text-sm font-medium transition-colors ${
+                  className={`flex-1 rounded-full py-2 text-sm font-medium transition-colors ${
                     portal === p.id
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border text-muted-foreground hover:bg-muted'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   {p.label}

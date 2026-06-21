@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduAI Student Dashboard</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error": "#ffffff",
+                      "tertiary-container": "#a145f4",
+                      "surface-container-lowest": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "primary": "#005bbf",
+                      "inverse-on-surface": "#eff0fa",
+                      "on-surface-variant": "#5F6368",
+                      "on-primary-fixed": "#001a41",
+                      "on-tertiary": "#ffffff",
+                      "on-surface": "#1F1F1F",
+                      "on-background": "#191c23",
+                      "on-tertiary-fixed-variant": "#6900b2",
+                      "surface-container-high": "#e6e8f2",
+                      "primary-container": "#1a73e8",
+                      "on-primary": "#FFFFFF",
+                      "secondary-fixed": "#89fa9b",
+                      "outline": "#DADCE0",
+                      "secondary-fixed-dim": "#6ddd81",
+                      "primary-fixed-dim": "#adc7ff",
+                      "surface": "#F8FAFD",
+                      "on-primary-container": "#041E49",
+                      "outline-variant": "#c1c6d6",
+                      "surface-container-highest": "#e0e2ec",
+                      "on-secondary": "#FFFFFF",
+                      "surface-bright": "#f9f9ff",
+                      "on-error-container": "#93000a",
+                      "surface-tint": "#005bc0",
+                      "surface-container-low": "#f2f3fd",
+                      "on-secondary-fixed": "#002108",
+                      "on-secondary-fixed-variant": "#005320",
+                      "on-tertiary-container": "#0b001a",
+                      "surface-container": "#ecedf7",
+                      "inverse-surface": "#2d3038",
+                      "primary-fixed": "#d8e2ff",
+                      "inverse-primary": "#adc7ff",
+                      "tertiary-fixed": "#f0dbff",
+                      "on-primary-fixed-variant": "#004493",
+                      "surface-variant": "#e0e2ec",
+                      "error": "#D93025",
+                      "tertiary": "#8621d9",
+                      "background": "#F8FAFD",
+                      "secondary-container": "#86f898",
+                      "on-secondary-container": "#00722f",
+                      "surface-dim": "#d8d9e3",
+                      "tertiary-fixed-dim": "#deb7ff",
+                      "secondary": "#006e2c",
+                      "on-tertiary-fixed": "#2c0050"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "xl": "32px",
+                      "sidebar-web": "240px",
+                      "lg": "24px",
+                      "max-width": "1280px",
+                      "sidebar-admin": "260px",
+                      "md": "16px",
+                      "gutter": "16px",
+                      "2xl": "48px",
+                      "sm": "8px"
+              },
+              "fontFamily": {
+                      "body-md": ["Roboto"],
+                      "title-md": ["Plus Jakarta Sans"],
+                      "headline-md": ["Plus Jakarta Sans"],
+                      "body-lg": ["Roboto"],
+                      "label-md": ["Roboto"],
+                      "display-lg": ["Plus Jakarta Sans"],
+                      "display-lg-mobile": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "title-md": ["20px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "headline-md": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "label-md": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                      "display-lg": ["48px", {"lineHeight": "1.1", "fontWeight": "600"}],
+                      "display-lg-mobile": ["36px", {"lineHeight": "1.2", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #F8FAFD;
+            font-family: 'Roboto', sans-serif;
+        }
+        .card-shadow {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- SideNavBar (from JSON logic) -->
+<aside class="w-sidebar-web h-screen fixed left-0 top-0 border-r border-outline bg-surface flex flex-col p-md z-50">
+<div class="flex items-center gap-sm mb-xl px-xs">
+<span class="material-symbols-outlined text-primary text-3xl">school</span>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary leading-none">EduAI</h1>
+<p class="font-body-md text-label-md text-on-surface-variant">Student Portal</p>
+</div>
+</div>
+<nav class="flex-1 space-y-xs">
+<!-- Active Tab: Dashboard -->
+<a class="flex items-center gap-md px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-bold transition-all scale-[0.98]" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">school</span>
+<span class="font-body-md">Courses</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-body-md">AI Tutor</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">hub</span>
+<span class="font-body-md">Hub</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">extension</span>
+<span class="font-body-md">Gamification</span>
+</a>
+</nav>
+<div class="mt-auto pt-md border-t border-outline-variant">
+<button class="w-full bg-primary text-on-primary py-sm rounded-full font-bold hover:opacity-90 transition-opacity">
+                Start Learning
+            </button>
+</div>
+</aside>
+<!-- TopNavBar (from JSON logic) -->
+<header class="fixed top-0 right-0 w-[calc(100%-240px)] h-16 z-40 bg-surface/80 backdrop-blur-md border-b border-outline flex justify-between items-center px-lg">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full focus-within:ring-2 focus-within:ring-primary rounded-full group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full pl-12 pr-4 py-2 focus:ring-0 text-body-md" placeholder="Search lessons, tutors, or topics..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 hover:bg-surface-container-highest rounded-full transition-all text-on-surface-variant relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 hover:bg-surface-container-highest rounded-full transition-all text-on-surface-variant">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="flex items-center gap-sm ml-sm pl-md border-l border-outline-variant">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="A professional high-resolution headshot of a young male student named Arjun. He has a friendly expression and is wearing a modern blue hoodie. The background is a soft, out-of-focus educational setting with light colors that match the corporate light mode aesthetic of the dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBran42G-gsd7f6JqaKwi9BKykT7JE0wlJQh_RkGL6UE-aa2qXLIjwcukTGduPLv-aUPTdV8axaLBs7migitZD4o-6gQ6nwxFvBJTl_t5RY5NDvcWWs3E5ghVbrmhbSBFraa7dvEbnAXKMg_jcvbKfMVlkfv1v3eomfVY2nw2GMTfhK9gmU8O9wZAbyho1QZeftUSzdWFyzVJsZkXFTC8HNEPg8c8ShLpg1_FvH8jW2Z28ipt1PXro3T5dD15CSjIsLnPZt-FZqARw"/>
+<span class="font-title-md text-body-md font-bold hidden xl:block">Arjun Sharma</span>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-sidebar-web pt-16 min-h-screen p-lg">
+<div class="max-w-max-width mx-auto space-y-xl">
+<!-- Welcome Banner -->
+<section class="relative overflow-hidden rounded-xl h-64 flex items-center p-xl card-shadow group">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp3RFSj0d_84XhS65KNybi1vTMHq8Ql_0jZiJXtlDVcVEmEEnKZEKmTavW-sIhT1BrvwUTrT-6HfJeXGJLA1lGETXfofTVm3bzoAWWGGoWLkI8ZcZYG3XzPNFBteMxZYbz6CXp5SBYhbcmCShKFZjexAmitqJSFK2TxccJpcXsc_b-VQ10OGkMgt2DxXcbqAcQicqTS1V6M32frwjSY-oeYfzolAwekW54EeiWnJAGjLepjCSng6j_IwuAu5nqq9ZSkFtPl3ns5i4"/>
+</div>
+<!-- Dark Overlay for Readability -->
+<div class="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent z-10"></div>
+<div class="relative z-20 text-white space-y-xs max-w-md">
+<h2 class="font-headline-md text-display-lg-mobile md:text-headline-md font-bold">Welcome back, Arjun!</h2>
+<p class="font-body-lg text-lg opacity-90">You're on a 5-day streak. Keep it up!</p>
+<div class="pt-md">
+<button class="px-lg py-2 bg-white text-primary rounded-full font-bold shadow-lg hover:scale-105 transition-transform">
+                            Continue Calc III
+                        </button>
+</div>
+</div>
+</section>
+<!-- KPI Stats Row -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
+<!-- XP Card -->
+<div class="bg-white p-lg rounded-xl card-shadow border border-outline/50">
+<div class="flex justify-between items-start mb-sm">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">stars</span>
+</div>
+<span class="bg-secondary-container text-on-secondary-container text-[10px] px-2 py-0.5 rounded-full font-bold">
+                            +15% WEEKLY
+                        </span>
+</div>
+<p class="text-on-surface-variant font-label-md">Total XP</p>
+<h3 class="font-headline-md text-2xl font-bold">1,250</h3>
+</div>
+<!-- Streak Card -->
+<div class="bg-white p-lg rounded-xl card-shadow border border-outline/50">
+<div class="flex justify-between items-start mb-sm">
+<div class="p-2 bg-tertiary-fixed rounded-lg">
+<span class="material-symbols-outlined text-tertiary">local_fire_department</span>
+</div>
+</div>
+<p class="text-on-surface-variant font-label-md">Current Streak</p>
+<h3 class="font-headline-md text-2xl font-bold">5 Days</h3>
+</div>
+<!-- Courses Card -->
+<div class="bg-white p-lg rounded-xl card-shadow border border-outline/50">
+<div class="flex justify-between items-start mb-sm">
+<div class="p-2 bg-secondary-fixed rounded-lg">
+<span class="material-symbols-outlined text-secondary">book</span>
+</div>
+</div>
+<p class="text-on-surface-variant font-label-md">Active Courses</p>
+<h3 class="font-headline-md text-2xl font-bold">4</h3>
+</div>
+<!-- Quizzes Card -->
+<div class="bg-white p-lg rounded-xl card-shadow border border-outline/50">
+<div class="flex justify-between items-start mb-sm">
+<div class="p-2 bg-error-container rounded-lg">
+<span class="material-symbols-outlined text-error">fact_check</span>
+</div>
+</div>
+<p class="text-on-surface-variant font-label-md">Quizzes Completed</p>
+<h3 class="font-headline-md text-2xl font-bold">12</h3>
+</div>
+</section>
+<!-- Course Progress & AI Tutor Bento Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-xl">
+<!-- Progress Section (2/3 width on large) -->
+<div class="lg:col-span-2 space-y-md">
+<div class="flex justify-between items-center px-xs">
+<h4 class="font-title-md text-title-md">Recent Courses</h4>
+<a class="text-primary font-bold text-sm hover:underline" href="#">View all</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<!-- Mathematics -->
+<div class="bg-white p-md rounded-xl card-shadow flex flex-col hover:-translate-y-1 transition-transform border border-outline/30">
+<div class="w-full h-24 rounded-lg bg-primary-fixed mb-md flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-primary opacity-40">functions</span>
+</div>
+<h5 class="font-title-md text-body-lg font-bold mb-xs">Mathematics</h5>
+<p class="text-on-surface-variant text-label-md mb-md">Advanced Calculus</p>
+<div class="mt-auto">
+<div class="flex justify-between text-label-md mb-xs font-bold">
+<span>75% Complete</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 75%"></div>
+</div>
+</div>
+</div>
+<!-- Science -->
+<div class="bg-white p-md rounded-xl card-shadow flex flex-col hover:-translate-y-1 transition-transform border border-outline/30">
+<div class="w-full h-24 rounded-lg bg-secondary-fixed mb-md flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-secondary opacity-40">biotech</span>
+</div>
+<h5 class="font-title-md text-body-lg font-bold mb-xs">Science</h5>
+<p class="text-on-surface-variant text-label-md mb-md">Molecular Biology</p>
+<div class="mt-auto">
+<div class="flex justify-between text-label-md mb-xs font-bold">
+<span>40% Complete</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-2">
+<div class="bg-secondary h-2 rounded-full" style="width: 40%"></div>
+</div>
+</div>
+</div>
+<!-- History -->
+<div class="bg-white p-md rounded-xl card-shadow flex flex-col hover:-translate-y-1 transition-transform border border-outline/30">
+<div class="w-full h-24 rounded-lg bg-tertiary-fixed mb-md flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-tertiary opacity-40">history_edu</span>
+</div>
+<h5 class="font-title-md text-body-lg font-bold mb-xs">History</h5>
+<p class="text-on-surface-variant text-label-md mb-md">Industrial Revolution</p>
+<div class="mt-auto">
+<div class="flex justify-between text-label-md mb-xs font-bold">
+<span>90% Complete</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-2">
+<div class="bg-tertiary h-2 rounded-full" style="width: 90%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Tutor Promo (1/3 width) -->
+<div class="lg:col-span-1">
+<div class="h-full bg-white rounded-xl card-shadow overflow-hidden flex flex-col border border-outline/30 group">
+<div class="h-48 relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWjba98yxEJilCJDFB1Bdvpq4qYvgG5f77masYZM0tzNWGZJMMdnOUMEVkTfHye-832wt4uhuF6bi0TIs4cvwNtT_oSJL3YbjcM9pCgQ2rinSPSIzsKz1lqheK2oMmuRuYHJa4-y_Mhs1FweqkOdbMH4VPqvmwA7ULNr1Vofd5sWWfLLT910tF6GM_jbzTi8YmLd5qHK5d9DNowEqWKcXCL5X0FomxnokY-CV1m_vTO-E3gQqy-08a0PDjspdH7bSC0Xa8DGqCs-4"/>
+<div class="absolute inset-0 bg-tertiary/20 backdrop-blur-[2px]"></div>
+</div>
+<div class="p-lg space-y-md flex-1 flex flex-col">
+<div class="flex items-center gap-sm">
+<div class="bg-tertiary text-white p-1 rounded-lg">
+<span class="material-symbols-outlined text-sm">psychology</span>
+</div>
+<span class="font-bold text-tertiary text-sm tracking-widest uppercase">Premium Feature</span>
+</div>
+<h4 class="font-headline-md text-title-md font-bold leading-tight">Elevate your learning with AI Tutor</h4>
+<p class="text-on-surface-variant text-body-md">Get personalized guidance, 24/7 instant answers, and adaptive study plans tailored just for you.</p>
+<div class="mt-auto pt-md">
+<button class="w-full py-3 bg-[#9334E6] text-white rounded-full font-bold shadow-lg shadow-tertiary/30 hover:shadow-tertiary/50 hover:-translate-y-0.5 transition-all">
+                                    Try Now
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Floating Action for specific context -->
+<!-- Note: FAB is contextually suppressed for "Dashboard" usually, but EduAI might have a "Ask Tutor" floating trigger. 
+                 Suppressing as per mandate "Suppress FAB on Settings, Profile, Details" - Dashboard is usually safe, but let's stick to content cards. -->
+</div>
+</main>
+<script>
+        // Micro-interaction: Subtle hover parallax for KPI cards
+        document.querySelectorAll('.card-shadow').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / 20;
+                const rotateY = (centerX - x) / 20;
+                
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+            });
+        });
+    </script>
+</body></html>

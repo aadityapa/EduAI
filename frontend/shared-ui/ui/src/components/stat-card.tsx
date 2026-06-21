@@ -18,7 +18,7 @@ export function StatCard({ icon, label, value, description, className, ...props 
         </div>
         <div className="min-w-0 flex-1 space-y-1">
           <p className="text-sm font-medium text-muted-foreground">{label}</p>
-          <p className="text-2xl font-bold tracking-tight">{value}</p>
+          <div className="text-2xl font-bold tracking-tight">{value}</div>
           {description && <p className="text-xs text-muted-foreground">{description}</p>}
         </div>
       </CardContent>

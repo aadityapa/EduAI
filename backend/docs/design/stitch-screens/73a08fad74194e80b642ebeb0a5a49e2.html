@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduAI | Log In</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600&amp;family=Roboto:wght@400;500&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "outline": "#DADCE0",
+                  "surface-container-high": "#e6e8f2",
+                  "surface-container": "#ecedf7",
+                  "tertiary-fixed-dim": "#deb7ff",
+                  "surface-tint": "#005bc0",
+                  "on-tertiary-fixed": "#2c0050",
+                  "on-tertiary": "#ffffff",
+                  "on-secondary-container": "#00722f",
+                  "secondary-container": "#86f898",
+                  "outline-variant": "#c1c6d6",
+                  "on-secondary-fixed": "#002108",
+                  "tertiary": "#8621d9",
+                  "on-background": "#191c23",
+                  "on-surface": "#1F1F1F",
+                  "on-secondary": "#FFFFFF",
+                  "on-tertiary-fixed-variant": "#6900b2",
+                  "error-container": "#ffdad6",
+                  "on-primary-container": "#041E49",
+                  "on-secondary-fixed-variant": "#005320",
+                  "surface-container-lowest": "#ffffff",
+                  "on-primary": "#FFFFFF",
+                  "secondary-fixed": "#89fa9b",
+                  "on-error": "#ffffff",
+                  "surface-variant": "#e0e2ec",
+                  "error": "#D93025",
+                  "surface-dim": "#d8d9e3",
+                  "on-primary-fixed-variant": "#004493",
+                  "surface-container-highest": "#e0e2ec",
+                  "on-primary-fixed": "#001a41",
+                  "secondary": "#006e2c",
+                  "on-surface-variant": "#414754",
+                  "inverse-primary": "#adc7ff",
+                  "inverse-on-surface": "#eff0fa",
+                  "tertiary-fixed": "#f0dbff",
+                  "on-error-container": "#93000a",
+                  "on-tertiary-container": "#0b001a",
+                  "background": "#f9f9ff",
+                  "inverse-surface": "#2d3038",
+                  "primary": "#005bbf",
+                  "surface-container-low": "#f2f3fd",
+                  "primary-fixed-dim": "#adc7ff",
+                  "primary-container": "#1a73e8",
+                  "tertiary-container": "#a145f4",
+                  "primary-fixed": "#d8e2ff",
+                  "surface-bright": "#f9f9ff",
+                  "surface": "#F8FAFD",
+                  "secondary-fixed-dim": "#6ddd81"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "sidebar-web": "240px",
+                  "sidebar-admin": "260px",
+                  "xl": "32px",
+                  "lg": "24px",
+                  "md": "16px",
+                  "xs": "4px",
+                  "sm": "8px",
+                  "2xl": "48px",
+                  "max-width": "1280px"
+          },
+          "fontFamily": {
+                  "display-lg-mobile": ["Plus Jakarta Sans"],
+                  "body-md": ["Roboto"],
+                  "display-lg": ["Plus Jakarta Sans"],
+                  "body-lg": ["Roboto"],
+                  "headline-md": ["Plus Jakarta Sans"],
+                  "title-md": ["Plus Jakarta Sans"],
+                  "label-md": ["Roboto"]
+          },
+          "fontSize": {
+                  "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                  "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                  "display-lg": ["48px", {"lineHeight": "1.1", "fontWeight": "600"}],
+                  "body-lg": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                  "headline-md": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                  "title-md": ["20px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                  "label-md": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.04em", "fontWeight": "500"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+    .gradient-hero {
+      background: linear-gradient(135deg, #1A73E8 0%, #9334E6 100%);
+    }
+    .form-card {
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .tab-active {
+      color: #005bbf;
+      border-bottom: 2px solid #005bbf;
+    }
+    .tab-inactive {
+      color: #414754;
+    }
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen selection:bg-primary-fixed selection:text-on-primary-fixed">
+<main class="flex flex-col md:flex-row min-h-screen w-full">
+<!-- Left Section: Hero -->
+<section class="hidden md:flex flex-col justify-center items-start w-full md:w-1/2 gradient-hero p-2xl relative overflow-hidden">
+<!-- Decorative Elements -->
+<div class="absolute top-[-10%] left-[-10%] w-64 h-64 bg-white opacity-5 rounded-full blur-3xl"></div>
+<div class="absolute bottom-[-5%] right-[-5%] w-96 h-96 bg-tertiary-container opacity-10 rounded-full blur-3xl"></div>
+<div class="relative z-10 max-w-lg">
+<h1 class="font-display-lg text-display-lg text-white mb-md leading-tight">
+          Learn smarter with AI
+        </h1>
+<p class="font-body-lg text-body-lg text-white/90 mb-xl leading-relaxed">
+          The all-in-one platform for K-12 education. Empowering students, teachers, and parents with intelligent insights and personalized learning paths.
+        </p>
+<!-- Feature Chips -->
+<div class="flex flex-wrap gap-sm">
+<div class="glass-effect rounded-full px-md py-xs text-white font-label-md text-label-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">auto_awesome</span> Personalized AI
+          </div>
+<div class="glass-effect rounded-full px-md py-xs text-white font-label-md text-label-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">monitoring</span> Real-time Analytics
+          </div>
+<div class="glass-effect rounded-full px-md py-xs text-white font-label-md text-label-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">verified_user</span> FERPA Compliant
+          </div>
+</div>
+</div>
+<!-- Abstract Image Decoration -->
+<div class="mt-2xl w-full h-64 rounded-xl overflow-hidden shadow-2xl">
+<img class="w-full h-full object-cover" data-alt="A high-tech digital classroom visualization with 3D floating interface elements, glowing network lines, and soft blue and purple lighting. The scene looks professional yet accessible for education, featuring a diverse group of stylized characters engaging with holographic educational content in a clean, modern workspace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYdKKJENKim0kvmtL4zPrjq7po9LF5lVH8l_njhY5yKXdlqL-rMRxgHQAJDIbD7FsdaqeJ-St_q5Bq9aVFXO4WFWE_sdyYB-8wRMHEOfoEuZiXTaswDpH79xrmHzEO0-aBu5nRSH66ntqhN2DGdnG7qspF3oJVhoBCkBZN48jsVIPSQH-Kz77-7CjMEWDj1o9TVlh16sGIT0rBjakeCZzIc0tJVsMxxSDkA-PFSeEx-0pbGBn_lJZSx-cdiGnLiO1SIXV0uWl2HOY"/>
+</div>
+</section>
+<!-- Right Section: Login Form -->
+<section class="w-full md:w-1/2 bg-surface flex items-center justify-center p-md sm:p-lg lg:p-2xl min-h-screen">
+<div class="w-full max-w-md">
+<!-- Brand Logo -->
+<div class="mb-xl text-center md:text-left">
+<div class="flex items-center justify-center md:justify-start gap-sm mb-xs">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">school</span>
+</div>
+<span class="font-display-lg text-title-md text-primary tracking-tight">EduAI</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-sm">Welcome back</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Please enter your details to sign in</p>
+</div>
+<!-- Form Card -->
+<div class="bg-surface-container-lowest rounded-[16px] form-card overflow-hidden">
+<!-- Tabs -->
+<div class="flex border-b border-outline">
+<button class="flex-1 py-md font-label-md text-label-md tab-active transition-all duration-200" id="tab-student" onclick="switchTab('student')">
+              Student
+            </button>
+<button class="flex-1 py-md font-label-md text-label-md tab-inactive hover:bg-surface-container-low transition-all duration-200" id="tab-teacher" onclick="switchTab('teacher')">
+              Teacher
+            </button>
+<button class="flex-1 py-md font-label-md text-label-md tab-inactive hover:bg-surface-container-low transition-all duration-200" id="tab-parent" onclick="switchTab('parent')">
+              Parent
+            </button>
+</div>
+<!-- Form Content -->
+<div class="p-lg">
+<form class="space-y-md" id="loginForm">
+<!-- Email -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-xs ml-xs" for="email">Email Address</label>
+<div class="relative">
+<input class="w-full h-12 px-md rounded-xl border border-outline bg-transparent text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all duration-200 placeholder:text-outline-variant font-body-md" id="email" placeholder="name@school.edu" type="email"/>
+<span class="absolute right-md top-1/2 -translate-y-1/2 material-symbols-outlined text-outline-variant">alternate_email</span>
+</div>
+</div>
+<!-- Password -->
+<div>
+<div class="flex justify-between items-center mb-xs ml-xs mr-xs">
+<label class="font-label-md text-label-md text-on-surface-variant" for="password">Password</label>
+<a class="font-label-md text-label-md text-primary hover:underline" href="#">Forgot Password?</a>
+</div>
+<div class="relative">
+<input class="w-full h-12 px-md rounded-xl border border-outline bg-transparent text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all duration-200 placeholder:text-outline-variant font-body-md" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute right-md top-1/2 -translate-y-1/2 material-symbols-outlined text-outline-variant hover:text-on-surface-variant transition-colors" type="button">
+                    visibility_off
+                  </button>
+</div>
+</div>
+<!-- Stay Logged In -->
+<div class="flex items-center gap-sm px-xs">
+<input class="w-4 h-4 rounded border-outline text-primary focus:ring-primary cursor-pointer" id="remember" type="checkbox"/>
+<label class="font-body-md text-body-md text-on-surface-variant cursor-pointer" for="remember">Keep me logged in</label>
+</div>
+<!-- Primary CTA -->
+<button class="w-full h-12 bg-primary-container text-on-primary-container font-label-md text-label-md rounded-full hover:opacity-90 transition-opacity shadow-sm flex items-center justify-center gap-sm mt-lg" type="submit">
+                Log In
+                <span class="material-symbols-outlined text-[18px]">login</span>
+</button>
+</form>
+<!-- Divider -->
+<div class="relative my-xl">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-outline"></div>
+</div>
+<div class="relative flex justify-center">
+<span class="bg-surface-container-lowest px-md font-label-md text-label-md text-on-surface-variant">Or continue with</span>
+</div>
+</div>
+<!-- Social Provider -->
+<button class="w-full h-12 border border-outline rounded-xl flex items-center justify-center gap-md font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-colors duration-200">
+<svg height="20" viewbox="0 0 24 24" width="20">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.1-1.94 3.3-4.82 3.3-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 12-4.53z" fill="#EA4335"></path>
+</svg>
+              Sign in with Google
+            </button>
+</div>
+</div>
+<!-- Footer Link -->
+<p class="text-center mt-xl font-body-md text-body-md text-on-surface-variant">
+          Don't have an account? 
+          <a class="text-primary font-medium hover:underline" href="#">Sign up</a>
+</p>
+<!-- Small Footer Links -->
+<div class="mt-2xl flex justify-center gap-lg border-t border-outline-variant/30 pt-md">
+<a class="font-label-md text-label-md text-on-surface-variant/70 hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="font-label-md text-label-md text-on-surface-variant/70 hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="font-label-md text-label-md text-on-surface-variant/70 hover:text-primary transition-colors" href="#">Help Center</a>
+</div>
+</div>
+</section>
+</main>
+<script>
+    function switchTab(role) {
+      const tabs = ['student', 'teacher', 'parent'];
+      tabs.forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        if (t === role) {
+          el.classList.add('tab-active');
+          el.classList.remove('tab-inactive');
+        } else {
+          el.classList.remove('tab-active');
+          el.classList.add('tab-inactive');
+        }
+      });
+      
+      // Update placeholder based on role
+      const emailInput = document.getElementById('email');
+      if (role === 'student') {
+        emailInput.placeholder = 'student.id@school.edu';
+      } else if (role === 'teacher') {
+        emailInput.placeholder = 'teacher.name@school.edu';
+      } else {
+        emailInput.placeholder = 'parent.email@example.com';
+      }
+    }
+
+    // Micro-interactions
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => {
+      input.addEventListener('focus', () => {
+        input.parentElement.classList.add('scale-[1.01]');
+      });
+      input.addEventListener('blur', () => {
+        input.parentElement.classList.remove('scale-[1.01]');
+      });
+    });
+
+    // Form submission simulation
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button[type="submit"]');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Signing in...';
+      btn.disabled = true;
+      
+      setTimeout(() => {
+        btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Success!';
+        btn.classList.replace('bg-primary-container', 'bg-secondary-container');
+        btn.classList.replace('text-on-primary-container', 'text-on-secondary-container');
+        
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.classList.replace('bg-secondary-container', 'bg-primary-container');
+          btn.classList.replace('text-on-secondary-container', 'text-on-primary-container');
+          btn.disabled = false;
+        }, 1500);
+      }, 1500);
+    });
+  </script>
+</body></html>

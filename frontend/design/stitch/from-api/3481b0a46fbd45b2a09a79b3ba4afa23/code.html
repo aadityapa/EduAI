@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduSphere AI | Graphing Lab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&amp;family=Google+Sans+Flex:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#a145f4",
+                    "surface-container-highest": "#e0e2ec",
+                    "inverse-on-surface": "#eff0fa",
+                    "surface-tint": "#005bc0",
+                    "secondary-fixed-dim": "#6ddd81",
+                    "on-surface-variant": "#5F6368",
+                    "inverse-surface": "#2d3038",
+                    "tertiary-fixed": "#f0dbff",
+                    "on-tertiary-fixed-variant": "#6900b2",
+                    "surface": "#F8FAFD",
+                    "surface-dim": "#d8d9e3",
+                    "on-background": "#191c23",
+                    "surface-container-lowest": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#EEF2F7",
+                    "primary-fixed": "#d8e2ff",
+                    "on-surface": "#191c23",
+                    "on-secondary-fixed-variant": "#005320",
+                    "on-secondary-fixed": "#002108",
+                    "on-secondary-container": "#00722f",
+                    "on-primary-container": "#ffffff",
+                    "background": "#F8FAFD",
+                    "on-tertiary-fixed": "#2c0050",
+                    "surface-variant": "#e0e2ec",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-container": "#0b001a",
+                    "inverse-primary": "#adc7ff",
+                    "primary": "#005bbf",
+                    "surface-container-low": "#f2f3fd",
+                    "on-primary-fixed": "#001a41",
+                    "outline-variant": "#c1c6d6",
+                    "surface-container": "#FFFFFF",
+                    "surface-bright": "#f9f9ff",
+                    "secondary-fixed": "#89fa9b",
+                    "on-error": "#ffffff",
+                    "primary-container": "#D3E3FD",
+                    "secondary": "#006e2c",
+                    "on-primary-fixed-variant": "#004493",
+                    "on-secondary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed-dim": "#deb7ff",
+                    "secondary-container": "#86f898",
+                    "on-tertiary": "#ffffff",
+                    "outline": "#DADCE0",
+                    "tertiary": "#8621d9",
+                    "error": "#D93025",
+                    "primary-fixed-dim": "#adc7ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "2xl": "48px",
+                    "sidebar-admin": "260px",
+                    "gutter": "16px",
+                    "xs": "4px",
+                    "xl": "32px",
+                    "max-width": "1280px",
+                    "md": "16px",
+                    "sidebar-web": "240px",
+                    "sm": "8px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "body-md": ["Roboto"],
+                    "display-lg": ["Google Sans Flex"],
+                    "headline-md": ["Google Sans Flex"],
+                    "body-lg": ["Roboto"],
+                    "title-md": ["Google Sans Flex"],
+                    "label-md": ["Roboto"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "fontWeight": "600"}],
+                    "headline-md": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "title-md": ["20px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.04em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Roboto', sans-serif; background-color: #F8FAFD; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .graph-canvas {
+            background-image: radial-gradient(#DADCE0 0.5px, transparent 0.5px);
+            background-size: 20px 20px;
+        }
+        .ai-bubble-float {
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #DADCE0; border-radius: 10px; }
+    </style>
+</head>
+<body class="overflow-hidden">
+<div class="flex h-screen w-full">
+<!-- SideNavBar (JSON Derived) -->
+<aside class="w-sidebar-web h-screen sticky left-0 top-0 bg-surface-container flex flex-col p-md gap-sm shadow-sm z-50">
+<div class="flex items-center gap-md mb-lg">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">school</span>
+</div>
+<div>
+<h1 class="font-title-md text-title-md font-black text-primary">EduSphere AI</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Academic Excellence</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<div class="flex items-center gap-md p-md hover:bg-surface-container-highest transition-all cursor-pointer rounded-lg text-on-surface-variant font-medium group">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</div>
+<div class="flex items-center gap-md p-md hover:bg-surface-container-highest transition-all cursor-pointer rounded-lg text-on-surface-variant font-medium group">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-label-md text-label-md">Learning Modules</span>
+</div>
+<!-- Active State Logic: Graphing Lab is active -->
+<div class="flex items-center gap-md p-md bg-primary-container text-on-primary-container font-bold rounded-lg cursor-pointer scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">query_stats</span>
+<span class="font-label-md text-label-md">Graphing Lab</span>
+</div>
+<div class="flex items-center gap-md p-md hover:bg-surface-container-highest transition-all cursor-pointer rounded-lg text-on-surface-variant font-medium group">
+<span class="material-symbols-outlined">quiz</span>
+<span class="font-label-md text-label-md">Quiz Center</span>
+</div>
+<div class="flex items-center gap-md p-md hover:bg-surface-container-highest transition-all cursor-pointer rounded-lg text-on-surface-variant font-medium group">
+<span class="material-symbols-outlined">trending_up</span>
+<span class="font-label-md text-label-md">Student Progress</span>
+</div>
+<div class="flex items-center gap-md p-md hover:bg-surface-container-highest transition-all cursor-pointer rounded-lg text-on-surface-variant font-medium group">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</div>
+</nav>
+<div class="mt-auto space-y-1 border-t border-outline pt-md">
+<button class="w-full bg-primary text-white py-3 rounded-full font-label-md flex items-center justify-center gap-2 mb-md shadow-md hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-sm">smart_toy</span>
+                AI Tutor Assistant
+            </button>
+<div class="flex items-center gap-md p-md hover:bg-surface-container-highest transition-all cursor-pointer rounded-lg text-on-surface-variant font-medium group">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Help Center</span>
+</div>
+<div class="flex items-center gap-md p-md hover:bg-surface-container-highest transition-all cursor-pointer rounded-lg text-on-surface-variant font-medium group">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col relative bg-surface overflow-hidden">
+<!-- TopNavBar (JSON Derived) -->
+<header class="sticky top-0 z-40 flex items-center justify-between px-lg h-16 bg-surface/90 backdrop-blur-md border-b border-outline">
+<div class="flex items-center gap-md">
+<span class="font-headline-md text-headline-md font-bold text-primary">Graphing Lab: Parabola Explorer</span>
+</div>
+<div class="flex-1 max-w-md mx-xl">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-high border-none rounded-xl focus:ring-2 focus:ring-primary text-body-md" placeholder="Search functions or experiments..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-lg">
+<button class="cursor-pointer hover:bg-surface-container-high transition-colors p-2 rounded-full active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="cursor-pointer hover:bg-surface-container-high transition-colors p-2 rounded-full active:opacity-80">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="flex items-center gap-sm cursor-pointer hover:bg-surface-container-high p-1 px-2 rounded-full transition-colors active:opacity-80">
+<span class="material-symbols-outlined text-3xl">account_circle</span>
+<span class="font-body-md text-body-md font-medium">Alex Chen</span>
+</div>
+</div>
+</header>
+<!-- Lab Content Area -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Main Interactive Canvas -->
+<div class="flex-1 relative graph-canvas p-xl">
+<!-- Mathematical Tool Overlay -->
+<div class="absolute top-8 left-8 z-10 flex gap-sm">
+<button class="bg-surface-container shadow-sm p-3 rounded-xl border border-outline hover:bg-surface-container-high transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">add_circle</span>
+<span class="font-label-md text-label-md">New Function</span>
+</button>
+<button class="bg-surface-container shadow-sm p-3 rounded-xl border border-outline hover:bg-surface-container-high transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">videocam</span>
+<span class="font-label-md text-label-md">Record Trial</span>
+</button>
+</div>
+<!-- Simulation/Graphing Engine -->
+<div class="w-full h-full bg-surface-container-lowest rounded-2xl shadow-sm border border-outline overflow-hidden relative group">
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10">
+<span class="material-symbols-outlined text-[300px]">grid_4x4</span>
+</div>
+<!-- SVG Interactive Simulation -->
+<svg class="w-full h-full cursor-crosshair" id="parabola-svg" viewbox="0 0 800 600">
+<defs>
+<pattern height="40" id="grid" patternunits="userSpaceOnUse" width="40">
+<path d="M 40 0 L 0 0 0 40" fill="none" stroke="#E0E2EC" stroke-width="1"></path>
+</pattern>
+</defs>
+<rect fill="url(#grid)" height="100%" width="100%"></rect>
+<!-- Axes -->
+<line stroke="#5F6368" stroke-width="2" x1="0" x2="800" y1="300" y2="300"></line>
+<line stroke="#5F6368" stroke-width="2" x1="400" x2="400" y1="0" y2="600"></line>
+<!-- Parabola Curve -->
+<path d="" fill="none" id="curve" stroke="#005bbf" stroke-linecap="round" stroke-width="4"></path>
+<!-- Vertex Point -->
+<circle class="cursor-pointer shadow-lg" cx="400" cy="300" fill="#006e2c" id="vertex" r="8"></circle>
+<!-- Labels -->
+<text fill="#5F6368" font-family="Roboto" font-size="12" x="780" y="290">x</text>
+<text fill="#5F6368" font-family="Roboto" font-size="12" x="410" y="20">y</text>
+</svg>
+<!-- Formula Overlay Card -->
+<div class="absolute bottom-8 left-8 bg-white/80 backdrop-blur-md p-md rounded-xl border border-primary/20 shadow-lg">
+<div class="font-title-md text-title-md font-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined">functions</span>
+                            y = <span id="val-a">1.0</span>(x - <span id="val-h">0.0</span>)² + <span id="val-k">0.0</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant mt-1">Vertex: (<span id="coord-h">0</span>, <span id="coord-k">0</span>)</p>
+</div>
+<!-- AI Assistant Bubble (Tertiary) -->
+<div class="absolute bottom-8 right-8 w-80 ai-bubble-float">
+<div class="bg-tertiary-container text-on-tertiary-container p-lg rounded-2xl rounded-br-none shadow-xl border border-tertiary/20 relative">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-on-tertiary-container">auto_awesome</span>
+<span class="font-label-md text-label-md font-bold">AI LAB ASSISTANT</span>
+</div>
+<p class="font-body-md text-body-md">"Notice how the parabola widens as <span class="font-bold italic">a</span> approaches zero. What do you think happens to the focus when the curve is inverted?"</p>
+<div class="mt-4 flex gap-2">
+<button class="bg-on-tertiary-container text-tertiary-container px-3 py-1.5 rounded-full font-label-md font-bold text-[10px] uppercase">Analyze Trend</button>
+<button class="bg-tertiary/20 text-on-tertiary-container px-3 py-1.5 rounded-full font-label-md font-bold text-[10px] uppercase">Show Hypotheses</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Experiment Controls Side Panel -->
+<aside class="w-80 bg-surface-container border-l border-outline p-lg flex flex-col gap-lg overflow-y-auto">
+<section>
+<h3 class="font-title-md text-title-md text-on-surface font-bold mb-md">Experiment Variables</h3>
+<div class="space-y-6">
+<!-- Slider A -->
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-label-md text-on-surface-variant font-bold">Stretch Factor (a)</label>
+<span class="font-mono bg-surface-container-high px-2 py-0.5 rounded text-primary font-bold" id="display-a">1.0</span>
+</div>
+<input class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" id="input-a" max="5" min="-5" step="0.1" type="range" value="1"/>
+</div>
+<!-- Slider H -->
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-label-md text-on-surface-variant font-bold">Horizontal Shift (h)</label>
+<span class="font-mono bg-surface-container-high px-2 py-0.5 rounded text-secondary font-bold" id="display-h">0.0</span>
+</div>
+<input class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-secondary" id="input-h" max="10" min="-10" step="0.5" type="range" value="0"/>
+</div>
+<!-- Slider K -->
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-label-md text-on-surface-variant font-bold">Vertical Shift (k)</label>
+<span class="font-mono bg-surface-container-high px-2 py-0.5 rounded text-tertiary font-bold" id="display-k">0.0</span>
+</div>
+<input class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-tertiary" id="input-k" max="10" min="-10" step="0.5" type="range" value="0"/>
+</div>
+</div>
+</section>
+<section class="flex-1">
+<h3 class="font-title-md text-title-md text-on-surface font-bold mb-md">Data Table</h3>
+<div class="bg-surface-container-low rounded-xl border border-outline overflow-hidden">
+<table class="w-full text-left font-body-md text-body-md">
+<thead class="bg-surface-container-high">
+<tr>
+<th class="px-3 py-2 font-bold text-on-surface-variant border-b border-outline">Trial</th>
+<th class="px-3 py-2 font-bold text-on-surface-variant border-b border-outline">X Value</th>
+<th class="px-3 py-2 font-bold text-on-surface-variant border-b border-outline">Y Value</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline/50" id="data-body">
+<!-- Dynamic rows -->
+<tr><td class="px-3 py-2">1</td><td class="px-3 py-2 font-mono">-2.0</td><td class="px-3 py-2 font-mono text-primary font-bold">4.0</td></tr>
+<tr><td class="px-3 py-2">2</td><td class="px-3 py-2 font-mono">-1.0</td><td class="px-3 py-2 font-mono text-primary font-bold">1.0</td></tr>
+<tr><td class="px-3 py-2">3</td><td class="px-3 py-2 font-mono">0.0</td><td class="px-3 py-2 font-mono text-primary font-bold">0.0</td></tr>
+<tr><td class="px-3 py-2">4</td><td class="px-3 py-2 font-mono">1.0</td><td class="px-3 py-2 font-mono text-primary font-bold">1.0</td></tr>
+<tr><td class="px-3 py-2">5</td><td class="px-3 py-2 font-mono">2.0</td><td class="px-3 py-2 font-mono text-primary font-bold">4.0</td></tr>
+</tbody>
+</table>
+</div>
+<button class="w-full mt-4 flex items-center justify-center gap-2 text-primary font-label-md py-2 border border-primary/30 rounded-lg hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-sm">download</span>
+                        Export Dataset (.csv)
+                    </button>
+</section>
+<div class="bg-primary/5 rounded-xl p-md border border-primary/10">
+<h4 class="font-label-md text-label-md font-bold text-primary mb-1">Experiment Status</h4>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary-fixed-dim animate-pulse"></div>
+<span class="font-body-md text-body-md text-on-surface-variant">Live Sync Active</span>
+</div>
+</div>
+</aside>
+</div>
+</main>
+</div>
+<script>
+    const inputA = document.getElementById('input-a');
+    const inputH = document.getElementById('input-h');
+    const inputK = document.getElementById('input-k');
+    
+    const displayA = document.getElementById('display-a');
+    const displayH = document.getElementById('display-h');
+    const displayK = document.getElementById('display-k');
+    
+    const valA = document.getElementById('val-a');
+    const valH = document.getElementById('val-h');
+    const valK = document.getElementById('val-k');
+    
+    const coordH = document.getElementById('coord-h');
+    const coordK = document.getElementById('coord-k');
+    
+    const path = document.getElementById('curve');
+    const vertex = document.getElementById('vertex');
+    const dataBody = document.getElementById('data-body');
+
+    function updateGraph() {
+        const a = parseFloat(inputA.value);
+        const h = parseFloat(inputH.value);
+        const k = parseFloat(inputK.value);
+
+        // Update Text
+        displayA.textContent = a.toFixed(1);
+        displayH.textContent = h.toFixed(1);
+        displayK.textContent = k.toFixed(1);
+        valA.textContent = a.toFixed(1);
+        valH.textContent = h.toFixed(1);
+        valK.textContent = k.toFixed(1);
+        coordH.textContent = h.toFixed(1);
+        coordK.textContent = k.toFixed(1);
+
+        // SVG Mapping
+        // Center of SVG is 400, 300. 1 unit = 20px
+        const originX = 400;
+        const originY = 300;
+        const scale = 20;
+
+        // Vertex Position
+        const vx = originX + (h * scale);
+        const vy = originY - (k * scale);
+        vertex.setAttribute('cx', vx);
+        vertex.setAttribute('cy', vy);
+
+        // Generate Path Points
+        let d = `M `;
+        const step = 0.1;
+        const xRange = 20; // -10 to +10 relative to h
+        
+        const points = [];
+        for (let xRel = -xRange; xRel <= xRange; xRel += step) {
+            const x = h + xRel;
+            const y = a * Math.pow(x - h, 2) + k;
+            
+            const px = originX + (x * scale);
+            const py = originY - (y * scale);
+            
+            if (py >= 0 && py <= 600 && px >= 0 && px <= 800) {
+                if (d === 'M ') {
+                    d += `${px},${py}`;
+                } else {
+                    d += ` L ${px},${py}`;
+                }
+                
+                // Track small set of points for table
+                if (Math.abs(x % 1) < 0.05 && points.length < 5) {
+                    points.push({x, y});
+                }
+            }
+        }
+        path.setAttribute('d', d);
+
+        // Update Table
+        let tableHtml = '';
+        const displayPoints = [-2, -1, 0, 1, 2];
+        displayPoints.forEach((xOffset, index) => {
+            const x = h + xOffset;
+            const y = a * Math.pow(x - h, 2) + k;
+            tableHtml += `
+                <tr>
+                    <td class="px-3 py-2 text-on-surface-variant">${index + 1}</td>
+                    <td class="px-3 py-2 font-mono">${x.toFixed(1)}</td>
+                    <td class="px-3 py-2 font-mono text-primary font-bold">${y.toFixed(1)}</td>
+                </tr>
+            `;
+        });
+        dataBody.innerHTML = tableHtml;
+    }
+
+    [inputA, inputH, inputK].forEach(input => {
+        input.addEventListener('input', updateGraph);
+    });
+
+    // Initial render
+    updateGraph();
+
+    // Micro-interactions
+    document.querySelectorAll('.group').forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            const icon = item.querySelector('.material-symbols-outlined');
+            if (icon) icon.style.fontVariationSettings = "'FILL' 1";
+        });
+        item.addEventListener('mouseleave', () => {
+            if (!item.classList.contains('bg-primary-container')) {
+                const icon = item.querySelector('.material-symbols-outlined');
+                if (icon) icon.style.fontVariationSettings = "'FILL' 0";
+            }
+        });
+    });
+</script>
+</body></html>

@@ -60,7 +60,7 @@ export function KpiCard({
         </div>
         <div className="mt-4 space-y-1">
           <p className="text-sm font-medium text-muted-foreground">{label}</p>
-          <p className="text-2xl font-bold tracking-tight">{value}</p>
+          <div className="text-2xl font-bold tracking-tight">{value}</div>
           {description && <p className="text-xs text-muted-foreground">{description}</p>}
           {trend?.label && <p className="text-xs text-muted-foreground">{trend.label}</p>}
         </div>

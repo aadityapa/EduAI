@@ -2,54 +2,57 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useAuth } from '../../src/auth/AuthContext';
 import { fetchParentChildren } from '../../src/api/services';
-import { useTheme } from '../../src/theme/ThemeProvider';
+import { MetricChip, MobileHeader, StitchCard } from '../../src/components/stitch';
+import { Screen, tokens } from '../../src/components/ui';
 
 export default function ParentDashboard() {
-  const { tokens } = useAuth();
-  const theme = useTheme();
+  const { tokens: authTokens } = useAuth();
   const [children, setChildren] = useState<unknown[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!tokens) return;
-    fetchParentChildren(tokens.accessToken)
+    if (!authTokens) return;
+    fetchParentChildren(authTokens.accessToken)
       .then(setChildren)
       .finally(() => setLoading(false));
-  }, [tokens]);
+  }, [authTokens]);
 
   if (loading) {
     return (
-      <View style={styles.center}>
-        <ActivityIndicator color={theme.primaryColor} />
-      </View>
+      <Screen style={styles.center}>
+        <ActivityIndicator color={tokens.colors.primaryBright} />
+      </Screen>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={[styles.title, { color: theme.primaryColor }]}>Parent Dashboard</Text>
-      <Text style={styles.subtitle}>{children.length} linked children</Text>
-      {children.map((child, i) => {
-        const c = child as { student?: { firstName?: string; lastName?: string } };
-        return (
-          <View key={i} style={styles.card}>
-            <Text style={styles.name}>
-              {c.student?.firstName} {c.student?.lastName}
-            </Text>
-            <Text style={styles.meta}>View attendance, fees, and reports</Text>
-          </View>
-        );
-      })}
-    </ScrollView>
+    <Screen>
+      <MobileHeader title="Parent Portal" subtitle={`${children.length} linked children`} />
+      <ScrollView contentContainerStyle={styles.list}>
+        <View style={styles.metricRow}>
+          <MetricChip icon="✓" value="95%" label="Attendance" accent={tokens.colors.primaryBright} />
+          <MetricChip icon="₹" value="Paid" label="Fees" accent={tokens.colors.tertiary} />
+        </View>
+        {children.map((child, i) => {
+          const c = child as { student?: { firstName?: string; lastName?: string } };
+          return (
+            <StitchCard key={i}>
+              <Text style={styles.name}>
+                {c.student?.firstName} {c.student?.lastName}
+              </Text>
+              <Text style={styles.meta}>Class linked · View attendance, fees, and reports</Text>
+            </StitchCard>
+          );
+        })}
+      </ScrollView>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#f8fafc' },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  title: { fontSize: 22, fontWeight: '700' },
-  subtitle: { color: '#64748b', marginBottom: 16 },
-  card: { backgroundColor: '#fff', borderRadius: 10, padding: 16, marginBottom: 12 },
-  name: { fontWeight: '600', fontSize: 16 },
-  meta: { color: '#94a3b8', marginTop: 4, fontSize: 13 },
+  list: { padding: tokens.spacing.md, paddingBottom: 100 },
+  center: { justifyContent: 'center', alignItems: 'center' },
+  metricRow: { flexDirection: 'row', gap: tokens.spacing.sm, marginBottom: tokens.spacing.md },
+  name: { fontWeight: '700', fontSize: tokens.fontSize.md, color: tokens.colors.text },
+  meta: { color: tokens.colors.textMuted, marginTop: 4, fontSize: tokens.fontSize.sm },
 });

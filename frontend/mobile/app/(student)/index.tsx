@@ -4,7 +4,16 @@ import { router } from 'expo-router';
 import { useAuth } from '../../src/auth/AuthContext';
 import { fetchGamification, fetchHub } from '../../src/api/services';
 import { cacheGet, cacheSet } from '../../src/auth/storage';
-import { Card, KpiCard, PortalBadge, PrimaryButton, Screen, tokens } from '../../src/components/ui';
+import { Screen, tokens } from '../../src/components/ui';
+import {
+  AiHero,
+  BentoTile,
+  CourseCarousel,
+  mapEnrollmentsToCourses,
+  MetricChip,
+  MobileHeader,
+  SectionHeader,
+} from '../../src/components/stitch';
 import { registerForPushNotifications } from '../../src/notifications/setup';
 
 export default function StudentHome() {
@@ -41,47 +50,69 @@ export default function StudentHome() {
   if (loading) {
     return (
       <Screen style={styles.center}>
-        <ActivityIndicator color={tokens.colors.primary} size="large" />
+        <ActivityIndicator color={tokens.colors.primaryBright} size="large" />
       </Screen>
     );
   }
 
   const streak = (xp as { currentStreak?: number })?.currentStreak ?? 0;
-  const level = (xp as { currentLevel?: number })?.currentLevel ?? 1;
   const totalXp = (xp as { totalXp?: number })?.totalXp ?? 0;
-  const courses = (hub as { enrollments?: unknown[] })?.enrollments?.length ?? 0;
+  const enrollments = (hub as { enrollments?: unknown[] })?.enrollments ?? [];
+  const courses = mapEnrollmentsToCourses(enrollments);
+  const firstName = auth?.user.firstName ?? 'Student';
 
   return (
     <Screen>
+      <MobileHeader
+        title="EduAI Portal"
+        subtitle={`Good morning, ${firstName}!`}
+        onSettings={() => router.push('/(student)/profile')}
+      />
       <ScrollView contentContainerStyle={styles.scroll}>
         {offline && (
           <View style={styles.offlineBanner}>
-            <Text style={styles.offlineText}>Offline — cached data</Text>
+            <Text style={styles.offlineText}>Offline — showing cached data</Text>
           </View>
         )}
-        <PortalBadge label="Student Portal" color={tokens.colors.primary} />
-        <Text style={styles.greeting}>Hello, {auth?.user.firstName}! 👋</Text>
 
-        <View style={styles.kpiRow}>
-          <KpiCard label="Streak" value={`${streak}d`} accent={tokens.colors.warning} />
-          <KpiCard label="Level" value={level} accent={tokens.colors.primary} />
-        </View>
-        <View style={styles.kpiRow}>
-          <KpiCard label="XP" value={totalXp} accent={tokens.colors.secondary} />
-          <KpiCard label="Courses" value={courses} accent={tokens.colors.success} />
+        <View style={styles.metricRow}>
+          <MetricChip icon="★" value={totalXp.toLocaleString()} label="Total XP" accent={tokens.colors.tertiary} />
+          <MetricChip icon="🔥" value={`${streak} Day`} label="Streak" accent={tokens.colors.error} />
         </View>
 
-        <Card>
-          <Text style={styles.cardTitle}>Today&apos;s focus</Text>
-          <Text style={styles.cardBody}>Complete 1 lesson and 1 quiz to keep your streak.</Text>
-        </Card>
+        <AiHero onPress={() => router.push('/(student)/tutor')} />
 
-        <PrimaryButton label="Continue Learning" onPress={() => router.push('/(student)/courses')} />
-        <PrimaryButton
-          label="Ask AI Tutor"
-          variant="outline"
-          onPress={() => router.push('/(student)/tutor')}
+        <SectionHeader
+          title="Active Courses"
+          actionLabel="View All"
+          onAction={() => router.push('/(student)/courses')}
         />
+        <CourseCarousel courses={courses} />
+
+        <View style={styles.bentoSection}>
+          <BentoTile
+            wide
+            title="Upcoming Exam"
+            subtitle="Check planner for your schedule"
+            icon="📅"
+            style={styles.examBento}
+            onPress={() => router.push('/(student)/planner')}
+          />
+          <View style={styles.bentoRow}>
+            <BentoTile
+              title="Social Hub"
+              subtitle="Class updates"
+              icon="💬"
+              onPress={() => router.push('/(student)/hub')}
+            />
+            <BentoTile
+              title="Rewards"
+              subtitle="View XP & badges"
+              icon="🏆"
+              onPress={() => router.push('/(student)/gamification')}
+            />
+          </View>
+        </View>
       </ScrollView>
     </Screen>
   );
@@ -89,7 +120,7 @@ export default function StudentHome() {
 
 const styles = StyleSheet.create({
   center: { justifyContent: 'center', alignItems: 'center' },
-  scroll: { padding: tokens.spacing.md },
+  scroll: { padding: tokens.spacing.md, paddingBottom: 100 },
   offlineBanner: {
     backgroundColor: '#FEF3C7',
     padding: 8,
@@ -97,8 +128,10 @@ const styles = StyleSheet.create({
     marginBottom: tokens.spacing.sm,
   },
   offlineText: { color: '#92400E', fontSize: tokens.fontSize.xs, textAlign: 'center' },
-  greeting: { fontSize: tokens.fontSize.xl, fontWeight: '700', color: tokens.colors.text, marginBottom: tokens.spacing.md },
-  kpiRow: { flexDirection: 'row', gap: tokens.spacing.sm, marginBottom: tokens.spacing.sm },
-  cardTitle: { fontSize: tokens.fontSize.md, fontWeight: '600', marginBottom: 6 },
-  cardBody: { color: tokens.colors.textMuted, lineHeight: 20 },
+  metricRow: { flexDirection: 'row', gap: tokens.spacing.sm, marginBottom: tokens.spacing.md },
+  bentoSection: { marginTop: tokens.spacing.lg },
+  bentoRow: { flexDirection: 'row', gap: tokens.spacing.sm },
+  examBento: {
+    backgroundColor: tokens.colors.primaryBright,
+  },
 });

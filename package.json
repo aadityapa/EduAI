@@ -24,13 +24,17 @@
     "dev:backend": "turbo run dev --parallel --filter=@eduai/identity-service --filter=@eduai/learning-service --filter=@eduai/ai-service --filter=@eduai/erp-service --filter=@eduai/billing-service",
     "dev:frontend": "turbo run dev --parallel --filter=@eduai/web --filter=@eduai/admin",
     "dev:mobile": "pnpm --filter @eduai/mobile dev",
+    "dev:mobile:lan": "powershell -ExecutionPolicy Bypass -File backend/testing/scripts/dev-mobile-lan.ps1",
     "clean:next": "node -e \"const fs=require('fs');['frontend/web','frontend/admin'].forEach(p=>{try{fs.rmSync(p+'/.next',{recursive:true,force:true})}catch{}});console.log('Cleaned .next caches')\"",
     "mvp:dev": "pnpm clean:next && turbo run dev --parallel --filter=@eduai/identity-service --filter=@eduai/learning-service --filter=@eduai/ai-service --filter=@eduai/erp-service --filter=@eduai/billing-service --filter=@eduai/web --filter=@eduai/admin",
     "dev:lan": "powershell -ExecutionPolicy Bypass -File backend/testing/scripts/dev-lan.ps1",
     "stitch:sync": "node backend/testing/scripts/stitch-sync.mjs all",
+    "stitch:import": "powershell -ExecutionPolicy Bypass -File frontend/design/stitch/import-local.ps1",
+    "stitch:mobile:generate": "node frontend/design/stitch/generate-mobile-screens.mjs",
     "stitch:generate": "node backend/testing/scripts/stitch-sync.mjs generate",
     "stitch:generate:next": "node backend/testing/scripts/stitch-sync.mjs generate:next",
     "stitch:fetch": "node backend/testing/scripts/stitch-sync.mjs fetch",
+    "stitch:consolidate": "node frontend/design/stitch/consolidate-api-export.mjs",
     "stitch:backfill": "node backend/testing/scripts/stitch-sync.mjs backfill"
   },
   "devDependencies": {

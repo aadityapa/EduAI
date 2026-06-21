@@ -1,21 +1,55 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from '../../src/i18n/useTranslation';
+import { StitchCard, StitchScreenHeader } from '../../src/components/stitch';
+import { Screen, tokens } from '../../src/components/ui';
+
+const MOCK_QUIZZES = [
+  { id: '1', title: 'Algebra Quiz 3', due: 'Due tomorrow', status: 'New' as const, score: null },
+  { id: '2', title: 'Science MCQ', due: 'Completed', status: 'Done' as const, score: '92%' },
+];
 
 export default function QuizzesScreen() {
   const t = useTranslation();
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{t('quiz.title', 'Quizzes')}</Text>
-      <Text style={styles.body}>
-        Take quizzes from your enrolled courses. Connect to learning-service quiz endpoints
-        for live attempts.
-      </Text>
-    </View>
+    <Screen>
+      <StitchScreenHeader title={t('quiz.title', 'Quizzes')} />
+      <ScrollView contentContainerStyle={styles.list}>
+        {MOCK_QUIZZES.map((q) => (
+          <StitchCard key={q.id}>
+            <View style={styles.row}>
+              <View style={styles.flex}>
+                <Text style={styles.title}>{q.title}</Text>
+                <Text style={styles.meta}>{q.due}</Text>
+              </View>
+              {q.status === 'New' ? (
+                <View style={styles.badgeNew}>
+                  <Text style={styles.badgeNewText}>New</Text>
+                </View>
+              ) : (
+                <Text style={styles.score}>{q.score}</Text>
+              )}
+            </View>
+          </StitchCard>
+        ))}
+        <Text style={styles.hint}>Live quiz attempts sync with learning-service endpoints.</Text>
+      </ScrollView>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#f8fafc' },
-  title: { fontSize: 20, fontWeight: '600', marginBottom: 8 },
-  body: { color: '#64748b', lineHeight: 22 },
+  list: { padding: tokens.spacing.md, paddingBottom: 100 },
+  row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  flex: { flex: 1 },
+  title: { fontSize: tokens.fontSize.md, fontWeight: '700', color: tokens.colors.text },
+  meta: { fontSize: tokens.fontSize.xs, color: tokens.colors.textMuted, marginTop: 4 },
+  badgeNew: {
+    backgroundColor: tokens.colors.primaryContainer,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: tokens.radius.full,
+  },
+  badgeNewText: { color: tokens.colors.primaryBright, fontSize: tokens.fontSize.xs, fontWeight: '700' },
+  score: { color: tokens.colors.secondary, fontWeight: '700', fontSize: tokens.fontSize.sm },
+  hint: { color: tokens.colors.textMuted, fontSize: tokens.fontSize.xs, marginTop: tokens.spacing.md, textAlign: 'center' },
 });

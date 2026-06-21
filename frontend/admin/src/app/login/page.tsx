@@ -81,6 +81,9 @@ export default function AdminLoginPage() {
               <Button type="submit" className="h-11 w-full rounded-full text-base font-medium">
                 Continue
               </Button>
+              <p className="mt-6 text-center text-xs text-muted-foreground">
+                © {new Date().getFullYear()} EduAI Platform · Admin CRM
+              </p>
             </form>
           </CardContent>
         </Card>

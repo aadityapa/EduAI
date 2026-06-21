@@ -92,8 +92,8 @@ const styles = StyleSheet.create({
   kpiLabel: { fontSize: tokens.fontSize.xs, color: tokens.colors.textMuted, marginBottom: 4 },
   kpiValue: { fontSize: tokens.fontSize.lg, fontWeight: '700' },
   button: {
-    backgroundColor: tokens.colors.primary,
-    borderRadius: tokens.radius.sm,
+    backgroundColor: tokens.colors.primaryBright,
+    borderRadius: tokens.radius.full,
     padding: tokens.spacing.md,
     alignItems: 'center',
     marginVertical: tokens.spacing.xs,

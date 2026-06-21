@@ -1,6 +1,6 @@
 'use client';
 
-import { Badge, Card, CardContent, CardHeader, CardTitle, KanbanBoard, KpiCard, type KanbanColumn } from '@eduai/ui';
+import { Badge, Card, CardContent, CardHeader, CardTitle, KanbanBoard, KpiCard, StitchSlaBanner, type KanbanColumn } from '@eduai/ui';
 import { AlertCircle, Clock, Headphones, CheckCircle, AlertTriangle } from 'lucide-react';
 import { PageHeader } from './page-header';
 import type { TicketRecord } from '@/lib/admin-api';
@@ -48,6 +48,14 @@ export function SupportCenter({ tickets, error }: { tickets: TicketRecord[] | nu
         </div>
       )}
 
+      {open > 0 && items.some((t) => t.priority === 'high') && (
+        <StitchSlaBanner
+          message={`${items.filter((t) => t.priority === 'high' && (t.status === 'open' || t.status === 'in_progress')).length} high-priority ticket(s) may breach SLA`}
+          actionLabel="Review Now"
+          actionHref="#tickets"
+        />
+      )}
+
       <div className="grid gap-4 sm:grid-cols-4">
         <KpiCard icon={<Headphones className="h-5 w-5" />} label="Open / Active" value={open} />
         <KpiCard icon={<CheckCircle className="h-5 w-5" />} label="Resolved" value={resolved} />
@@ -58,7 +66,9 @@ export function SupportCenter({ tickets, error }: { tickets: TicketRecord[] | nu
       {items.length === 0 ? (
         <p className="text-sm text-muted-foreground">No support tickets yet.</p>
       ) : (
-        <KanbanBoard columns={columns} />
+        <div id="tickets">
+          <KanbanBoard columns={columns} />
+        </div>
       )}
 
       <Card>

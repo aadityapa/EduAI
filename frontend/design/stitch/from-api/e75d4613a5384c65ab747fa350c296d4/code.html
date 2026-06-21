@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login | EduAI Admin CRM</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#2d3135",
+                        "primary": "#005bbf",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#ffffff",
+                        "on-secondary-fixed-variant": "#004494",
+                        "tertiary-container": "#008939",
+                        "on-secondary-fixed": "#001a41",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#005bc0",
+                        "surface-container-low": "#f1f4fa",
+                        "on-tertiary-fixed-variant": "#005320",
+                        "on-surface": "#181c20",
+                        "on-background": "#181c20",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#001a41",
+                        "on-surface-variant": "#414754",
+                        "tertiary-fixed": "#89fa9b",
+                        "inverse-primary": "#adc7ff",
+                        "primary-fixed": "#d8e2ff",
+                        "inverse-on-surface": "#eef1f7",
+                        "surface": "#f7f9ff",
+                        "primary-fixed-dim": "#adc7ff",
+                        "tertiary": "#006d2c",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "outline": "#727785",
+                        "secondary-fixed": "#d8e2ff",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#dfe3e8",
+                        "on-primary-fixed-variant": "#004493",
+                        "on-tertiary-fixed": "#002108",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e5e8ee",
+                        "surface-bright": "#f7f9ff",
+                        "secondary": "#005ac1",
+                        "tertiary-fixed-dim": "#6ddd81",
+                        "primary-container": "#1a73e8",
+                        "surface-dim": "#d7dae0",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#dfe3e8",
+                        "outline-variant": "#c1c6d6",
+                        "on-secondary-container": "#00285c",
+                        "on-primary-container": "#ffffff",
+                        "secondary-container": "#4d8efe",
+                        "surface-container": "#ebeef4",
+                        "background": "#f7f9ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sidebar-width": "280px",
+                        "sm": "8px",
+                        "margin-desktop": "32px",
+                        "base": "4px",
+                        "md": "16px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "data-mono": ["JetBrains Mono"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "data-mono": ["13px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "display-lg": ["44px", {"lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f7f9ff; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #005bbf 0%, #006d2c 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-stretch">
+<!-- Left Side: Hero Section -->
+<section class="hidden lg:flex w-7/12 hero-gradient relative overflow-hidden flex-col justify-between p-xl">
+<!-- Background Decoration -->
+<div class="absolute inset-0 opacity-20">
+<div class="absolute -top-24 -left-24 w-96 h-96 bg-tertiary-fixed rounded-full blur-[120px]"></div>
+<div class="absolute top-1/2 -right-24 w-80 h-80 bg-primary-fixed rounded-full blur-[100px]"></div>
+</div>
+<!-- Logo & Header -->
+<div class="relative z-10 flex items-center gap-sm">
+<div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-primary text-[28px]" style="font-variation-settings: 'FILL' 1;">school</span>
+</div>
+<span class="text-white font-headline-md text-headline-md tracking-tight">EduAdmin</span>
+</div>
+<!-- Content Center -->
+<div class="relative z-10 max-w-2xl">
+<h1 class="text-white font-display-lg text-display-lg mb-lg leading-tight">
+                Admin CRM for <br/> <span class="text-tertiary-fixed">modern schools</span>
+</h1>
+<p class="text-primary-fixed font-body-lg text-body-lg mb-xl opacity-90 leading-relaxed">
+                Empower your educational institution with intelligent data analytics, automated billing, and seamless student lifecycle management in one unified enterprise portal.
+            </p>
+<!-- Feature Chips (Bento-lite) -->
+<div class="grid grid-cols-2 gap-md">
+<div class="glass-card rounded-xl p-md flex items-center gap-md">
+<span class="material-symbols-outlined text-tertiary-fixed">analytics</span>
+<div>
+<p class="text-white font-label-md text-label-md">Real-time Analytics</p>
+<p class="text-primary-fixed text-xs">Live school performance metrics</p>
+</div>
+</div>
+<div class="glass-card rounded-xl p-md flex items-center gap-md">
+<span class="material-symbols-outlined text-tertiary-fixed">security</span>
+<div>
+<p class="text-white font-label-md text-label-md">Enterprise Security</p>
+<p class="text-primary-fixed text-xs">ISO certified data protection</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Footer Info -->
+<div class="relative z-10 flex justify-between items-center text-primary-fixed text-xs font-medium">
+<span>© 2024 EduAI Systems Inc.</span>
+<div class="flex gap-lg">
+<a class="hover:text-white transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-white transition-colors" href="#">Terms of Service</a>
+</div>
+</div>
+</section>
+<!-- Right Side: Login Form -->
+<main class="w-full lg:w-5/12 bg-surface flex items-center justify-center p-gutter relative">
+<!-- Mobile Logo (Visible only on mobile) -->
+<div class="lg:hidden absolute top-xl left-xl flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">school</span>
+<span class="text-on-surface font-headline-sm text-headline-sm">EduAdmin</span>
+</div>
+<div class="w-full max-w-md space-y-xl">
+<!-- Form Header -->
+<div class="space-y-sm">
+<h2 class="text-on-surface font-headline-lg text-headline-lg">Sign In</h2>
+<p class="text-on-surface-variant font-body-md text-body-md">Enter your credentials to access the admin portal.</p>
+</div>
+<!-- Login Form -->
+<form class="space-y-lg" onsubmit="event.preventDefault();">
+<div class="space-y-base">
+<label class="text-on-surface-variant font-label-md text-label-md ml-1" for="email">Email Address</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">mail</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-on-surface focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none" id="email" placeholder="admin@eduai.com" type="email"/>
+</div>
+</div>
+<div class="space-y-base">
+<div class="flex justify-between items-center">
+<label class="text-on-surface-variant font-label-md text-label-md ml-1" for="password">Password</label>
+<a class="text-primary font-label-md text-label-md hover:underline" href="#">Forgot?</a>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-on-surface focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none" id="password" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<input class="w-4 h-4 text-primary border-outline-variant rounded focus:ring-primary" id="remember" type="checkbox"/>
+<label class="text-on-surface-variant font-body-sm text-body-sm" for="remember">Remember me for 30 days</label>
+</div>
+<button class="w-full bg-primary text-on-primary py-3.5 rounded-full font-headline-sm text-headline-sm hover:bg-primary/90 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-sm" type="submit">
+                    Continue
+                    <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</form>
+<!-- Demo Hint -->
+<div class="bg-surface-container-low border border-outline-variant/50 rounded-xl p-md flex gap-md items-start">
+<span class="material-symbols-outlined text-primary mt-0.5">info</span>
+<div>
+<p class="text-on-surface font-label-md text-label-md mb-0.5">Demo hint</p>
+<p class="text-on-surface-variant font-body-sm text-body-sm">
+                        Try our demo with <span class="font-data-mono text-primary bg-primary-fixed px-1 rounded">admin@eduai.com</span> / <span class="font-data-mono text-primary bg-primary-fixed px-1 rounded">admin123</span>
+</p>
+</div>
+</div>
+<!-- SSO / Alternative Options -->
+<div class="space-y-lg">
+<div class="flex items-center gap-md text-outline-variant">
+<div class="h-[1px] flex-grow bg-outline-variant"></div>
+<span class="text-xs uppercase tracking-widest font-bold">or use enterprise sso</span>
+<div class="h-[1px] flex-grow bg-outline-variant"></div>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<button class="flex items-center justify-center gap-sm border border-outline-variant bg-white py-2.5 rounded-lg hover:bg-surface-container-low transition-colors font-label-md text-label-md text-on-surface">
+<img class="w-5 h-5" data-alt="A clean, minimalist vector logo of Google represented by its characteristic four-color G symbol on a white background, symbolizing enterprise-level integration and trust." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCz_YGrxMwlilzC4Cf5iSiGn3V88dHpNbRW5YsPMo6LgDuUcmOCcrwmqvaDadN_N2vfMdUfoO9FTQNUkzcQuh442-bCsqxqWjvBYvVV7vhjT2E3LMW2-6t1DuOvdXHA26pjHQa-Pi8APZpO2sGHb3xjzhRd3wjOWW3UEs12ax2_Mr0PM3fRjSZM11nPhNNDg7XiDUuTHPPiTFt3TleaaT9-mCowFUtRwKCxyfVik-aIsSMdFQ7PLAudUSbG7daVk9vIHaLQ4xLR524"/>
+                        Google
+                    </button>
+<button class="flex items-center justify-center gap-sm border border-outline-variant bg-white py-2.5 rounded-lg hover:bg-surface-container-low transition-colors font-label-md text-label-md text-on-surface">
+<img class="w-5 h-5" data-alt="A minimalist vector logo of Microsoft, featuring its iconic four colored squares representing corporate software stability and professional cloud services connectivity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDfXpyQ9upvOfM43cdL_ltn-yPGOXKzVnDSDWLx5UjfIyZRucJscEZ7VtIACi8diZH5N-PcGxBrVWZrwXSLVcl-2B_1_QJtIneGTLpD_ODC1LTLDJgt19U_awHkMvxAF3n6dfT4tWfXBiGyvGjDVP5C0OtU72ulNqxwtksxhPpkKfwcmut6W1jcFqnfmDwqE81F9wVmcl2VBuBxxQ3QAjKTg2dwyDsC3tmXlIo7GMsssx44dIKA_prqCiXwH_-DCPZb36IDRGxUQM"/>
+                        Microsoft
+                    </button>
+</div>
+</div>
+<p class="text-center text-on-surface-variant font-body-sm text-body-sm pt-xl">
+                Don't have an account? <a class="text-primary font-bold hover:underline" href="#">Contact Sales</a>
+</p>
+</div>
+<!-- Atmospheric Background Layer for Login side -->
+<div class="absolute bottom-0 right-0 w-64 h-64 opacity-10 pointer-events-none">
+
+</div>
+</main>
+<script>
+        // Micro-interaction for input focus
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.querySelector('.material-symbols-outlined').style.color = '#005bbf';
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.querySelector('.material-symbols-outlined').style.color = '#727785';
+            });
+        });
+    </script>
+</body></html>

@@ -12,10 +12,12 @@ import {
   Button,
   Avatar,
   AvatarFallback,
+  Input,
   LanguageSwitcher,
   cn,
   ScrollArea,
   Separator,
+  StitchMobileBottomNav,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -32,6 +34,7 @@ import {
   LayoutDashboard,
   LogOut,
   Moon,
+  Search,
   Sparkles,
   Sun,
   Trophy,
@@ -162,8 +165,24 @@ function DashboardShellInner({ title, portal, children }: DashboardShellProps) {
           </div>
 
           <ScrollArea className="flex-1 px-3 py-4">
-            <div className="space-y-0.5">{navItems.map(renderNavLink)}</div>
+            <div className="space-y-1">{navItems.map(renderNavLink)}</div>
           </ScrollArea>
+
+          {portal === 'teacher' && !collapsed && (
+            <div className="border-t border-sidebar-border p-3">
+              <Button asChild className="w-full rounded-full font-bold">
+                <Link href="/teacher/quizzes/builder">Quiz Builder</Link>
+              </Button>
+            </div>
+          )}
+
+          {portal === 'student' && !collapsed && (
+            <div className="border-t border-sidebar-border p-3">
+              <Button asChild className="w-full rounded-full font-bold">
+                <Link href="/student/hub">Start Learning</Link>
+              </Button>
+            </div>
+          )}
 
           <div className="border-t border-sidebar-border p-3">
             <Button
@@ -179,12 +198,29 @@ function DashboardShellInner({ title, portal, children }: DashboardShellProps) {
         </motion.aside>
 
         <div className={cn('flex flex-1 flex-col transition-all duration-200', collapsed ? 'ml-[72px]' : 'ml-[240px]')}>
-          <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b bg-background/80 px-6 backdrop-blur-md">
-            <div>
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">{portal}</p>
-              <h1 className="text-lg font-semibold">{title}</h1>
-            </div>
+          <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-4 border-b bg-background/80 px-6 backdrop-blur-md">
+            {portal === 'student' ? (
+              <div className="relative hidden max-w-xl flex-1 md:block">
+                <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search lessons, tutors, or topics..."
+                  className="stitch-command-search w-full pl-10"
+                  aria-label="Search"
+                />
+              </div>
+            ) : (
+              <div>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">{portal}</p>
+                <h1 className="text-lg font-semibold">{title}</h1>
+              </div>
+            )}
             <div className="flex items-center gap-2">
+              {portal === 'student' && (
+                <div className="md:hidden">
+                  <p className="text-sm font-semibold">{title}</p>
+                </div>
+              )}
               <LanguageSwitcher
                 value={locale}
                 onChange={(value) => setLocale(value as typeof locale)}
@@ -213,7 +249,7 @@ function DashboardShellInner({ title, portal, children }: DashboardShellProps) {
             </div>
           </header>
 
-          <main className="flex-1 p-6">
+          <main className={cn('flex-1 p-6', portal === 'student' && 'pb-20 md:pb-6')}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={pathname}
@@ -231,6 +267,7 @@ function DashboardShellInner({ title, portal, children }: DashboardShellProps) {
           <footer className="border-t py-4 text-center text-xs text-muted-foreground">
             <Link href="/login">EduAI</Link> · AI-Powered Learning Platform
           </footer>
+          {portal === 'student' && <StitchMobileBottomNav activePath={pathname} />}
         </div>
       </div>
     </TooltipProvider>

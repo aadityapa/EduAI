@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EduAI Mobile Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Google+Sans+Flex:wght@600;700&display=swap" rel="stylesheet"/>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#1A73E8',tertiary:'#9334E6',secondary:'#006e2c',background:'#F8FAFD',surface:'#FFFFFF','on-surface':'#1F1F1F','on-surface-variant':'#5F6368',outline:'#DADCE0','primary-container':'#D3E3FD','secondary-container':'#86f898'},borderRadius:{xl:'12px','2xl':'16px',full:'9999px'}}}};</script>
+<style>body{font-family:Roboto,sans-serif;-webkit-tap-highlight-color:transparent}.no-scrollbar::-webkit-scrollbar{display:none}</style>
+</head>
+<body class="bg-background text-on-surface min-h-screen pb-24">
+<main class="px-4 py-6 max-w-md mx-auto space-y-4">
+<div class="flex items-center gap-4"><div class="w-16 h-16 rounded-full bg-primary-container"></div><div><p class="font-bold text-lg">Arjun Sharma</p><p class="text-sm text-on-surface-variant">Class 8 · CBSE</p></div></div>
+<div class="bg-white rounded-2xl border divide-y"><button class="w-full text-left px-4 py-3 text-sm font-medium">Notifications</button><button class="w-full text-left px-4 py-3 text-sm font-medium">Language</button><button class="w-full text-left px-4 py-3 text-sm font-medium text-red-600">Sign Out</button></div></main>
+
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 pb-4 pt-2 bg-white shadow border-t border-outline">
+<button class="flex flex-col items-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1"><span class="text-xs font-bold">Home</span></button>
+<button class="flex flex-col items-center text-on-surface-variant px-4 py-1"><span class="text-xs">Courses</span></button>
+<button class="flex flex-col items-center text-on-surface-variant px-4 py-1"><span class="text-xs">Tutor</span></button>
+<button class="flex flex-col items-center text-on-surface-variant px-4 py-1"><span class="text-xs">Quizzes</span></button>
+<button class="flex flex-col items-center text-on-surface-variant px-4 py-1"><span class="text-xs">Profile</span></button>
+</nav>
+</body></html>

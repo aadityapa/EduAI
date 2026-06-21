@@ -1,18 +1,21 @@
 import React, { createContext, useContext, useMemo } from 'react';
+import { tokens } from './tokens';
 
 export interface TenantTheme {
   primaryColor: string;
   secondaryColor: string;
   accentColor: string;
+  tertiaryColor: string;
   fontFamily: string;
   logoUrl?: string;
   appName: string;
 }
 
 const DEFAULT_THEME: TenantTheme = {
-  primaryColor: '#6D28D9',
-  secondaryColor: '#8B5CF6',
-  accentColor: '#22C55E',
+  primaryColor: tokens.colors.primary,
+  secondaryColor: tokens.colors.secondary,
+  accentColor: tokens.colors.secondaryContainer,
+  tertiaryColor: tokens.colors.tertiary,
   fontFamily: 'System',
   appName: 'EduAI',
 };

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduAI Admin - Support Tickets</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800;900&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .kanban-column {
+            min-height: calc(100vh - 380px);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #dfe3e8;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #c1c6d6;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-fixed-dim": "#adc6ff",
+                      "primary-container": "#1a73e8",
+                      "on-secondary": "#ffffff",
+                      "on-background": "#181c20",
+                      "on-primary-fixed": "#001a41",
+                      "inverse-surface": "#2d3135",
+                      "error": "#ba1a1a",
+                      "tertiary-fixed": "#89fa9b",
+                      "error-container": "#ffdad6",
+                      "surface-container-high": "#e5e8ee",
+                      "on-tertiary-fixed-variant": "#005320",
+                      "on-secondary-fixed": "#001a41",
+                      "on-error": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "background": "#f7f9ff",
+                      "inverse-primary": "#adc7ff",
+                      "surface-tint": "#005bc0",
+                      "outline": "#727785",
+                      "primary": "#005bbf",
+                      "on-tertiary": "#ffffff",
+                      "secondary-fixed": "#d8e2ff",
+                      "tertiary-fixed-dim": "#6ddd81",
+                      "surface-dim": "#d7dae0",
+                      "primary-fixed": "#d8e2ff",
+                      "secondary-container": "#4d8efe",
+                      "on-primary-container": "#ffffff",
+                      "tertiary": "#006d2c",
+                      "on-primary-fixed-variant": "#004493",
+                      "surface-container": "#ebeef4",
+                      "secondary": "#005ac1",
+                      "on-tertiary-fixed": "#002108",
+                      "surface-container-highest": "#dfe3e8",
+                      "inverse-on-surface": "#eef1f7",
+                      "surface-container-lowest": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "tertiary-container": "#008939",
+                      "surface": "#f7f9ff",
+                      "on-secondary-fixed-variant": "#004494",
+                      "surface-container-low": "#f1f4fa",
+                      "surface-bright": "#f7f9ff",
+                      "on-surface": "#181c20",
+                      "surface-variant": "#dfe3e8",
+                      "outline-variant": "#c1c6d6",
+                      "on-tertiary-container": "#ffffff",
+                      "primary-fixed-dim": "#adc7ff",
+                      "on-surface-variant": "#414754",
+                      "on-secondary-container": "#00285c"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "sm": "8px",
+                      "lg": "24px",
+                      "base": "4px",
+                      "xs": "4px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "32px",
+                      "sidebar-width": "280px",
+                      "gutter": "24px",
+                      "xl": "32px",
+                      "md": "16px"
+              },
+              "fontFamily": {
+                      "body-md": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-lg": ["Plus Jakarta Sans"],
+                      "headline-sm": ["Plus Jakarta Sans"],
+                      "display-lg": ["Plus Jakarta Sans"],
+                      "headline-md": ["Plus Jakarta Sans"],
+                      "body-sm": ["Inter"],
+                      "data-mono": ["JetBrains Mono"],
+                      "body-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "display-lg": ["44px", {"lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "data-mono": ["13px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-hidden">
+<!-- SideNavBar (Enterprise Suite) -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-on-background flex flex-col py-6 shadow-xl z-50">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined">school</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-surface-container-lowest leading-none">EduAI Admin</h1>
+<p class="font-label-md text-label-md text-surface-variant/70 mt-1 uppercase tracking-wider">Enterprise Support</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<div class="px-6 mb-2">
+<button class="w-full bg-primary-container text-on-primary-container py-3 px-4 rounded-xl flex items-center justify-center gap-2 font-bold hover:opacity-90 transition-all active:scale-95">
+<span class="material-symbols-outlined">add</span>
+                    New Support Case
+                </button>
+</div>
+<a class="flex items-center gap-3 py-3 px-4 mx-2 text-surface-variant hover:bg-on-surface-variant/10 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 mx-2 text-surface-variant hover:bg-on-surface-variant/10 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">domain</span>
+<span>Institutions</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 mx-2 bg-primary-container text-on-primary-container rounded-xl transition-colors shadow-lg shadow-primary-container/20" href="#">
+<span class="material-symbols-outlined">confirmation_number</span>
+<span>Support Tickets</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 mx-2 text-surface-variant hover:bg-on-surface-variant/10 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 mx-2 text-surface-variant hover:bg-on-surface-variant/10 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">monitor_heart</span>
+<span>System Health</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 mx-2 text-surface-variant hover:bg-on-surface-variant/10 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-surface-variant/10 pt-4">
+<a class="flex items-center gap-3 py-3 px-6 text-surface-variant hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">help</span>
+<span>Help Center</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-6 text-error hover:text-error-container transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Log Out</span>
+</a>
+</div>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-[280px] h-16 bg-surface-container-lowest border-b border-outline-variant flex items-center justify-between px-8 z-40 shadow-sm">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-body-md focus:ring-2 focus:ring-primary" placeholder="Search tickets, schools, or users ( / )" type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden lg:flex flex-col items-end">
+<span class="text-label-md font-bold text-primary">Support Level: Tier 3</span>
+<span class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Admin Console</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface-container-lowest"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all">
+<span class="material-symbols-outlined">apps</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant"></div>
+<div class="flex items-center gap-3 cursor-pointer group">
+<div class="text-right">
+<p class="text-label-md font-bold text-on-surface group-hover:text-primary transition-colors leading-none">Alexander Pierce</p>
+<p class="text-[10px] text-on-surface-variant">Senior Administrator</p>
+</div>
+<img class="w-10 h-10 rounded-full border-2 border-primary-container object-cover" data-alt="Professional headshot of a senior system administrator in a modern office, soft bokeh background, high-end corporate photography style, balanced lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeb1dhAZm00_YKDwg6Be_aKogpaufWRfq85UvtMDaBb5iaSl5-AzRrfjIG0IOhOjXBRQXxw2SdFgucR4tUPdZKyMyQv45-vteLEibx7bGFI4jIBMTdn8ZvGIqs1FtplvCNr67Nv6WOPytn63a86VHdRyCjE3hOUKQORY9m-u4WET13qkXGQ4KZINpXNLgKPX_phqhg6QiI8_6A64U_8z0BsriapFKz_lQcMLSVz-IlmZJLTBRuBCgEZnfs6znaRpluXHJGs0nBJoo"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[280px] mt-16 p-8 h-[calc(100vh-64px)] overflow-y-auto">
+<!-- SLA Breach Banner -->
+<div class="mb-8 animate-pulse">
+<div class="bg-error-container text-on-error-container p-4 rounded-xl flex items-center justify-between shadow-md border border-error/20">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-error rounded-full flex items-center justify-center text-white">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<div>
+<h2 class="font-bold text-body-lg">CRITICAL: SLA Breach Alert</h2>
+<p class="text-body-sm opacity-90">12 support tickets have exceeded the 24-hour response threshold. Immediate intervention required.</p>
+</div>
+</div>
+<button class="bg-error text-white px-6 py-2 rounded-lg font-bold text-label-md hover:bg-on-error-container transition-colors shadow-sm">
+                    View Overdue Tickets
+                </button>
+</div>
+</div>
+<div class="flex justify-between items-end mb-8">
+<div>
+<h1 class="font-display-lg text-display-lg text-on-surface">Support Tickets</h1>
+<p class="text-on-surface-variant mt-1">Manage institutional support requests and AI-assisted resolutions.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-container-high rounded-lg text-label-md font-bold hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+                    Filter
+                </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-container-high rounded-lg text-label-md font-bold hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">download</span>
+                    Export CSV
+                </button>
+</div>
+</div>
+<!-- KPI Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">list_alt</span>
+</div>
+<span class="text-tertiary font-bold text-label-md flex items-center bg-tertiary/10 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[16px] mr-1">arrow_upward</span>
+                        +12%
+                    </span>
+</div>
+<h3 class="text-on-surface-variant text-label-md font-bold">Total Open</h3>
+<p class="text-headline-lg font-headline-lg mt-1">1,248</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 bg-error/10 rounded-xl flex items-center justify-center text-error">
+<span class="material-symbols-outlined">priority_high</span>
+</div>
+<span class="text-error font-bold text-label-md flex items-center bg-error/10 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[16px] mr-1">arrow_upward</span>
+                        +5%
+                    </span>
+</div>
+<h3 class="text-on-surface-variant text-label-md font-bold">High Priority</h3>
+<p class="text-headline-lg font-headline-lg mt-1 text-error">42</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">timer</span>
+</div>
+<span class="text-tertiary font-bold text-label-md flex items-center bg-tertiary/10 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[16px] mr-1">arrow_downward</span>
+                        -18m
+                    </span>
+</div>
+<h3 class="text-on-surface-variant text-label-md font-bold">Avg. Response Time</h3>
+<p class="text-headline-lg font-headline-lg mt-1">2h 14m</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 bg-tertiary/10 rounded-xl flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">verified_user</span>
+</div>
+<span class="text-on-surface-variant font-bold text-label-md flex items-center bg-surface-variant/30 px-2 py-1 rounded">
+                        Stable
+                    </span>
+</div>
+<h3 class="text-on-surface-variant text-label-md font-bold">SLA Compliance %</h3>
+<p class="text-headline-lg font-headline-lg mt-1">94.2%</p>
+</div>
+</div>
+<div class="flex gap-8">
+<!-- Kanban Board -->
+<div class="flex-1 grid grid-cols-1 xl:grid-cols-4 gap-6 overflow-x-auto pb-4">
+<!-- Column: Open -->
+<div class="flex flex-col gap-4 min-w-[300px]">
+<div class="flex items-center justify-between px-2">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-outline"></span>
+<h4 class="font-bold text-on-surface uppercase tracking-wider text-label-md">Open</h4>
+<span class="bg-surface-container-high px-2 py-0.5 rounded text-[10px] font-bold">14</span>
+</div>
+<button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined">more_horiz</span></button>
+</div>
+<div class="kanban-column space-y-4">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant shadow-sm hover:border-primary cursor-pointer transition-all active:scale-[0.98]">
+<div class="flex justify-between items-start mb-3">
+<span class="bg-error/10 text-error px-2 py-1 rounded text-[10px] font-bold uppercase">Critical</span>
+<span class="font-data-mono text-[10px] text-on-surface-variant">#TK-8842</span>
+</div>
+<h5 class="font-bold text-on-surface text-body-md mb-2">SSO Authentication Failure - Main Portal</h5>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">school</span>
+<span class="text-body-sm text-on-surface-variant">St. Mary's Academy</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-surface-container-lowest object-cover" data-alt="Portrait of a young male support engineer with glasses, looking focused, high quality close up." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbt4_ilvx7t0z3QNhfpM3brGOTTyOgFdTwmIg3SJlr8MF4UaY4Y8WluD8L_cRrdfGSGMd72Ibmn2mV-WGSaXjfoKKJQEHFjTBTXOFGxcK7VKNT5ay_5a0uMNiu6NrOF2vO3K_tR6pN2a0mEaly7iucyDZVhMmXmOz2Vn93KwMnpd255SFLuKD253nJhNCawq-o2Rys8VffhrYK8YqGzbsWxxGdnfaXdm07Waun9EQSqUXBBC805Cf0nSUZBrfPId5jMRGcwI8Xj58"/>
+</div>
+<span class="text-[10px] text-error font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                                    Overdue 4h
+                                </span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant shadow-sm hover:border-primary cursor-pointer transition-all">
+<div class="flex justify-between items-start mb-3">
+<span class="bg-primary/10 text-primary px-2 py-1 rounded text-[10px] font-bold uppercase">High</span>
+<span class="font-data-mono text-[10px] text-on-surface-variant">#TK-8845</span>
+</div>
+<h5 class="font-bold text-on-surface text-body-md mb-2">Grade Migration Error (Spring Term)</h5>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">school</span>
+<span class="text-body-sm text-on-surface-variant">Lakeside University</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container border-2 border-dashed border-outline-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">person_add</span>
+</div>
+<span class="text-[10px] text-on-surface-variant font-bold">2h ago</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Column: In Progress -->
+<div class="flex flex-col gap-4 min-w-[300px]">
+<div class="flex items-center justify-between px-2">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-secondary"></span>
+<h4 class="font-bold text-on-surface uppercase tracking-wider text-label-md">In Progress</h4>
+<span class="bg-surface-container-high px-2 py-0.5 rounded text-[10px] font-bold">8</span>
+</div>
+</div>
+<div class="kanban-column space-y-4">
+<div class="bg-surface-container-lowest p-4 rounded-xl border-l-4 border-l-secondary border-outline-variant shadow-sm hover:shadow-md cursor-pointer transition-all ring-2 ring-primary/20">
+<div class="flex justify-between items-start mb-3">
+<span class="bg-secondary/10 text-secondary px-2 py-1 rounded text-[10px] font-bold uppercase">Med</span>
+<span class="font-data-mono text-[10px] text-on-surface-variant">#TK-8839</span>
+</div>
+<h5 class="font-bold text-on-surface text-body-md mb-2">New Professor Onboarding Request</h5>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">school</span>
+<span class="text-body-sm text-on-surface-variant">Horizon Tech Institute</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-surface-container-lowest object-cover" data-alt="Portrait of a diverse female support specialist smiling, professional lighting, clean white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWzOZyCLhQoUu_hTdO5W9gP19bHM-a8fdwVYS0VASlPcAGYPVm5h3GPFfuCtOdbascNAwJp1Npp6B3Gb76q63WztDkCT4yzUwdbONYACGbymmty8_nv--RGqp6N9AB3EMfUZ2nhTn6gMGI1lObd-RFtV_XNd3QD8yleoXNZfcKAX_2vYz6uhvoVouv0rHN5RTzh43E0QnbNPRaJ7bjVHfvXpM8hvFk8gIeKEz5YqUU_l86GoQSBn6F0l4PB4F7508r1mn11UdE-8g"/>
+</div>
+<span class="text-[10px] text-on-surface-variant font-bold">Active now</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Column: Waiting on School -->
+<div class="flex flex-col gap-4 min-w-[300px]">
+<div class="flex items-center justify-between px-2">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-tertiary"></span>
+<h4 class="font-bold text-on-surface uppercase tracking-wider text-label-md">Waiting on School</h4>
+<span class="bg-surface-container-high px-2 py-0.5 rounded text-[10px] font-bold">21</span>
+</div>
+</div>
+<div class="kanban-column space-y-4">
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant shadow-sm opacity-80">
+<div class="flex justify-between items-start mb-3">
+<span class="bg-on-surface-variant/10 text-on-surface-variant px-2 py-1 rounded text-[10px] font-bold uppercase">Low</span>
+<span class="font-data-mono text-[10px] text-on-surface-variant">#TK-8812</span>
+</div>
+<h5 class="font-bold text-on-surface text-body-md mb-2">Update Campus Map Coordinates</h5>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">school</span>
+<span class="text-body-sm text-on-surface-variant">Oakwood Grammar</span>
+</div>
+<div class="flex justify-between items-center">
+<img class="w-8 h-8 rounded-full border-2 border-surface-container-lowest object-cover" data-alt="Friendly looking male office worker with a headset, professional headshot." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSb2R8Qm_kQUwWt3-dNigElPNunAu1qLpESMrnKqH7fzTa3H7W_uYDa4YYGgLP65NOlh8B2kfA7z4iBMUklcbfnDzKripVAsr8TP_p38IkbMgKbp5icKPNMURMpfZjZHHJlxj_MlBXqMXOsSagVTcAgP5VH0x5aTLA5UhM6q2Ey-QVWABipSP2YHcnQS1gxcxBzZWr6dsoztSr-Lyv9x2CxQJzoEESPf5Vn8idIpmXbKAp5bkFdUkbAWNMF4dNgsHV-anTmMWQQfc"/>
+<span class="text-[10px] text-on-surface-variant italic">Awaiting Logs</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Column: Resolved -->
+<div class="flex flex-col gap-4 min-w-[300px]">
+<div class="flex items-center justify-between px-2">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-outline-variant"></span>
+<h4 class="font-bold text-on-surface uppercase tracking-wider text-label-md">Resolved</h4>
+<span class="bg-surface-container-high px-2 py-0.5 rounded text-[10px] font-bold">56</span>
+</div>
+</div>
+<div class="kanban-column space-y-4 bg-surface-container/30 rounded-xl p-2 border-2 border-dashed border-outline-variant/30">
+<!-- Drop zone or history -->
+<div class="text-center py-10 opacity-30">
+<span class="material-symbols-outlined text-4xl">check_circle</span>
+<p class="text-body-sm mt-2">Archive Ready</p>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Panel (Right Sidebar) -->
+<aside class="w-96 bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 shadow-xl flex flex-col sticky top-0 h-fit">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[20px]">auto_awesome</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm">AI Assistant</h3>
+</div>
+<div class="mb-6 p-4 bg-surface-container-low rounded-xl">
+<div class="flex justify-between items-center mb-2">
+<span class="text-label-md font-bold uppercase text-on-surface-variant">Sentiment Analysis</span>
+<span class="bg-error-container text-on-error-container px-2 py-0.5 rounded text-[10px] font-bold">Urgent / Frustrated</span>
+</div>
+<div class="w-full bg-outline-variant h-1.5 rounded-full mt-2 overflow-hidden">
+<div class="bg-error w-[85%] h-full"></div>
+</div>
+<p class="text-body-sm mt-3 text-on-surface-variant italic">"The user's language indicates high frustration due to service outage during peak hours."</p>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between mb-3">
+<label class="text-label-md font-bold uppercase text-on-surface-variant">AI-Suggested Response</label>
+<button class="text-primary text-[11px] font-bold hover:underline">Regenerate</button>
+</div>
+<div class="bg-primary/5 border border-primary/20 rounded-xl p-4 text-body-sm text-on-surface relative">
+<p class="mb-3">Dear Administrator,</p>
+<p class="mb-3">We have detected an issue with the SSO handshake specifically targeting your domain's certificate. Our engineering team is currently white-listing your new IP ranges to restore access.</p>
+<p>Expected resolution is within 30 minutes. We apologize for the disruption.</p>
+<div class="mt-4 flex gap-2">
+<button class="flex-1 bg-primary text-white py-2 rounded-lg font-bold text-label-md hover:bg-on-primary-container transition-all active:scale-95 shadow-md shadow-primary/20">
+                                Apply Draft
+                            </button>
+<button class="p-2 bg-surface-container-high rounded-lg text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-outline-variant">
+<h4 class="text-label-md font-bold uppercase text-on-surface-variant mb-4">Historical Context</h4>
+<div class="space-y-4">
+<div class="flex gap-3">
+<div class="w-1 h-8 bg-tertiary rounded-full"></div>
+<div>
+<p class="text-body-sm font-bold">Previous Resolution</p>
+<p class="text-[11px] text-on-surface-variant">Handled by AI Agent via Webhook #92</p>
+</div>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<script>
+        // Micro-interactions and Search Shortcut
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/') {
+                e.preventDefault();
+                document.querySelector('input[type="text"]').focus();
+            }
+        });
+
+        // Simple Tab active state toggling (simulated)
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                navLinks.forEach(l => {
+                    l.classList.remove('bg-primary-container', 'text-on-primary-container', 'shadow-lg', 'shadow-primary-container/20');
+                    l.classList.add('text-surface-variant', 'hover:bg-on-surface-variant/10');
+                });
+                link.classList.remove('text-surface-variant', 'hover:bg-on-surface-variant/10');
+                link.classList.add('bg-primary-container', 'text-on-primary-container', 'shadow-lg', 'shadow-primary-container/20');
+            });
+        });
+    </script>
+</body></html>

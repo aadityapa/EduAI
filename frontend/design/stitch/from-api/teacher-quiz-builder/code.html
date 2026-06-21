@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduAI - Quiz Builder</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Roboto & Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=Roboto:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        @font-face {
+            font-family: 'Google Sans Flex';
+            src: url('https://fonts.gstatic.com/s/googlesansflex/v1/o0b_p6id0Vv6hXfP9Vq7n8v6p8p6.woff2') format('woff2');
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .step-active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #005bbf;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #DADCE0;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#e0e2ec",
+                        "surface-dim": "#d8d9e3",
+                        "on-error-container": "#93000a",
+                        "on-primary": "#FFFFFF",
+                        "on-primary-fixed": "#001a41",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#2c0050",
+                        "on-background": "#191c23",
+                        "secondary": "#006e2c",
+                        "on-primary-container": "#ffffff",
+                        "on-secondary-fixed": "#002108",
+                        "surface-container": "#ecedf7",
+                        "surface-container-high": "#e6e8f2",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#0b001a",
+                        "primary-fixed": "#d8e2ff",
+                        "secondary-container": "#86f898",
+                        "on-surface": "#1F1F1F",
+                        "on-secondary-container": "#00722f",
+                        "tertiary": "#8621d9",
+                        "surface": "#F8FAFD",
+                        "secondary-fixed": "#89fa9b",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#adc7ff",
+                        "on-secondary-fixed-variant": "#005320",
+                        "inverse-primary": "#adc7ff",
+                        "surface-container-highest": "#e0e2ec",
+                        "surface-tint": "#005bc0",
+                        "outline-variant": "#c1c6d6",
+                        "error": "#D93025",
+                        "on-error": "#ffffff",
+                        "primary": "#005bbf",
+                        "secondary-fixed-dim": "#6ddd81",
+                        "background": "#F8FAFD",
+                        "tertiary-container": "#a145f4",
+                        "tertiary-fixed-dim": "#deb7ff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#f0dbff",
+                        "on-surface-variant": "#5F6368",
+                        "primary-container": "#D3E3FD",
+                        "on-tertiary-fixed-variant": "#6900b2",
+                        "on-primary-fixed-variant": "#004493",
+                        "inverse-surface": "#2d3038",
+                        "inverse-on-surface": "#eff0fa",
+                        "surface-container-low": "#f2f3fd",
+                        "surface-bright": "#f9f9ff",
+                        "outline": "#DADCE0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "gutter": "16px",
+                        "xl": "32px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "max-width": "1280px",
+                        "sidebar-admin": "260px",
+                        "sm": "8px",
+                        "sidebar-web": "240px",
+                        "2xl": "48px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Roboto"],
+                        "body-lg": ["Roboto"],
+                        "headline-md": ["Google Sans Flex"],
+                        "display-lg": ["Google Sans Flex"],
+                        "label-md": ["Roboto"],
+                        "title-md": ["Google Sans Flex"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-md": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                        "title-md": ["20px", {"lineHeight": "1.3", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md overflow-hidden">
+<div class="flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<aside class="w-sidebar-web h-screen sticky left-0 bg-surface-container-low flex flex-col py-lg px-md gap-sm border-r border-outline">
+<div class="flex flex-col gap-xs mb-xl px-sm">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">school</span>
+</div>
+<span class="font-title-md text-title-md font-bold text-on-surface">EduAI</span>
+</div>
+<div class="mt-md">
+<p class="font-title-md text-on-surface font-bold">Quiz Builder</p>
+<p class="font-label-md text-on-surface-variant">Creator Suite</p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-1">
+<a class="flex items-center gap-md px-md py-sm bg-primary-container text-on-primary-container font-bold rounded-lg transition-all scale-98 active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">quiz</span>
+<span class="font-label-md">My Quizzes</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-variant transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">database</span>
+<span class="font-label-md">Question Bank</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-variant transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-md">AI Lab</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-variant transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">format_list_bulleted</span>
+<span class="font-label-md">Rubrics</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-variant transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">archive</span>
+<span class="font-label-md">Archived</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-outline-variant pt-md flex flex-col gap-1">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-variant transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-label-md">Help Center</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-variant transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md">Log Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Workspace -->
+<main class="flex-1 flex flex-col overflow-hidden">
+<!-- TopNavBar -->
+<header class="w-full top-0 sticky bg-surface border-b border-outline shadow-sm z-30">
+<div class="flex justify-between items-center h-16 px-gutter max-w-max-width mx-auto">
+<div class="flex items-center gap-xl">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container border border-outline rounded-xl focus:ring-2 focus:ring-primary focus:border-primary w-64 text-body-md" placeholder="Search resources..." type="text"/>
+</div>
+<nav class="hidden md:flex items-center gap-lg">
+<a class="text-on-surface-variant hover:text-primary transition-colors pb-1 font-body-md" href="#">Dashboard</a>
+<a class="text-primary border-b-2 border-primary font-bold pb-1 font-body-md" href="#">Classes</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors pb-1 font-body-md" href="#">Library</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors pb-1 font-body-md" href="#">Reports</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="flex items-center gap-xs px-md py-2 bg-primary text-on-primary rounded-full font-body-md font-bold hover:shadow-lg transition-all active:opacity-80">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                            Create New
+                        </button>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-variant rounded-full transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-variant rounded-full transition-all">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-outline ml-sm">
+<img class="w-full h-full object-cover" data-alt="A professional close-up headshot of a friendly female teacher in a brightly lit modern classroom environment. The image uses a clean, corporate photography style with soft bokeh background and high-key lighting to emphasize a professional yet approachable persona, consistent with a high-end educational platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlMoC4rMuHFCoH0frMl99Qgs3nGpR4djSOVEr7Z7AYeSY3aqypd4y4fjE8RdTDjRKum8-79eqjUPoxavpBrhhK-U7-YSXlZ-NEnKZQFQeULsiW9NsnFeNHfRZvh6GNN_PZQ3XKiw6UtYJXuihq9LnCdEQY1RLCOys4EiMd-GN6_wbXczhX866L6qnnM8wowM_mkVW3nQMLBCv49iuKYANBfndeXIydngg5dksHfmE5OuXK9OrbdSVyOCRGYixral0xsAEzefP_OmY"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="flex-1 overflow-y-auto bg-surface pb-32">
+<div class="max-w-max-width mx-auto px-gutter py-xl">
+<!-- Stepper Header -->
+<div class="flex items-center justify-between mb-xl bg-surface-container-low p-md rounded-xl shadow-sm border border-outline-variant">
+<div class="flex items-center gap-xl w-full">
+<div class="flex items-center gap-sm relative step-active px-2 pb-1">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-label-md">1</div>
+<span class="font-title-md text-primary font-bold">Configure</span>
+</div>
+<div class="flex items-center gap-sm px-2 opacity-50">
+<div class="w-8 h-8 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center font-bold text-label-md">2</div>
+<span class="font-title-md">Review Questions</span>
+</div>
+<div class="flex items-center gap-sm px-2 opacity-50">
+<div class="w-8 h-8 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center font-bold text-label-md">3</div>
+<span class="font-title-md">Finalize Rubric</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-xl">
+<!-- Left Column: Configuration -->
+<div class="col-span-12 lg:col-span-5 space-y-xl">
+<!-- Quiz Details -->
+<section class="bg-surface-container-lowest p-lg rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-outline-variant">
+<h2 class="font-headline-md text-on-surface mb-md">Quiz Details</h2>
+<div class="space-y-lg">
+<div>
+<label class="block font-label-md text-on-surface-variant mb-xs">Quiz Title</label>
+<input class="w-full p-md border border-outline rounded-xl focus:ring-2 focus:ring-primary outline-none" type="text" value="Cellular Biology Fundamentals"/>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<div>
+<label class="block font-label-md text-on-surface-variant mb-xs">Class</label>
+<select class="w-full p-md border border-outline rounded-xl focus:ring-2 focus:ring-primary outline-none bg-white">
+<option>Biology 101 - Sec A</option>
+<option>Biology 102 - Sec B</option>
+<option>Genetics Adv.</option>
+</select>
+</div>
+<div>
+<label class="block font-label-md text-on-surface-variant mb-xs">Subject</label>
+<select class="w-full p-md border border-outline rounded-xl focus:ring-2 focus:ring-primary outline-none bg-white">
+<option>Life Sciences</option>
+<option>Chemistry</option>
+<option>Physics</option>
+</select>
+</div>
+</div>
+<div>
+<label class="block font-label-md text-on-surface-variant mb-xs">Chapter</label>
+<select class="w-full p-md border border-outline rounded-xl focus:ring-2 focus:ring-primary outline-none bg-white">
+<option>CH 4: Cell Structure & Function</option>
+<option>CH 5: DNA Replication</option>
+</select>
+</div>
+</div>
+</section>
+<!-- AI Settings -->
+<section class="bg-surface-container-lowest p-lg rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-outline-variant">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h2 class="font-headline-md text-on-surface">AI Settings</h2>
+</div>
+<div class="mb-xl">
+<div class="flex justify-between items-center mb-sm">
+<label class="font-label-md text-on-surface-variant">Difficulty Level</label>
+<span class="px-sm py-xs bg-primary-container text-primary rounded-full text-label-md font-bold">Intermediate</span>
+</div>
+<input class="w-full h-2 bg-outline rounded-lg appearance-none cursor-pointer accent-primary" max="100" min="1" type="range" value="50"/>
+<div class="flex justify-between mt-xs">
+<span class="text-label-md text-on-surface-variant opacity-60">Beginner</span>
+<span class="text-label-md text-on-surface-variant opacity-60">Expert</span>
+</div>
+</div>
+<div>
+<label class="block font-label-md text-on-surface-variant mb-md">Question Types</label>
+<div class="grid grid-cols-2 gap-md">
+<label class="flex items-center gap-sm p-md border border-outline rounded-xl cursor-pointer hover:bg-surface-container transition-all">
+<input checked="" class="w-5 h-5 rounded text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-md">MCQ</span>
+</label>
+<label class="flex items-center gap-sm p-md border border-outline rounded-xl cursor-pointer hover:bg-surface-container transition-all">
+<input checked="" class="w-5 h-5 rounded text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-md">Short Answer</span>
+</label>
+<label class="flex items-center gap-sm p-md border border-outline rounded-xl cursor-pointer hover:bg-surface-container transition-all">
+<input class="w-5 h-5 rounded text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-md">True / False</span>
+</label>
+<label class="flex items-center gap-sm p-md border border-outline rounded-xl cursor-pointer hover:bg-surface-container transition-all">
+<input checked="" class="w-5 h-5 rounded text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-md">Essay</span>
+</label>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Live Preview / Rubric -->
+<div class="col-span-12 lg:col-span-7 space-y-xl">
+<!-- Preview Section -->
+<section>
+<div class="flex justify-between items-end mb-md">
+<h2 class="font-headline-md text-on-surface">Live Preview</h2>
+<span class="text-label-md text-on-surface-variant">Estimated Questions: 15</span>
+</div>
+<div class="space-y-md">
+<!-- Sample Card 1 -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-outline-variant group">
+<div class="flex justify-between mb-sm">
+<span class="text-label-md text-primary font-bold px-sm py-xs bg-primary-container rounded-full uppercase tracking-wider">MCQ</span>
+<div class="flex items-center gap-xs opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-xs hover:bg-surface-variant rounded-full text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="p-xs hover:bg-surface-variant rounded-full text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">refresh</span></button>
+<button class="p-xs hover:bg-surface-variant rounded-full text-error"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</div>
+</div>
+<p class="font-body-lg text-on-surface mb-md">Which organelle is primarily responsible for generating ATP through cellular respiration?</p>
+<div class="grid grid-cols-1 gap-sm pl-md border-l-2 border-outline-variant">
+<div class="text-body-md text-on-surface-variant">A) Nucleus</div>
+<div class="text-body-md text-primary font-bold">B) Mitochondria</div>
+<div class="text-body-md text-on-surface-variant">C) Ribosome</div>
+<div class="text-body-md text-on-surface-variant">D) Golgi Apparatus</div>
+</div>
+</div>
+<!-- Sample Card 2 -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-outline-variant group">
+<div class="flex justify-between mb-sm">
+<span class="text-label-md text-secondary font-bold px-sm py-xs bg-secondary-container rounded-full uppercase tracking-wider">Short Answer</span>
+<div class="flex items-center gap-xs opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-xs hover:bg-surface-variant rounded-full text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="p-xs hover:bg-surface-variant rounded-full text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">refresh</span></button>
+<button class="p-xs hover:bg-surface-variant rounded-full text-error"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</div>
+</div>
+<p class="font-body-lg text-on-surface mb-sm">Describe the role of the phospholipid bilayer in maintaining cell homeostasis.</p>
+<div class="h-24 bg-surface rounded-lg border border-dashed border-outline flex items-center justify-center text-on-surface-variant opacity-50 italic">
+                                            AI-generated sample response will appear here...
+                                        </div>
+</div>
+</div>
+</section>
+<!-- Rubric Panel -->
+<section class="bg-surface-container-lowest rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-outline-variant overflow-hidden">
+<div class="bg-tertiary-fixed text-on-tertiary-fixed p-md flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">list_alt</span>
+<h3 class="font-title-md">Grading Rubric: Essay Portion</h3>
+</div>
+<button class="text-label-md font-bold hover:underline">Edit Criteria</button>
+</div>
+<div class="p-lg">
+<div class="space-y-md">
+<div class="flex items-start gap-md pb-md border-b border-outline-variant">
+<div class="w-12 h-12 rounded-xl bg-tertiary-container text-on-primary flex flex-col items-center justify-center shrink-0">
+<span class="font-bold">40</span>
+<span class="text-[10px] uppercase">pts</span>
+</div>
+<div>
+<p class="font-body-lg font-bold">Scientific Accuracy</p>
+<p class="text-body-md text-on-surface-variant">Depth of understanding regarding cellular mechanisms and accurate terminology.</p>
+</div>
+</div>
+<div class="flex items-start gap-md pb-md border-b border-outline-variant">
+<div class="w-12 h-12 rounded-xl bg-surface-container text-on-surface-variant flex flex-col items-center justify-center shrink-0">
+<span class="font-bold">30</span>
+<span class="text-[10px] uppercase">pts</span>
+</div>
+<div>
+<p class="font-body-lg font-bold">Critical Argument</p>
+<p class="text-body-md text-on-surface-variant">Ability to relate structure to function in various environments.</p>
+</div>
+</div>
+<div class="flex items-start gap-md">
+<div class="w-12 h-12 rounded-xl bg-surface-container text-on-surface-variant flex flex-col items-center justify-center shrink-0">
+<span class="font-bold">30</span>
+<span class="text-[10px] uppercase">pts</span>
+</div>
+<div>
+<p class="font-body-lg font-bold">Organization & Clarity</p>
+<p class="text-body-md text-on-surface-variant">Logical flow of ideas and grammatical precision.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Footer Bottom Bar -->
+<footer class="fixed bottom-0 right-0 left-0 lg:left-[240px] h-24 bg-surface-container-lowest border-t border-outline flex items-center z-40 px-gutter">
+<div class="max-w-max-width w-full mx-auto flex items-center justify-between">
+<div class="flex items-center gap-md">
+<span class="text-label-md text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">cloud_done</span>
+                            Autosaved 2 mins ago
+                        </span>
+</div>
+<div class="flex items-center gap-lg">
+<button class="px-xl py-3 border border-outline rounded-full font-bold text-on-surface-variant hover:bg-surface-variant transition-all">
+                            Save Draft
+                        </button>
+<button class="flex items-center gap-md px-2xl py-3 bg-primary text-on-primary rounded-full font-bold shadow-md hover:shadow-xl hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                            Generate with AI
+                        </button>
+</div>
+</div>
+</footer>
+</main>
+</div>
+<!-- Micro-interaction Script -->
+<script>
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.style.transform = 'scale(0.95)';
+            });
+            el.addEventListener('mouseup', () => {
+                el.style.transform = 'scale(1)';
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'scale(1)';
+            });
+        });
+
+        // Simple range slider update simulation
+        const slider = document.querySelector('input[type="range"]');
+        const difficultyLabel = document.querySelector('.bg-primary-container.text-primary');
+        
+        slider.addEventListener('input', (e) => {
+            const val = e.target.value;
+            if(val < 33) difficultyLabel.textContent = 'Beginner';
+            else if(val < 66) difficultyLabel.textContent = 'Intermediate';
+            else difficultyLabel.textContent = 'Expert';
+        });
+    </script>
+</body></html>

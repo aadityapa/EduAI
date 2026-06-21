@@ -2,54 +2,71 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useAuth } from '../../src/auth/AuthContext';
 import { fetchTeacherDashboard } from '../../src/api/services';
-import { useTheme } from '../../src/theme/ThemeProvider';
+import { MobileHeader, StitchCard } from '../../src/components/stitch';
+import { Screen, tokens } from '../../src/components/ui';
 
 export default function TeacherDashboard() {
-  const { tokens } = useAuth();
-  const theme = useTheme();
+  const { tokens: authTokens } = useAuth();
   const [data, setData] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!tokens) return;
-    fetchTeacherDashboard(tokens.accessToken)
+    if (!authTokens) return;
+    fetchTeacherDashboard(authTokens.accessToken)
       .then(setData)
       .finally(() => setLoading(false));
-  }, [tokens]);
+  }, [authTokens]);
 
   if (loading) {
     return (
-      <View style={styles.center}>
-        <ActivityIndicator color={theme.primaryColor} />
-      </View>
+      <Screen style={styles.center}>
+        <ActivityIndicator color={tokens.colors.primaryBright} />
+      </Screen>
     );
   }
 
   const classes = (data?.classes as unknown[]) ?? [];
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={[styles.title, { color: theme.primaryColor }]}>Teacher Dashboard</Text>
-      <Text style={styles.subtitle}>{classes.length} classes assigned</Text>
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Today</Text>
-        <Text style={styles.cardBody}>
-          Pending assignments: {(data?.pendingAssignments as number) ?? 0}
-        </Text>
-        <Text style={styles.cardBody}>
-          Students: {(data?.totalStudents as number) ?? 0}
-        </Text>
-      </View>
-    </ScrollView>
+    <Screen>
+      <MobileHeader title="Teacher Portal" subtitle={`${classes.length} classes assigned`} />
+      <ScrollView contentContainerStyle={styles.list}>
+        <View style={styles.aiPromo}>
+          <Text style={styles.aiPromoTitle}>AI Question Generator</Text>
+          <Text style={styles.aiPromoBody}>Create quizzes in seconds</Text>
+        </View>
+        <StitchCard>
+          <Text style={styles.cardLabel}>TODAY&apos;S SCHEDULE</Text>
+          <Text style={styles.cardTitle}>Grade 8 Science · 10:00 AM</Text>
+          <Text style={styles.cardBody}>
+            Pending assignments: {(data?.pendingAssignments as number) ?? 0}
+          </Text>
+          <Text style={styles.cardBody}>Students: {(data?.totalStudents as number) ?? 0}</Text>
+        </StitchCard>
+      </ScrollView>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#f8fafc' },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  title: { fontSize: 22, fontWeight: '700' },
-  subtitle: { color: '#64748b', marginBottom: 16 },
-  card: { backgroundColor: '#fff', borderRadius: 10, padding: 16 },
-  cardTitle: { fontWeight: '600', marginBottom: 8 },
-  cardBody: { color: '#64748b', marginBottom: 4 },
+  list: { padding: tokens.spacing.md, paddingBottom: 100 },
+  center: { justifyContent: 'center', alignItems: 'center' },
+  aiPromo: {
+    backgroundColor: tokens.colors.tertiary + '18',
+    borderRadius: tokens.radius.xl,
+    padding: tokens.spacing.md,
+    borderWidth: 1,
+    borderColor: tokens.colors.tertiary + '33',
+    marginBottom: tokens.spacing.md,
+  },
+  aiPromoTitle: { fontWeight: '700', color: tokens.colors.tertiary, fontSize: tokens.fontSize.md },
+  aiPromoBody: { color: tokens.colors.textMuted, marginTop: 4, fontSize: tokens.fontSize.sm },
+  cardLabel: {
+    fontSize: tokens.fontSize.xs,
+    color: tokens.colors.textMuted,
+    letterSpacing: 0.5,
+    marginBottom: 4,
+  },
+  cardTitle: { fontWeight: '700', fontSize: tokens.fontSize.md, color: tokens.colors.text, marginBottom: 8 },
+  cardBody: { color: tokens.colors.textMuted, marginBottom: 4, fontSize: tokens.fontSize.sm },
 });

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduAI | Login Portal</title>
+<!-- Google Fonts: Roboto Flex is used as the closest available substitute for Google Sans / Material 3 Typography -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#f7f9ff",
+                    "surface-container": "#ebeef4",
+                    "on-tertiary": "#ffffff",
+                    "secondary": "#005ac1",
+                    "outline": "#727785",
+                    "on-tertiary-fixed": "#002108",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed-variant": "#005320",
+                    "surface-variant": "#dfe3e8",
+                    "surface-tint": "#005bc0",
+                    "on-primary-fixed-variant": "#004493",
+                    "surface-dim": "#d7dae0",
+                    "primary-container": "#1a73e8",
+                    "primary": "#005bbf",
+                    "surface-container-low": "#f1f4fa",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "background": "#f7f9ff",
+                    "inverse-primary": "#adc7ff",
+                    "secondary-container": "#4d8efe",
+                    "on-error": "#ffffff",
+                    "on-tertiary-container": "#ffffff",
+                    "inverse-surface": "#2d3135",
+                    "on-surface-variant": "#414754",
+                    "on-background": "#181c20",
+                    "on-secondary-fixed-variant": "#004494",
+                    "inverse-on-surface": "#eef1f7",
+                    "tertiary-container": "#008939",
+                    "surface-container-high": "#e5e8ee",
+                    "on-surface": "#181c20",
+                    "on-error-container": "#93000a",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-container": "#00285c",
+                    "on-primary-container": "#ffffff",
+                    "tertiary-fixed-dim": "#6ddd81",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary": "#006d2c",
+                    "outline-variant": "#c1c6d6",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed": "#89fa9b",
+                    "surface-container-highest": "#dfe3e8",
+                    "error": "#ba1a1a",
+                    "primary-fixed-dim": "#adc7ff",
+                    "on-secondary-fixed": "#001a41",
+                    "surface": "#f7f9ff",
+                    "on-primary-fixed": "#001a41",
+                    "primary-fixed": "#d8e2ff",
+                    "secondary-fixed": "#d8e2ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "base": "4px",
+                    "lg": "24px",
+                    "xs": "4px",
+                    "margin-mobile": "16px",
+                    "sm": "8px",
+                    "md": "16px",
+                    "xl": "32px",
+                    "margin-desktop": "32px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Roboto Flex"],
+                    "display-lg": ["Roboto Flex"],
+                    "body-md": ["Roboto Flex"],
+                    "label-lg": ["Roboto Flex"],
+                    "headline-md": ["Roboto Flex"],
+                    "body-lg": ["Roboto Flex"],
+                    "title-lg": ["Roboto Flex"],
+                    "headline-lg-mobile": ["Roboto Flex"],
+                    "headline-lg": ["Roboto Flex"]
+            },
+            "fontSize": {
+                    "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+                    "display-lg": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "400"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}],
+                    "headline-md": ["28px", {"lineHeight": "36px", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400"}],
+                    "title-lg": ["22px", {"lineHeight": "28px", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Roboto Flex', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1;
+        }
+        .floating-label-container:focus-within label,
+        .floating-label-container input:not(:placeholder-shown) + label {
+            transform: translateY(-24px) scale(0.85);
+            color: #005bbf;
+            background-color: white;
+            padding: 0 4px;
+        }
+        .left-panel-gradient {
+            background: linear-gradient(135deg, #1A73E8 0%, #0d47a1 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar Suppression: Page is Transactional Login -->
+<main class="min-h-screen flex flex-col md:flex-row overflow-hidden">
+<!-- Left Panel: Brand Messaging -->
+<section class="hidden md:flex md:w-1/2 left-panel-gradient relative flex-col justify-center px-margin-desktop overflow-hidden">
+<!-- Atmospheric Grid Overlay -->
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 32px 32px;"></div>
+<div class="relative z-10 max-w-xl">
+<div class="mb-lg">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-primary text-[48px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h1 class="text-on-primary font-title-lg text-title-lg tracking-tight">EduAI</h1>
+</div>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-primary mb-md leading-tight">
+                    Learn smarter with AI
+                </h2>
+<p class="font-body-lg text-body-lg text-on-primary/80 mb-xl max-w-lg">
+                    The all-in-one platform for K-12 education. Empowering students, teachers, and parents with intelligent insights and personalized learning paths.
+                </p>
+<!-- Illustrative Image -->
+<div class="w-full aspect-video rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+<img class="w-full h-full object-cover" data-alt="A futuristic classroom scene with a diverse group of K-12 students collaborating around a glowing holographic interface displaying educational data. The lighting is soft and cinematic, dominated by deep blues and vibrant electric blue accents, creating an atmosphere of technological empowerment and inspiration. The aesthetic is clean, professional, and modern, echoing a corporate educational software vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmNG5Gc2dvxcq4HnycsN52ZwsG2B2HJIfvnRpgYr_pcUo2FEBG_KYY0YgLrav7GX16Pmzb_GKdaDLbTg5MFkaHRD4vuy3W59GyDubxTDwwxgzmlx2D9cnif2PSeDwRxfBGpInj8kskBAFLnS8dQK3BvY-ES7aEdyp8hdlbOd4PnvOMNe912M59Lpbxo7PI0m0RVpgsO7Sls5-NAaa95iIAmkTZymLzeMTvdj0Wy2NKd3rlHdUSWh605qimwPRhJ6YaN6AXXlH-mDE"/>
+</div>
+</div>
+<!-- Branding Accent -->
+<div class="absolute bottom-margin-desktop left-margin-desktop flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed"></span>
+<span class="font-label-sm text-label-sm text-on-primary/60 uppercase tracking-widest">Next-Gen Education</span>
+</div>
+</section>
+<!-- Right Panel: Functional Form -->
+<section class="w-full md:w-1/2 bg-surface-container-lowest flex flex-col items-center justify-center p-margin-mobile md:p-margin-desktop min-h-screen">
+<!-- Login Card -->
+<div class="w-full max-w-md bg-white p-lg md:p-xl rounded-xl shadow-sm border border-outline-variant/30">
+<!-- Identity Branding (Mobile Only) -->
+<div class="md:hidden flex justify-center mb-lg">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-[32px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h1 class="text-on-surface font-title-lg text-title-lg font-bold">EduAI</h1>
+</div>
+</div>
+<!-- Role Selector (Material 3 Pill Tabs) -->
+<nav class="flex p-1 bg-surface-container rounded-full mb-xl" role="tablist">
+<button aria-selected="true" class="flex-1 py-sm px-md rounded-full text-label-lg font-label-lg transition-all duration-200 bg-primary-container text-on-primary-container shadow-sm" id="tab-student" onclick="switchRole('student')" role="tab">
+                        Student
+                    </button>
+<button aria-selected="false" class="flex-1 py-sm px-md rounded-full text-label-lg font-label-lg transition-all duration-200 text-on-surface-variant hover:bg-surface-variant/50" id="tab-teacher" onclick="switchRole('teacher')" role="tab">
+                        Teacher
+                    </button>
+<button aria-selected="false" class="flex-1 py-sm px-md rounded-full text-label-lg font-label-lg transition-all duration-200 text-on-surface-variant hover:bg-surface-variant/50" id="tab-parent" onclick="switchRole('parent')" role="tab">
+                        Parent
+                    </button>
+</nav>
+<div class="mb-lg">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-xs">Welcome back</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Please enter your details to sign in.</p>
+</div>
+<!-- Form -->
+<form class="space-y-lg" onsubmit="event.preventDefault()">
+<!-- Email Field -->
+<div class="relative floating-label-container h-14 group">
+<input class="peer w-full h-full px-md pt-base border border-outline rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" id="email" placeholder=" " required="" type="email"/>
+<label class="absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant font-body-md transition-all pointer-events-none origin-left" for="email">
+                            Email Address
+                        </label>
+</div>
+<!-- Password Field -->
+<div class="relative floating-label-container h-14 group">
+<input class="peer w-full h-full px-md pt-base border border-outline rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" id="password" placeholder=" " required="" type="password"/>
+<label class="absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant font-body-md transition-all pointer-events-none origin-left" for="password">
+                            Password
+                        </label>
+</div>
+<!-- Options -->
+<div class="flex items-center justify-between">
+<label class="flex items-center gap-sm cursor-pointer">
+<input class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-label-lg text-label-lg text-on-surface-variant">Remember me</span>
+</label>
+<a class="font-label-lg text-label-lg text-primary hover:underline transition-all" href="#">Forgot Password?</a>
+</div>
+<!-- CTA -->
+<button class="w-full h-12 bg-primary text-on-primary rounded-full font-label-lg text-label-lg flex items-center justify-center gap-sm hover:bg-secondary-container transition-all active:scale-95 duration-150 shadow-md" type="submit">
+                        Log In
+                        <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</form>
+<!-- Divider -->
+<div class="relative my-xl">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-outline-variant"></div>
+</div>
+<div class="relative flex justify-center text-label-sm uppercase tracking-widest">
+<span class="bg-white px-md text-on-surface-variant font-medium">Or continue with</span>
+</div>
+</div>
+<!-- Google Sign-In -->
+<button class="w-full h-12 bg-white border border-outline-variant text-on-surface rounded-full font-label-lg text-label-lg flex items-center justify-center gap-md hover:bg-surface-container-low transition-all active:scale-95">
+<svg height="20" viewbox="0 0 24 24" width="20">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+</svg>
+                    Continue with Google
+                </button>
+<!-- Signup Prompt -->
+<p class="mt-xl text-center font-body-md text-body-md text-on-surface-variant">
+                    Don't have an account? <a class="text-primary font-bold hover:underline" href="#">Request Access</a>
+</p>
+</div>
+<!-- Transactional Footer (Bottom Right) -->
+<footer class="mt-auto w-full flex justify-end gap-lg py-md text-label-sm font-label-sm text-on-surface-variant/60">
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-primary transition-colors" href="#">Help Center</a>
+<span class="cursor-default">© 2024 EduAI</span>
+</footer>
+</section>
+</main>
+<script>
+        function switchRole(role) {
+            const roles = ['student', 'teacher', 'parent'];
+            roles.forEach(r => {
+                const btn = document.getElementById(`tab-${r}`);
+                if (r === role) {
+                    btn.classList.add('bg-primary-container', 'text-on-primary-container', 'shadow-sm');
+                    btn.classList.remove('text-on-surface-variant', 'hover:bg-surface-variant/50');
+                    btn.setAttribute('aria-selected', 'true');
+                } else {
+                    btn.classList.remove('bg-primary-container', 'text-on-primary-container', 'shadow-sm');
+                    btn.classList.add('text-on-surface-variant', 'hover:bg-surface-variant/50');
+                    btn.setAttribute('aria-selected', 'false');
+                }
+            });
+            
+            // Interaction feedback
+            const container = document.querySelector('main');
+            container.style.transition = 'background 0.5s ease';
+        }
+
+        // Lightweight atmospheric effect for the left panel
+        document.addEventListener('mousemove', (e) => {
+            const leftPanel = document.querySelector('section.md\\:flex');
+            if (leftPanel) {
+                const rect = leftPanel.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                leftPanel.style.background = `linear-gradient(135deg, #1A73E8 0%, #0d47a1 100%), radial-gradient(circle at ${x}% ${y}%, rgba(255,255,255,0.1) 0%, transparent 50%)`;
+            }
+        });
+    </script>
+</body></html>

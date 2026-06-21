@@ -7,7 +7,7 @@ import { ApiError } from '@/components/api-error';
 import { CourseFilters } from '@/components/course-filters';
 import { PageMotion } from '@/components/page-motion';
 import { getCourses, getMyEnrollments, LearningApiError } from '@/lib/learning-api';
-import { CourseCard } from '@eduai/ui';
+import { CourseCard, StitchPageHeader } from '@eduai/ui';
 
 interface CoursesPageProps {
   searchParams: Promise<{ classLevel?: string; boardId?: string; subjectId?: string }>;
@@ -44,6 +44,7 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
     <DashboardShell title="Courses" portal="student">
       <PageMotion>
         <div className="space-y-6">
+          <StitchPageHeader title="Course Catalog" description="Browse and enroll in courses for your class and board." />
           <Suspense fallback={null}>
             <CourseFilters />
           </Suspense>

@@ -1,0 +1,301 @@
+{
+  "version": "1.0.0",
+  "source": "g:\\stitch_eduai_platform",
+  "root": "frontend/design/stitch",
+  "designSystem": {
+    "web": "eduai_platform_1/DESIGN.md",
+    "admin": "eduai_admin_1/DESIGN.md",
+    "mobile": "eduai_student_dashboard_mobile/code.html"
+  },
+  "screens": {
+    "web": {
+      "login": "eduai_web_login_portal_1/code.html",
+      "student_dashboard": "eduai_student_dashboard_1/code.html",
+      "teacher_dashboard": "eduai_teacher_dashboard/code.html",
+      "parent_dashboard": "eduai_parent_dashboard/code.html",
+      "tutor_chat": "eduai_tutor_chat_interface/code.html",
+      "quiz_builder": "eduai_quiz_builder/code.html",
+      "admin_login": "eduai_admin_login_portal_1/code.html",
+      "admin_dashboard": "eduai_admin_crm_dashboard_2/code.html",
+      "admin_leads": "eduai_admin_leads_crm/code.html",
+      "admin_support": "eduai_admin_support_portal/code.html"
+    },
+    "mobile": {
+      "student_home": "eduai_student_dashboard_mobile/code.html",
+      "login": "mobile/eduai_mobile_login/code.html",
+      "courses": "mobile/eduai_mobile_courses/code.html",
+      "tutor": "mobile/eduai_mobile_tutor/code.html",
+      "quizzes": "mobile/eduai_mobile_quizzes/code.html",
+      "planner": "mobile/eduai_mobile_planner/code.html",
+      "profile": "mobile/eduai_mobile_profile/code.html",
+      "gamification": "mobile/eduai_mobile_gamification/code.html",
+      "hub": "mobile/eduai_mobile_hub/code.html",
+      "parent_home": "mobile/eduai_mobile_parent_home/code.html",
+      "parent_fees": "mobile/eduai_mobile_parent_fees/code.html",
+      "teacher_home": "mobile/eduai_mobile_teacher_home/code.html"
+    }
+  },
+  "mobileAppRoutes": {
+    "student_home": "/(student)/index",
+    "login": "/login",
+    "courses": "/(student)/courses",
+    "tutor": "/(student)/tutor",
+    "quizzes": "/(student)/quizzes",
+    "planner": "/(student)/planner",
+    "profile": "/(student)/profile",
+    "hub": "/(student)/hub",
+    "gamification": "/(student)/gamification",
+    "parent_home": "/(parent)/index",
+    "parent_fees": "/(parent)/fees",
+    "teacher_home": "/(teacher)/index"
+  },
+  "stitchProject": {
+    "id": "17256885408366407754",
+    "url": "https://stitch.withgoogle.com/projects/17256885408366407754",
+    "syncedAt": "2026-06-21T05:39:04.386Z",
+    "screenCount": 35
+  },
+  "apiExport": {
+    "0412874567154fc0bb348cf33047c7df": {
+      "path": "from-api/0412874567154fc0bb348cf33047c7df/code.html",
+      "title": "0412874567154fc0bb348cf33047c7df",
+      "screenId": "0412874567154fc0bb348cf33047c7df",
+      "appRoute": null,
+      "bytes": 24419
+    },
+    "0bca2060de3947f4b717159a4bc164de": {
+      "path": "from-api/0bca2060de3947f4b717159a4bc164de/code.html",
+      "title": "0bca2060de3947f4b717159a4bc164de",
+      "screenId": "0bca2060de3947f4b717159a4bc164de",
+      "appRoute": null,
+      "bytes": 18841
+    },
+    "10648787147142187911": {
+      "path": "from-api/10648787147142187911/code.html",
+      "title": "10648787147142187911",
+      "appRoute": null,
+      "bytes": 2838
+    },
+    "1588692892660207800": {
+      "path": "from-api/1588692892660207800/code.html",
+      "title": "1588692892660207800",
+      "appRoute": null,
+      "bytes": 2838
+    },
+    "3481b0a46fbd45b2a09a79b3ba4afa23": {
+      "path": "from-api/3481b0a46fbd45b2a09a79b3ba4afa23/code.html",
+      "title": "3481b0a46fbd45b2a09a79b3ba4afa23",
+      "screenId": "3481b0a46fbd45b2a09a79b3ba4afa23",
+      "appRoute": null,
+      "bytes": 22279
+    },
+    "3ba16a763fc24d10a5216a580851dec7": {
+      "path": "from-api/3ba16a763fc24d10a5216a580851dec7/code.html",
+      "title": "3ba16a763fc24d10a5216a580851dec7",
+      "screenId": "3ba16a763fc24d10a5216a580851dec7",
+      "appRoute": null,
+      "bytes": 25445
+    },
+    "4c165e57164f48ac844b1d158ff2c4e3": {
+      "path": "from-api/4c165e57164f48ac844b1d158ff2c4e3/code.html",
+      "title": "4c165e57164f48ac844b1d158ff2c4e3",
+      "screenId": "4c165e57164f48ac844b1d158ff2c4e3",
+      "appRoute": null,
+      "bytes": 14826
+    },
+    "565e03b19e654e77aabccad1f677f63a": {
+      "path": "from-api/565e03b19e654e77aabccad1f677f63a/code.html",
+      "title": "565e03b19e654e77aabccad1f677f63a",
+      "screenId": "565e03b19e654e77aabccad1f677f63a",
+      "appRoute": null,
+      "bytes": 28050
+    },
+    "7042ed7a4a3744868ee2ef4b8c8df1cc": {
+      "path": "from-api/7042ed7a4a3744868ee2ef4b8c8df1cc/code.html",
+      "title": "7042ed7a4a3744868ee2ef4b8c8df1cc",
+      "screenId": "7042ed7a4a3744868ee2ef4b8c8df1cc",
+      "appRoute": null,
+      "bytes": 27373
+    },
+    "71eebc68560b47439d0741212380fff8": {
+      "path": "from-api/71eebc68560b47439d0741212380fff8/code.html",
+      "title": "71eebc68560b47439d0741212380fff8",
+      "screenId": "71eebc68560b47439d0741212380fff8",
+      "appRoute": null,
+      "bytes": 31488
+    },
+    "7272437275952616710": {
+      "path": "from-api/7272437275952616710/code.html",
+      "title": "7272437275952616710",
+      "appRoute": null,
+      "bytes": 2724
+    },
+    "73a08fad74194e80b642ebeb0a5a49e2": {
+      "path": "from-api/73a08fad74194e80b642ebeb0a5a49e2/code.html",
+      "title": "73a08fad74194e80b642ebeb0a5a49e2",
+      "screenId": "73a08fad74194e80b642ebeb0a5a49e2",
+      "appRoute": null,
+      "bytes": 16239
+    },
+    "75fad14da6ec4d7f8cfc7c72d6cc7137": {
+      "path": "from-api/75fad14da6ec4d7f8cfc7c72d6cc7137/code.html",
+      "title": "75fad14da6ec4d7f8cfc7c72d6cc7137",
+      "screenId": "75fad14da6ec4d7f8cfc7c72d6cc7137",
+      "appRoute": null,
+      "bytes": 30760
+    },
+    "8838197761825537591": {
+      "path": "from-api/8838197761825537591/code.html",
+      "title": "8838197761825537591",
+      "appRoute": null,
+      "bytes": 2838
+    },
+    "88793843b0c84ed5949d5a9a0c4948c3": {
+      "path": "from-api/88793843b0c84ed5949d5a9a0c4948c3/code.html",
+      "title": "88793843b0c84ed5949d5a9a0c4948c3",
+      "screenId": "88793843b0c84ed5949d5a9a0c4948c3",
+      "appRoute": null,
+      "bytes": 15220
+    },
+    "8b83e30d571849c1b5fe2b676842e6aa": {
+      "path": "from-api/8b83e30d571849c1b5fe2b676842e6aa/code.html",
+      "title": "8b83e30d571849c1b5fe2b676842e6aa",
+      "screenId": "8b83e30d571849c1b5fe2b676842e6aa",
+      "appRoute": null,
+      "bytes": 16239
+    },
+    "8bc0c8effa0949a9971ee83452697365": {
+      "path": "from-api/8bc0c8effa0949a9971ee83452697365/code.html",
+      "title": "8bc0c8effa0949a9971ee83452697365",
+      "screenId": "8bc0c8effa0949a9971ee83452697365",
+      "appRoute": null,
+      "bytes": 25431
+    },
+    "8cfe5953f4794a04a8b7a6679d4b5183": {
+      "path": "from-api/8cfe5953f4794a04a8b7a6679d4b5183/code.html",
+      "title": "8cfe5953f4794a04a8b7a6679d4b5183",
+      "screenId": "8cfe5953f4794a04a8b7a6679d4b5183",
+      "appRoute": null,
+      "bytes": 20363
+    },
+    "9a5d88b531094364b691ac993cf51837": {
+      "path": "from-api/9a5d88b531094364b691ac993cf51837/code.html",
+      "title": "9a5d88b531094364b691ac993cf51837",
+      "screenId": "9a5d88b531094364b691ac993cf51837",
+      "appRoute": null,
+      "bytes": 28611
+    },
+    "9d8c2cba0a734ce78dbf8f05a921a93e": {
+      "path": "from-api/9d8c2cba0a734ce78dbf8f05a921a93e/code.html",
+      "title": "9d8c2cba0a734ce78dbf8f05a921a93e",
+      "screenId": "9d8c2cba0a734ce78dbf8f05a921a93e",
+      "appRoute": null,
+      "bytes": 16045
+    },
+    "admin-dashboard": {
+      "path": "from-api/admin-dashboard/code.html",
+      "title": "EduAI Admin CRM Dashboard",
+      "screenId": "10a6d575ee3c45d38e5fa803b15baa38",
+      "appRoute": "/dashboard",
+      "bytes": 25912
+    },
+    "admin-leads-crm": {
+      "path": "from-api/admin-leads-crm/code.html",
+      "title": "EduAI Admin Leads CRM",
+      "screenId": "81d0e143a7d54c2ab5ed10a75b7bc15f",
+      "appRoute": "/dashboard/leads",
+      "bytes": 31444
+    },
+    "admin-login": {
+      "path": "from-api/admin-login/code.html",
+      "title": "EduAI Admin Login Portal",
+      "screenId": "c9bd721dbdeb41c1b965321091a03cdf",
+      "appRoute": "/login",
+      "bytes": 14665
+    },
+    "admin-support-tickets": {
+      "path": "from-api/admin-support-tickets/code.html",
+      "title": "EduAI Admin Support Portal",
+      "screenId": "bbd6295c84bc419c8c7bda931fdb6949",
+      "appRoute": "/dashboard/tickets",
+      "bytes": 27904
+    },
+    "ai-tutor-chat": {
+      "path": "from-api/ai-tutor-chat/code.html",
+      "title": "EduAI Tutor Chat Interface",
+      "screenId": "a7d36b5481034327b79ac07bab6efad5",
+      "appRoute": "/student/tutor",
+      "bytes": 18471
+    },
+    "b4c8f281694f4e49aa9edd3eb9f6b40f": {
+      "path": "from-api/b4c8f281694f4e49aa9edd3eb9f6b40f/code.html",
+      "title": "b4c8f281694f4e49aa9edd3eb9f6b40f",
+      "screenId": "b4c8f281694f4e49aa9edd3eb9f6b40f",
+      "appRoute": null,
+      "bytes": 26682
+    },
+    "d02d33856c624027abcc454819acc2db": {
+      "path": "from-api/d02d33856c624027abcc454819acc2db/code.html",
+      "title": "d02d33856c624027abcc454819acc2db",
+      "screenId": "d02d33856c624027abcc454819acc2db",
+      "appRoute": null,
+      "bytes": 29591
+    },
+    "e75d4613a5384c65ab747fa350c296d4": {
+      "path": "from-api/e75d4613a5384c65ab747fa350c296d4/code.html",
+      "title": "e75d4613a5384c65ab747fa350c296d4",
+      "screenId": "e75d4613a5384c65ab747fa350c296d4",
+      "appRoute": null,
+      "bytes": 14963
+    },
+    "ebdf874252af4284b853f971b3e5889e": {
+      "path": "from-api/ebdf874252af4284b853f971b3e5889e/code.html",
+      "title": "ebdf874252af4284b853f971b3e5889e",
+      "screenId": "ebdf874252af4284b853f971b3e5889e",
+      "appRoute": null,
+      "bytes": 17669
+    },
+    "parent-dashboard": {
+      "path": "from-api/parent-dashboard/code.html",
+      "title": "EduAI Parent Dashboard",
+      "screenId": "a94fa28f1724477aa6313f405bc0f145",
+      "appRoute": "/parent/dashboard",
+      "bytes": 25372
+    },
+    "student-dashboard": {
+      "path": "from-api/student-dashboard/code.html",
+      "title": "EduAI Student Dashboard",
+      "screenId": "fb346f4399e84c2288a057924c7ddda7",
+      "appRoute": "/student/dashboard",
+      "bytes": 22863
+    },
+    "student-mobile-dashboard": {
+      "path": "from-api/student-mobile-dashboard/code.html",
+      "title": "EduAI Student Dashboard (Mobile)",
+      "screenId": "7fd3b708ed3e4da58ae0dbb0563654bf",
+      "appRoute": "/(student)/index",
+      "bytes": 15569
+    },
+    "teacher-dashboard": {
+      "path": "from-api/teacher-dashboard/code.html",
+      "title": "EduAI Teacher Dashboard",
+      "screenId": "07ef1264f8d54ba79a9386178932178a",
+      "appRoute": "/teacher/dashboard",
+      "bytes": 21158
+    },
+    "teacher-quiz-builder": {
+      "path": "from-api/teacher-quiz-builder/code.html",
+      "title": "EduAI Quiz Builder",
+      "screenId": "928f74d4113c4a1887a13d152d752b86",
+      "appRoute": "/teacher/quizzes/builder",
+      "bytes": 24011
+    },
+    "web-login": {
+      "path": "from-api/web-login/code.html",
+      "title": "EduAI Web Login Portal",
+      "screenId": "3a4ddcd9deaf42dca64d4a65d8e7c905",
+      "appRoute": "/login",
+      "bytes": 16449
+    }
+  }
+}

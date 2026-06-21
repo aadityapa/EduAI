@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduAI Teacher Dashboard</title>
+<!-- Tailwind CSS with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Google Sans Flex & Roboto -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#005320",
+                    "on-primary-container": "#041E49",
+                    "tertiary": "#8621d9",
+                    "outline": "#DADCE0",
+                    "surface-container-low": "#f2f3fd",
+                    "surface-container": "#ecedf7",
+                    "tertiary-container": "#a145f4",
+                    "primary-container": "#1a73e8",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed": "#d8e2ff",
+                    "on-error-container": "#93000a",
+                    "surface-container-high": "#EEF2F7",
+                    "surface-dim": "#d8d9e3",
+                    "on-surface": "#1F1F1F",
+                    "error": "#D93025",
+                    "outline-variant": "#c1c6d6",
+                    "surface-container-lowest": "#ffffff",
+                    "on-surface-variant": "#414754",
+                    "surface": "#F8FAFD",
+                    "on-tertiary-fixed": "#2c0050",
+                    "background": "#F8FAFD",
+                    "secondary": "#006e2c",
+                    "on-background": "#191c23",
+                    "secondary-fixed-dim": "#6ddd81",
+                    "tertiary-fixed": "#f0dbff",
+                    "surface-tint": "#005bc0",
+                    "inverse-primary": "#adc7ff",
+                    "on-primary": "#FFFFFF",
+                    "secondary-fixed": "#89fa9b",
+                    "on-tertiary-container": "#0b001a",
+                    "on-secondary-container": "#00722f",
+                    "surface-container-highest": "#e0e2ec",
+                    "secondary-container": "#86f898",
+                    "on-secondary": "#FFFFFF",
+                    "primary": "#005bbf",
+                    "on-secondary-fixed": "#002108",
+                    "tertiary-fixed-dim": "#deb7ff",
+                    "on-tertiary-fixed-variant": "#6900b2",
+                    "inverse-surface": "#2d3038",
+                    "on-primary-fixed-variant": "#004493",
+                    "surface-variant": "#e0e2ec",
+                    "on-primary-fixed": "#001a41",
+                    "surface-bright": "#f9f9ff",
+                    "primary-fixed-dim": "#adc7ff",
+                    "error-container": "#ffdad6",
+                    "on-error": "#ffffff",
+                    "inverse-on-surface": "#eff0fa"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "24px",
+                    "sm": "8px",
+                    "sidebar-web": "240px",
+                    "xl": "32px",
+                    "xs": "4px",
+                    "md": "16px",
+                    "sidebar-admin": "260px",
+                    "max-width": "1280px",
+                    "2xl": "48px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "label-md": ["Roboto"],
+                    "display-lg": ["Google Sans Flex"],
+                    "title-md": ["Google Sans Flex"],
+                    "headline-md": ["Google Sans Flex"],
+                    "body-md": ["Roboto"],
+                    "body-lg": ["Roboto"],
+                    "display-lg-mobile": ["plusJakartaSans"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "fontWeight": "600"}],
+                    "title-md": ["20px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "headline-md": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "1.2", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #F8FAFD;
+            color: #1F1F1F;
+            font-family: 'Roboto', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .font-title-md { font-family: 'Google Sans Flex', sans-serif; }
+        .font-headline-md { font-family: 'Google Sans Flex', sans-serif; }
+        .card-shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .sidebar-active-gradient {
+            background: linear-gradient(90deg, rgba(26, 115, 232, 0.1) 0%, rgba(26, 115, 232, 0) 100%);
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #DADCE0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #c1c6d6; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="flex flex-col w-sidebar-web h-screen overflow-y-auto bg-surface dark:bg-on-background fixed left-0 top-0 border-r border-outline dark:border-outline-variant z-50">
+<div class="px-lg py-xl">
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed font-bold">EduAI</h1>
+<p class="text-on-surface-variant font-label-md text-label-md mt-1">Teacher Portal</p>
+</div>
+<nav class="flex-1 px-md space-y-1">
+<!-- Dashboard Active -->
+<a class="flex items-center gap-md px-md py-3 bg-primary-container text-on-primary-container font-bold rounded-r-full transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-title-md text-body-lg">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high rounded-r-full transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">school</span>
+<span class="font-title-md text-body-lg">Classes</span>
+</a>
+<a class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high rounded-r-full transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-title-md text-body-lg">Students</span>
+</a>
+<a class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high rounded-r-full transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-title-md text-body-lg">Assignments</span>
+</a>
+<a class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high rounded-r-full transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-title-md text-body-lg">AI Tools</span>
+</a>
+</nav>
+<div class="p-lg mt-auto">
+<button class="w-full py-3 px-md bg-primary text-on-primary rounded-full font-bold flex items-center justify-center gap-sm transition-transform hover:scale-[1.02] active:scale-95 shadow-lg">
+<span class="material-symbols-outlined">add</span>
+                Quiz Builder
+            </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-sidebar-web min-h-screen">
+<!-- Top Navbar -->
+<header class="flex items-center justify-between px-lg w-full h-16 sticky top-0 z-40 bg-surface/80 backdrop-blur-md border-b border-outline">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary-container text-body-md transition-all" placeholder="Search students, classes, or help..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-lg">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">settings</button>
+<div class="h-8 w-8 rounded-full bg-primary-container overflow-hidden border border-outline">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a friendly female teacher in her late 30s, wearing a modern blue blazer, smiling at the camera. The background is a blurred office with clean, minimalist white and light blue aesthetic. High-quality corporate photography style with soft, even lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB543sqUV-mK4mE0rb7jYZ5woyeLCmf1x1tEay3qEhZHsb-BZwnx1iibND5DE7ZX3zkE7An0rxEoXUe7bXHAf_rHrqXDpi2I4_Ipai8Z5-9zvP48mosqn8HkTpGn_k3DaZZB0WxVCOqnKwL0-rjaPg7h8bLHE53DLpGWN5cfQ87hIvaJ5ffXwWVgReoYsbmMrfHj27ch9PLbdyjv00gYYoQHwh4i3kHXcUUfhT1Gz1NxK371m0VCn16wtXD6hCSa_LKwJn3HyAhNfc"/>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="p-lg max-w-max-width mx-auto">
+<!-- Welcome Header -->
+<section class="mb-xl animate-fade-in">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-xs">Good morning, Ms. Robinson!</h2>
+<p class="text-on-surface-variant text-body-lg">You have <span class="text-primary font-bold">4 classes</span> scheduled for today.</p>
+</section>
+<!-- Top Row Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg mb-lg">
+<!-- AI Promo Card (Bento Large) -->
+<div class="md:col-span-8 relative overflow-hidden bg-white rounded-xl card-shadow group p-lg flex flex-col justify-between min-h-[240px] border border-tertiary/10">
+<div class="absolute -right-16 -top-16 w-64 h-64 bg-tertiary/5 rounded-full blur-3xl group-hover:bg-tertiary/10 transition-colors duration-500"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-sm mb-md">
+<div class="w-10 h-10 bg-tertiary-container flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-on-tertiary">auto_awesome</span>
+</div>
+<span class="text-tertiary font-bold font-title-md">AI Question Generator</span>
+</div>
+<p class="text-on-surface-variant text-body-lg max-w-md">Instantly create high-quality multiple choice, short answer, and essay questions from any textbook page or PDF.</p>
+</div>
+<div class="mt-xl flex items-center justify-between">
+<button class="px-xl py-2 bg-tertiary text-white rounded-full font-bold hover:bg-on-tertiary-fixed-variant transition-all hover:shadow-md transform hover:-translate-y-0.5">Try Now</button>
+<div class="hidden sm:block h-24 w-48 relative">
+
+</div>
+</div>
+</div>
+<!-- KPI Card: Attendance (Bento Small) -->
+<div class="md:col-span-4 bg-white rounded-xl card-shadow p-lg border border-outline/30 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-sm">
+<span class="text-on-surface-variant font-label-md text-label-md">DAILY ATTENDANCE</span>
+<span class="bg-secondary-container text-on-secondary-container text-[10px] px-2 py-0.5 rounded-full font-bold">+2% today</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">94.2%</h3>
+<p class="text-on-surface-variant text-body-md mt-xs">Across all classes</p>
+</div>
+<div class="mt-lg h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[94.2%] rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Second Row -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- Class Schedule (Horizontal Scroll Logic) -->
+<section class="md:col-span-7">
+<div class="flex items-center justify-between mb-md">
+<h3 class="font-title-md text-title-md text-on-surface">Today's Schedule</h3>
+<button class="text-primary text-body-md font-bold hover:underline">View Calendar</button>
+</div>
+<div class="flex gap-md overflow-x-auto pb-4 scroll-smooth snap-x">
+<!-- Class Card 1 -->
+<div class="min-w-[240px] snap-start bg-white rounded-xl card-shadow p-lg border-l-4 border-primary">
+<p class="text-primary font-bold text-label-md mb-xs">10:00 AM</p>
+<h4 class="font-title-md text-body-lg mb-sm">Grade 8 Science</h4>
+<div class="flex items-center gap-xs text-on-surface-variant mb-md">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span class="text-body-md">Lab 302</span>
+</div>
+<button class="w-full py-2 bg-surface-container-high text-on-surface font-bold rounded-lg text-body-md hover:bg-surface-container-highest transition-colors">Start Session</button>
+</div>
+<!-- Class Card 2 -->
+<div class="min-w-[240px] snap-start bg-white rounded-xl card-shadow p-lg border-l-4 border-secondary">
+<p class="text-secondary font-bold text-label-md mb-xs">11:30 AM</p>
+<h4 class="font-title-md text-body-lg mb-sm">Grade 9 Biology</h4>
+<div class="flex items-center gap-xs text-on-surface-variant mb-md">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span class="text-body-md">Room 104</span>
+</div>
+<button class="w-full py-2 bg-surface-container-high text-on-surface font-bold rounded-lg text-body-md hover:bg-surface-container-highest transition-colors">Start Session</button>
+</div>
+<!-- Class Card 3 -->
+<div class="min-w-[240px] snap-start bg-white rounded-xl card-shadow p-lg border-l-4 border-outline">
+<p class="text-on-surface-variant font-bold text-label-md mb-xs">01:15 PM</p>
+<h4 class="font-title-md text-body-lg mb-sm">Grade 8 Science</h4>
+<div class="flex items-center gap-xs text-on-surface-variant mb-md">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span class="text-body-md">Lab 302</span>
+</div>
+<button class="w-full py-2 bg-surface-container-low text-on-surface-variant font-bold rounded-lg text-body-md cursor-not-allowed">Scheduled</button>
+</div>
+</div>
+</section>
+<!-- Pending Assignments List -->
+<section class="md:col-span-5">
+<div class="flex items-center justify-between mb-md">
+<h3 class="font-title-md text-title-md text-on-surface">To Grade</h3>
+<span class="bg-error-container text-on-error-container font-bold text-label-md px-2 py-0.5 rounded-full">3 Active</span>
+</div>
+<div class="bg-white rounded-xl card-shadow overflow-hidden">
+<ul class="divide-y divide-outline/30">
+<li class="p-md flex items-center justify-between hover:bg-surface transition-colors cursor-pointer group">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 bg-primary/5 rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<h5 class="font-bold text-body-md">Cell Structures Lab</h5>
+<p class="text-on-surface-variant text-label-md">Grade 9 Biology</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-primary font-bold text-body-md">18/24</p>
+<p class="text-on-surface-variant text-label-md">Pending</p>
+</div>
+</li>
+<li class="p-md flex items-center justify-between hover:bg-surface transition-colors cursor-pointer">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 bg-primary/5 rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">quiz</span>
+</div>
+<div>
+<h5 class="font-bold text-body-md">Weekly Quiz #4</h5>
+<p class="text-on-surface-variant text-label-md">Grade 8 Science</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-primary font-bold text-body-md">32/32</p>
+<p class="text-secondary font-bold text-label-md">Complete</p>
+</div>
+</li>
+<li class="p-md flex items-center justify-between hover:bg-surface transition-colors cursor-pointer">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 bg-primary/5 rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">biotech</span>
+</div>
+<div>
+<h5 class="font-bold text-body-md">Safety Protocol Essay</h5>
+<p class="text-on-surface-variant text-label-md">Grade 8 Science</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-primary font-bold text-body-md">5/28</p>
+<p class="text-on-surface-variant text-label-md">New</p>
+</div>
+</li>
+</ul>
+<button class="w-full py-3 bg-surface-container-high text-primary font-bold text-body-md hover:bg-surface-container-highest transition-colors">
+                            View All Assignments
+                        </button>
+</div>
+</section>
+</div>
+<!-- Footer Stats / Small Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg mt-lg">
+<div class="bg-white p-lg rounded-xl card-shadow border border-outline/30 flex items-center gap-md">
+<div class="w-12 h-12 bg-surface-container-high rounded-full flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">person_check</span>
+</div>
+<div>
+<p class="text-on-surface-variant text-label-md font-bold">Total Students</p>
+<p class="font-title-md text-title-md">118</p>
+</div>
+</div>
+<div class="bg-white p-lg rounded-xl card-shadow border border-outline/30 flex items-center gap-md">
+<div class="w-12 h-12 bg-surface-container-high rounded-full flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">trending_up</span>
+</div>
+<div>
+<p class="text-on-surface-variant text-label-md font-bold">Average Score</p>
+<p class="font-title-md text-title-md">84.5%</p>
+</div>
+</div>
+<div class="bg-white p-lg rounded-xl card-shadow border border-outline/30 flex items-center gap-md">
+<div class="w-12 h-12 bg-surface-container-high rounded-full flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">magic_button</span>
+</div>
+<div>
+<p class="text-on-surface-variant text-label-md font-bold">AI Questions</p>
+<p class="font-title-md text-title-md">452</p>
+</div>
+</div>
+<div class="bg-white p-lg rounded-xl card-shadow border border-outline/30 flex items-center gap-md">
+<div class="w-12 h-12 bg-surface-container-high rounded-full flex items-center justify-center text-on-error-container">
+<span class="material-symbols-outlined">priority_high</span>
+</div>
+<div>
+<p class="text-on-surface-variant text-label-md font-bold">At Risk</p>
+<p class="font-title-md text-title-md">4</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (FAB) -->
+<div class="fixed bottom-lg right-lg z-50">
+<button class="w-14 h-14 bg-primary text-on-primary rounded-2xl shadow-2xl flex items-center justify-center transition-transform hover:scale-110 active:scale-95 group relative">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+<span class="absolute right-full mr-4 bg-inverse-surface text-inverse-on-surface text-body-md px-3 py-1 rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">New Quick Quiz</span>
+</button>
+</div>
+<script>
+        // Micro-interactions and Lightweight Atmospheric Effects
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.card-shadow');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-2px)';
+                    card.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Active State Logic simulation
+            const navLinks = document.querySelectorAll('aside nav a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    navLinks.forEach(l => {
+                        l.classList.remove('bg-primary-container', 'text-on-primary-container', 'font-bold');
+                        l.classList.add('text-on-surface-variant');
+                        l.querySelector('.material-symbols-outlined').style.fontVariationSettings = "'FILL' 0";
+                    });
+                    link.classList.add('bg-primary-container', 'text-on-primary-container', 'font-bold');
+                    link.classList.remove('text-on-surface-variant');
+                    link.querySelector('.material-symbols-outlined').style.fontVariationSettings = "'FILL' 1";
+                });
+            });
+        });
+    </script>
+</body></html>

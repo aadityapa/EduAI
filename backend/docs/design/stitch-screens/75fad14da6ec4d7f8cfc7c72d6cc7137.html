@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduAI - Smart Learning Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #F8FAFD;
+            color: #191c23;
+        }
+        .sidebar-item-active {
+            transform: scale(0.98);
+        }
+        .card-hover-effect:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        .glass-header {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #DADCE0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #c1c6d6; }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-container": "#00722f",
+                    "surface": "#F8FAFD",
+                    "primary": "#005bbf",
+                    "on-secondary-fixed": "#002108",
+                    "secondary": "#006e2c",
+                    "surface-bright": "#f9f9ff",
+                    "surface-variant": "#e0e2ec",
+                    "tertiary-fixed-dim": "#deb7ff",
+                    "on-surface-variant": "#414754",
+                    "outline": "#DADCE0",
+                    "surface-container": "#FFFFFF",
+                    "primary-fixed": "#d8e2ff",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#f2f3fd",
+                    "primary-container": "#D3E3FD",
+                    "surface-dim": "#d8d9e3",
+                    "primary-fixed-dim": "#adc7ff",
+                    "on-primary-container": "#ffffff",
+                    "secondary-fixed-dim": "#6ddd81",
+                    "on-tertiary-fixed": "#2c0050",
+                    "on-tertiary-container": "#0b001a",
+                    "inverse-primary": "#adc7ff",
+                    "on-primary": "#FFFFFF",
+                    "on-error": "#ffffff",
+                    "on-secondary-fixed-variant": "#005320",
+                    "on-surface": "#191c23",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#e0e2ec",
+                    "on-secondary": "#FFFFFF",
+                    "surface-container-high": "#EEF2F7",
+                    "secondary-fixed": "#89fa9b",
+                    "inverse-surface": "#2d3038",
+                    "tertiary-container": "#a145f4",
+                    "on-tertiary-fixed-variant": "#6900b2",
+                    "on-primary-fixed": "#001a41",
+                    "on-primary-fixed-variant": "#004493",
+                    "error": "#D93025",
+                    "background": "#F8FAFD",
+                    "inverse-on-surface": "#eff0fa",
+                    "tertiary-fixed": "#f0dbff",
+                    "on-background": "#191c23",
+                    "secondary-container": "#86f898",
+                    "on-tertiary": "#ffffff",
+                    "tertiary": "#8621d9",
+                    "surface-tint": "#005bc0",
+                    "outline-variant": "#c1c6d6",
+                    "on-error-container": "#93000a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "24px",
+                    "max-width": "1280px",
+                    "sidebar-web": "240px",
+                    "gutter": "16px",
+                    "md": "16px",
+                    "2xl": "48px",
+                    "xl": "32px",
+                    "sidebar-admin": "260px",
+                    "xs": "4px",
+                    "sm": "8px"
+            },
+            "fontFamily": {
+                    "title-md": ["Google Sans Flex"],
+                    "headline-md": ["Google Sans Flex"],
+                    "label-md": ["Roboto"],
+                    "body-md": ["Roboto"],
+                    "body-lg": ["Roboto"],
+                    "display-lg": ["Google Sans Flex"]
+            },
+            "fontSize": {
+                    "title-md": ["20px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "headline-md": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                    "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="flex min-h-screen bg-surface">
+<!-- Side Navigation Bar (Desktop) -->
+<aside class="w-sidebar-web h-screen fixed left-0 top-0 bg-surface-container-low border-r border-outline flex flex-col py-lg px-md z-50">
+<div class="flex items-center gap-3 mb-xl px-2">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">school</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary leading-none">EduAI</h1>
+<p class="text-[10px] font-label-md text-on-surface-variant uppercase tracking-wider">Learning Portal</p>
+</div>
+</div>
+<button class="mb-xl w-full bg-primary text-on-primary py-3 px-4 rounded-full flex items-center justify-center gap-2 font-body-md font-bold shadow-md hover:bg-primary/90 transition-all active:scale-95">
+<span class="material-symbols-outlined">add_comment</span>
+<span>New Chat with AI</span>
+</button>
+<nav class="flex-1 flex flex-col gap-2">
+<!-- Navigation items from JSON mapping -->
+<a class="flex items-center gap-3 py-3 px-4 text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-md text-label-md rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">dashboard</span>
+<span>Dashboard</span>
+</a>
+<!-- Hub is active based on request -->
+<a class="flex items-center gap-3 py-3 px-4 bg-primary-container text-on-primary-container font-bold rounded-lg font-label-md text-label-md active:scale-[0.98] transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">hub</span>
+<span>Hub</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-md text-label-md rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">school</span>
+<span>Courses</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-md text-label-md rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">smart_toy</span>
+<span>AI Tutor</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-md text-label-md rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">military_tech</span>
+<span>Gamification</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-outline-variant pt-4 flex flex-col gap-1">
+<a class="flex items-center gap-3 py-2 px-4 text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-md text-label-md rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-3 py-2 px-4 text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-md text-label-md rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span>Help</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-sidebar-web flex-1 flex flex-col min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="h-16 flex justify-between items-center px-xl max-w-max-width mx-auto w-full sticky top-0 z-40 bg-surface/80 backdrop-blur-md border-b border-outline">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border border-outline rounded-full py-2 pl-10 pr-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-all font-body-md" placeholder="Search resources, PYQs, or formula sheets..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6 ml-lg">
+<div class="flex items-center gap-4 text-on-surface-variant">
+<button class="p-2 hover:bg-surface-variant/50 rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined">calendar_today</span>
+</button>
+<button class="p-2 hover:bg-surface-variant/50 rounded-full transition-all relative active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+</button>
+</div>
+<div class="h-8 w-[1px] bg-outline mx-2"></div>
+<div class="flex items-center gap-3 group cursor-pointer">
+<div class="text-right hidden sm:block">
+<p class="font-label-md text-label-md text-on-surface font-bold">Aditi Sharma</p>
+<p class="font-label-md text-[10px] text-on-surface-variant">Class 10 • CBSE</p>
+</div>
+<img class="w-10 h-10 rounded-full border-2 border-primary-container object-cover" data-alt="A professional studio portrait of a cheerful young Indian female student with glasses, wearing a smart casual outfit, with a blurred modern library background filled with books and soft morning sunlight. The lighting is bright and airy, reflecting a clean light-mode aesthetic with soft shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPrDO801hUFd7QVoO8mEgjVVAFEiSt1BMX2JwL1OauaXG127greWKc3F3CS4KqgbZ22XJCW5MJ_VisbPX5ilmXJYeEXPtze04tO9G3BN9HiQiKkIfMMQK7WMbB3VKBBebpPCtSzGj6XykPl0lhPKZrX4r21LYzC_pQazlmbcGYVdY9WEMGibI_-hoB19Z9iOiu4kPanXx7-bmU77_vNMziw7ubOGLTwHvwBxybpl3Loy489TFZiPB9K8O6ABxCqq7ChTZjf0BP0C0"/>
+</div>
+</div>
+</header>
+<!-- Hub Content -->
+<div class="p-xl max-w-max-width mx-auto w-full space-y-xl">
+<!-- Welcome Header -->
+<section class="relative overflow-hidden rounded-3xl p-lg bg-gradient-to-br from-primary/10 via-primary-container/20 to-surface-container border border-primary/5">
+<div class="relative z-10 max-w-2xl">
+<h2 class="font-display-lg text-headline-md lg:text-display-lg text-on-surface mb-md">Smart Learning Hub</h2>
+<p class="font-body-lg text-on-surface-variant mb-lg">Access curated study materials, high-yield practice questions, and AI-driven mock tests tailored for your board and grade.</p>
+<div class="flex flex-wrap gap-4">
+<div class="bg-surface-container-lowest px-4 py-3 rounded-2xl flex items-center gap-3 shadow-sm border border-outline/30">
+<div class="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant">Board Ready</p>
+<p class="font-title-md text-sm">CBSE 2024-25</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest px-4 py-3 rounded-2xl flex items-center gap-3 shadow-sm border border-outline/30">
+<div class="w-8 h-8 rounded-lg bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">trending_up</span>
+</div>
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant">Your Progress</p>
+<p class="font-title-md text-sm">78% Mastery</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Abstract Decorative Element -->
+<div class="absolute right-0 bottom-0 opacity-10 pointer-events-none">
+<span class="material-symbols-outlined text-[300px]" style="font-variation-settings: 'wght' 100;">hub</span>
+</div>
+</section>
+<!-- Filters Section -->
+<section class="flex flex-col lg:flex-row gap-gutter items-end bg-surface-container p-lg rounded-2xl border border-outline/40 shadow-sm">
+<div class="flex-1 w-full space-y-2">
+<label class="font-label-md text-on-surface-variant ml-1">Board</label>
+<div class="flex gap-2 p-1 bg-surface-container-low rounded-xl border border-outline">
+<button class="flex-1 py-2 px-4 rounded-lg bg-primary text-on-primary font-bold transition-all shadow-sm">CBSE</button>
+<button class="flex-1 py-2 px-4 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all">ICSE</button>
+<button class="flex-1 py-2 px-4 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all">State Board</button>
+</div>
+</div>
+<div class="w-full lg:w-48 space-y-2">
+<label class="font-label-md text-on-surface-variant ml-1">Grade</label>
+<select class="w-full bg-surface-container-low border border-outline rounded-xl py-2.5 px-4 focus:ring-primary focus:border-primary font-body-md appearance-none">
+<option>Class 10</option>
+<option>Class 9</option>
+<option>Class 8</option>
+<option>Class 1-7</option>
+</select>
+</div>
+<div class="w-full lg:w-64 space-y-2">
+<label class="font-label-md text-on-surface-variant ml-1">Subject</label>
+<div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+<button class="whitespace-nowrap px-4 py-2 rounded-full border border-primary bg-primary/5 text-primary font-bold text-sm">All Subjects</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full border border-outline text-on-surface-variant hover:border-primary transition-all text-sm">Mathematics</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full border border-outline text-on-surface-variant hover:border-primary transition-all text-sm">Science</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full border border-outline text-on-surface-variant hover:border-primary transition-all text-sm">Social Science</button>
+</div>
+</div>
+</section>
+<!-- Resource Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+<!-- Category 1: Formula Sheets -->
+<div class="space-y-4">
+<div class="flex items-center justify-between px-1">
+<h3 class="font-title-md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">functions</span>
+                            Formula Sheets
+                        </h3>
+<button class="text-primary font-label-md hover:underline">View All</button>
+</div>
+<div class="space-y-3">
+<div class="p-lg bg-surface-container rounded-2xl border border-outline/30 card-hover-effect transition-all flex items-center gap-4 cursor-pointer group">
+<div class="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined">calculate</span>
+</div>
+<div class="flex-1">
+<h4 class="font-title-md text-base">Physics: Optics &amp; Light</h4>
+<p class="text-on-surface-variant font-body-md text-xs">Essential mirror &amp; lens formulas</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">download</span>
+</div>
+<div class="p-lg bg-surface-container rounded-2xl border border-outline/30 card-hover-effect transition-all flex items-center gap-4 cursor-pointer group">
+<div class="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined">science</span>
+</div>
+<div class="flex-1">
+<h4 class="font-title-md text-base">Chemical Reactions</h4>
+<p class="text-on-surface-variant font-body-md text-xs">Balanced equations list</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">download</span>
+</div>
+</div>
+</div>
+<!-- Category 2: PYQs (Previous Year Questions) -->
+<div class="space-y-4">
+<div class="flex items-center justify-between px-1">
+<h3 class="font-title-md flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">history_edu</span>
+                            PYQs (Previous Years)
+                        </h3>
+<button class="text-secondary font-label-md hover:underline">View All</button>
+</div>
+<div class="space-y-3">
+<div class="relative overflow-hidden p-lg bg-surface-container rounded-2xl border border-outline/30 card-hover-effect transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<span class="px-2 py-1 bg-secondary-container text-on-secondary-container font-bold text-[10px] rounded-md">MOST ACCURATE</span>
+<span class="material-symbols-outlined text-on-surface-variant/40">bookmark</span>
+</div>
+<h4 class="font-title-md text-lg mb-1">CBSE Class 10 Maths</h4>
+<p class="text-on-surface-variant font-body-md text-sm mb-4">2019 - 2024 Complete Set</p>
+<div class="flex items-center gap-2">
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full bg-blue-200 border border-white"></div>
+<div class="w-6 h-6 rounded-full bg-green-200 border border-white"></div>
+<div class="w-6 h-6 rounded-full bg-yellow-200 border border-white"></div>
+</div>
+<span class="text-[10px] text-on-surface-variant">4.2k Students Practiced</span>
+</div>
+</div>
+<div class="p-lg bg-surface-container rounded-2xl border border-outline/30 card-hover-effect transition-all flex items-center gap-4 cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-secondary/5 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">menu_book</span>
+</div>
+<div class="flex-1">
+<h4 class="font-title-md text-base">Class 10 Biology</h4>
+<p class="text-on-surface-variant font-body-md text-xs">Top 50 Repeated Questions</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Category 3: AI Mock Tests (High End Feature) -->
+<div class="space-y-4">
+<div class="flex items-center justify-between px-1">
+<h3 class="font-title-md flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary">psychology</span>
+                            AI Mock Tests
+                        </h3>
+<span class="px-2 py-0.5 bg-tertiary/10 text-tertiary font-bold text-[10px] rounded-full">NEW</span>
+</div>
+<div class="h-full bg-gradient-to-b from-tertiary/5 to-surface-container rounded-3xl border border-tertiary/20 p-lg flex flex-col items-center text-center space-y-4">
+<div class="w-16 h-16 rounded-full bg-tertiary flex items-center justify-center text-on-tertiary shadow-lg mb-2">
+<span class="material-symbols-outlined text-3xl">smart_toy</span>
+</div>
+<div>
+<h4 class="font-title-md text-lg">Adaptive Full Mock Test</h4>
+<p class="font-body-md text-sm text-on-surface-variant px-4">Questions dynamically change difficulty based on your real-time accuracy.</p>
+</div>
+<div class="w-full grid grid-cols-2 gap-2 text-xs font-bold text-on-surface-variant">
+<div class="bg-surface-container-lowest p-2 rounded-xl border border-outline/30">
+<p class="text-tertiary mb-1">EST. TIME</p>
+<p>180 Mins</p>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded-xl border border-outline/30">
+<p class="text-tertiary mb-1">DIFFICULTY</p>
+<p>Dynamic</p>
+</div>
+</div>
+<button class="w-full bg-tertiary text-on-tertiary font-bold py-3 rounded-2xl shadow-md hover:bg-tertiary-container transition-all active:scale-95 flex items-center justify-center gap-2">
+                            Start Test Now
+                            <span class="material-symbols-outlined">rocket_launch</span>
+</button>
+</div>
+</div>
+<!-- Category 4: Recorded Classes (Wide Span) -->
+<div class="lg:col-span-3 space-y-4">
+<div class="flex items-center justify-between px-1">
+<h3 class="font-title-md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">video_library</span>
+                            Featured Recorded Classes
+                        </h3>
+<button class="text-primary font-label-md hover:underline">Browse Video Library</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg">
+<!-- Video Card 1 -->
+<div class="group cursor-pointer">
+<div class="relative aspect-video rounded-2xl overflow-hidden mb-3">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A cinematic high-quality still from an educational video showing a modern high-tech teacher standing next to a glowing 3D holographic projection of a human DNA strand. The room is a sophisticated dark-mode classroom with blue and cyan lighting accents. Sharp focus, professional photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtb8vHrP-R6EgXNe28XmOwHikWtrmKblO-sGAHT5IxgCahsCEr7zrC8GpFfa-9rino6ydx3QHZdFFI57OPt0VuFRA6PDtr5PjHfSQM7FLOR4r9JljkY7NjAoN3vcLdntid0YwFOa_g-0LB2OqGyG51WFAInQ3JZY0lPsKYRBcxsnMd5fGyxVPtZOTyTu3PdHEl_T8dcv2C0KuNbBhMi9nE0hXjh_2_a5Us68gaN3u9W4o2ZBu5ETx-GRsM9JBkOeuUsSVFZV2O_JE"/>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+<div class="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+<div class="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-md font-bold">45:20</div>
+</div>
+<h5 class="font-title-md text-sm mb-1 group-hover:text-primary transition-colors">Mastering Genetic Heredity</h5>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant font-body-md">
+<span>Class 10 Biology</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">visibility</span> 12k views</span>
+</div>
+</div>
+<!-- Video Card 2 -->
+<div class="group cursor-pointer">
+<div class="relative aspect-video rounded-2xl overflow-hidden mb-3">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A clean professional educational video thumbnail showing a top-down view of a hand writing elegant mathematical equations on a digital white tablet. The interface shows vibrant graphs and geometric shapes in blue and purple. Bright, studio lighting with a focus on clarity and education." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB16EHcakVxF-4qlOKVaGyNsVdIfU_1We_DjNkJsl8_YusRB8HvQ00lVqLAaqylhONZR-_A_eavF_bHFip0SYPgxtN8YgBuajDdNq7iuraqvD_jZKdh7LS09YdHSINSJspYr4BA09cHRYy7xqaSyENjo-Oa_L6kvo0drmRdf0M9WxI1IdKJCdZpYgs6efpQlwLj1DirtyGceV7YIDXO5_R2qeEsbbgsL1Fy92hFBT27L6DYaVhR0iQCdTq3bMuO0XFtgTLQRwUAblw"/>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+<div class="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+<div class="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-md font-bold">32:15</div>
+</div>
+<h5 class="font-title-md text-sm mb-1 group-hover:text-primary transition-colors">Quadratic Equations Simplified</h5>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant font-body-md">
+<span>Class 10 Mathematics</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">visibility</span> 8.5k views</span>
+</div>
+</div>
+<!-- Video Card 3 -->
+<div class="group cursor-pointer">
+<div class="relative aspect-video rounded-2xl overflow-hidden mb-3">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A vibrant scientific laboratory setting in a video thumbnail where a teacher is demonstrating a colorful chemical reaction with bubbling test tubes. The background is a clean white science lab with high-end glass equipment. Bright natural lighting through windows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBm2yAcM6FBI5uAJe_rUDZ8L9vaPbUBHuREJWouNjD4oyjpu9AOKfNECo9O_6lMSwJ-vXcGzLDEFnxGH_GCYSeBA6QICQn-koEvy7i4qlWhW7jo5HoMhJktMRA4zau1AjlnyCutmCGZlVVTvUbuY7UOlgwp_bL1gT056xwaacD6APw0nB4gQpl4o782TNzzKGQu5yjhX2AwnfpAMCD-mLeHk14lzBxm0_2K10Bx23jumauRY0enDy9zLLtY86C7PP9_6VolJKjs3cg"/>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+<div class="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+<div class="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-md font-bold">58:00</div>
+</div>
+<h5 class="font-title-md text-sm mb-1 group-hover:text-primary transition-colors">Acids, Bases &amp; Salts: Live Demo</h5>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant font-body-md">
+<span>Class 10 Chemistry</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">visibility</span> 15k views</span>
+</div>
+</div>
+<!-- Video Card 4 -->
+<div class="group cursor-pointer">
+<div class="relative aspect-video rounded-2xl overflow-hidden mb-3 bg-surface-container-high flex flex-col items-center justify-center border-2 border-dashed border-outline">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant/40">video_call</span>
+<p class="text-xs font-bold text-on-surface-variant mt-2">Next Live Session</p>
+<p class="text-[10px] text-on-surface-variant">Starts in 2 hours</p>
+</div>
+<h5 class="font-title-md text-sm mb-1">Civics: Power Sharing Live</h5>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant font-body-md">
+<span class="text-secondary font-bold">LIVE SOON</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">person</span> 450 waiting</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Sticky Mobile Nav (Hidden on MD up) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface-container border-t border-outline flex items-center justify-around px-2 z-50">
+<button class="flex flex-col items-center text-on-surface-variant gap-1">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-label-md">Home</span>
+</button>
+<button class="flex flex-col items-center text-primary gap-1">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">hub</span>
+<span class="text-[10px] font-label-md">Hub</span>
+</button>
+<div class="-mt-8 w-14 h-14 bg-primary rounded-full flex items-center justify-center text-on-primary shadow-lg border-4 border-surface active:scale-90 transition-all">
+<span class="material-symbols-outlined text-3xl">smart_toy</span>
+</div>
+<button class="flex flex-col items-center text-on-surface-variant gap-1">
+<span class="material-symbols-outlined">school</span>
+<span class="text-[10px] font-label-md">Learn</span>
+</button>
+<button class="flex flex-col items-center text-on-surface-variant gap-1">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="text-[10px] font-label-md">Profile</span>
+</button>
+</nav>
+<!-- Footer -->
+<footer class="mt-auto border-t border-outline py-xl px-xl bg-surface-container-low text-on-surface-variant">
+<div class="max-width mx-auto flex flex-col md:flex-row justify-between items-center gap-lg">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">school</span>
+<span class="font-headline-md text-title-md font-bold text-primary">EduAI</span>
+</div>
+<div class="flex gap-lg font-body-md text-sm">
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-primary transition-colors" href="#">Academic Standards</a>
+</div>
+<div class="text-[12px] opacity-60">
+                    © 2024 EduAI Technologies. Powered by Smart Learning Systems.
+                </div>
+</div>
+</footer>
+</main>
+<script>
+        // Simple Interaction: Toggle active state for board filters
+        const boardButtons = document.querySelectorAll('.bg-surface-container-low button');
+        boardButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                boardButtons.forEach(b => {
+                    b.classList.remove('bg-primary', 'text-on-primary', 'font-bold', 'shadow-sm');
+                    b.classList.add('text-on-surface-variant');
+                });
+                btn.classList.remove('text-on-surface-variant');
+                btn.classList.add('bg-primary', 'text-on-primary', 'font-bold', 'shadow-sm');
+            });
+        });
+
+        // Search highlight effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('scale-[1.02]');
+            searchInput.parentElement.classList.add('shadow-md');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('scale-[1.02]');
+            searchInput.parentElement.classList.remove('shadow-md');
+        });
+    </script>
+</body></html>

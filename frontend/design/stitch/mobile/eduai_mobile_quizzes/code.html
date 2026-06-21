@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EduAI Mobile Quizzes</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Google+Sans+Flex:wght@600;700&display=swap" rel="stylesheet"/>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#1A73E8',tertiary:'#9334E6',secondary:'#006e2c',background:'#F8FAFD',surface:'#FFFFFF','on-surface':'#1F1F1F','on-surface-variant':'#5F6368',outline:'#DADCE0','primary-container':'#D3E3FD','secondary-container':'#86f898'},borderRadius:{xl:'12px','2xl':'16px',full:'9999px'}}}};</script>
+<style>body{font-family:Roboto,sans-serif;-webkit-tap-highlight-color:transparent}.no-scrollbar::-webkit-scrollbar{display:none}</style>
+</head>
+<body class="bg-background text-on-surface min-h-screen pb-24">
+<header class="px-4 py-3 border-b"><h1 class="font-bold text-lg">Quizzes</h1></header>
+<main class="px-4 py-4 space-y-3 max-w-md mx-auto">
+<div class="bg-white rounded-2xl p-4 border flex justify-between items-center"><div><p class="font-bold">Algebra Quiz 3</p><p class="text-xs text-on-surface-variant">Due tomorrow</p></div><span class="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full">New</span></div>
+<div class="bg-white rounded-2xl p-4 border"><p class="font-bold">Science MCQ</p><p class="text-xs text-green-600 font-bold mt-1">Score: 92%</p></div></main>
+
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 pb-4 pt-2 bg-white shadow border-t border-outline">
+<button class="flex flex-col items-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1"><span class="text-xs font-bold">Home</span></button>
+<button class="flex flex-col items-center text-on-surface-variant px-4 py-1"><span class="text-xs">Courses</span></button>
+<button class="flex flex-col items-center text-on-surface-variant px-4 py-1"><span class="text-xs">Tutor</span></button>
+<button class="flex flex-col items-center text-on-surface-variant px-4 py-1"><span class="text-xs">Quizzes</span></button>
+<button class="flex flex-col items-center text-on-surface-variant px-4 py-1"><span class="text-xs">Profile</span></button>
+</nav>
+</body></html>
