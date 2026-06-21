@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Mail, Lock, Sparkles } from 'lucide-react';
+import { Mail, Lock, Sparkles, BookOpen, GraduationCap, Heart } from 'lucide-react';
 import {
   Button,
   Card,
@@ -58,20 +58,45 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="portal-background flex min-h-screen items-center justify-center p-4">
+    <div className="stitch-auth-page">
+      <div className="stitch-auth-hero hidden lg:flex">
+        <div className="relative z-10">
+          <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
+            <Sparkles className="h-7 w-7" />
+          </div>
+          <h1 className="max-w-md text-4xl font-bold leading-tight">Learn smarter with AI</h1>
+          <p className="mt-4 max-w-sm text-lg text-white/85">
+            Courses, quizzes, AI tutor, and parent insights — designed for CBSE & ICSE.
+          </p>
+        </div>
+        <div className="relative z-10 grid gap-3">
+          {[
+            { icon: BookOpen, label: 'Interactive lessons' },
+            { icon: GraduationCap, label: 'Teacher tools' },
+            { icon: Heart, label: 'Parent dashboard' },
+          ].map(({ icon: Icon, label }) => (
+            <div key={label} className="flex items-center gap-3 rounded-xl bg-white/10 px-4 py-3 backdrop-blur-sm">
+              <Icon className="h-5 w-5" />
+              <span className="font-medium">{label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="stitch-auth-form-panel">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
         className="w-full max-w-md"
       >
-        <Card className="glass-card border-0 shadow-glass">
+        <Card className="stitch-surface stitch-elevated border-0">
           <CardHeader className="text-center">
-            <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+            <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground lg:hidden">
               <Sparkles className="h-6 w-6" />
             </div>
-            <CardTitle className="text-2xl">Welcome to EduAI</CardTitle>
-            <CardDescription>Student · Teacher · Parent — Port 3000</CardDescription>
+            <CardTitle className="text-2xl font-bold">Welcome to EduAI</CardTitle>
+            <CardDescription>Student · Teacher · Parent</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex gap-2">
@@ -142,7 +167,7 @@ export default function LoginPage() {
                   </div>
                 </div>
                 {error && <p className="text-sm text-destructive">{error}</p>}
-                <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                <Button type="submit" className="h-11 w-full rounded-full" size="lg" disabled={loading}>
                   {loading ? 'Signing in…' : 'Sign in'}
                 </Button>
               </form>
@@ -211,6 +236,7 @@ export default function LoginPage() {
           </CardContent>
         </Card>
       </motion.div>
+      </div>
     </div>
   );
 }

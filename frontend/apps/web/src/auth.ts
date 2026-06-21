@@ -3,6 +3,7 @@ import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
 import Apple from 'next-auth/providers/apple';
 import { getDashboardRoute, resolveAuthSecret, type RoleCode } from '@eduai/shared';
+import { safeAuthRedirect } from '@eduai/auth';
 
 const identityUrl = process.env.NEXT_PUBLIC_IDENTITY_SERVICE_URL ?? 'http://localhost:3001';
 
@@ -61,6 +62,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    redirect: safeAuthRedirect,
     async jwt({ token, user }) {
       if (user) {
         token.sub = user.id;
@@ -82,11 +84,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.accessToken = token.accessToken as string | undefined;
       }
       return session;
-    },
-    async redirect({ url, baseUrl }) {
-      if (url.startsWith('/')) return `${baseUrl}${url}`;
-      if (new URL(url).origin === baseUrl) return url;
-      return baseUrl;
     },
   },
 });

@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import { safeAuthRedirect } from '@eduai/auth';
 import { resolveAuthSecret, type RoleCode } from '@eduai/shared';
 
 const identityUrl = process.env.NEXT_PUBLIC_IDENTITY_SERVICE_URL ?? 'http://localhost:3001';
@@ -43,6 +44,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    redirect: safeAuthRedirect,
     async jwt({ token, user }) {
       if (user) {
         token.sub = user.id;

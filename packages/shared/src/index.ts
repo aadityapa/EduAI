@@ -152,6 +152,7 @@ export const SELF_REGISTER_ROLES: RoleCode[] = ['student', 'parent'];
 
 export { withTimeout, DB_QUERY_TIMEOUT_MS } from './timeout.js';
 export { PORTS, FRONTEND_APPS, BACKEND_SERVICES, serviceUrl } from './ports.js';
+import { getAdminPortalUrl } from './url.js';
 
 export function getDashboardRoute(roles: RoleCode[]): string {
   const priority: RoleCode[] = [
@@ -170,11 +171,12 @@ export function getDashboardRoute(roles: RoleCode[]): string {
   return '/dashboard';
 }
 
-/** Admin CRM runs on a separate Next.js app (default :3002). */
-export function getAdminPortalUrl(): string {
-  const url = process.env.NEXT_PUBLIC_ADMIN_URL ?? 'http://localhost:3002';
-  return url.replace(/\/$/, '');
-}
+export {
+  normalizeBrowserUrl,
+  getWebPortalUrl,
+  getAdminPortalUrl,
+  getPortalLoginUrl,
+} from './url.js';
 
 const ADMIN_DASHBOARD_ROLES: RoleCode[] = [
   ROLES.PLATFORM_ADMIN,

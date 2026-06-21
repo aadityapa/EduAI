@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getDashboardRoute, isValidEmail, resolvePostLoginDestination, ROLES, slugify, wrapResponse } from './index';
+import { getDashboardRoute, isValidEmail, resolvePostLoginDestination, ROLES, slugify, wrapResponse, normalizeBrowserUrl, getPortalLoginUrl } from './index';
 
 describe('shared utils', () => {
   it('validates email', () => {
@@ -28,5 +28,11 @@ describe('shared utils', () => {
       'http://localhost:3002/dashboard',
     );
     expect(resolvePostLoginDestination([ROLES.STUDENT])).toBe('/student/dashboard');
+  });
+
+  it('normalizes 0.0.0.0 to localhost for browser URLs', () => {
+    expect(normalizeBrowserUrl('http://0.0.0.0:3002/login')).toBe('http://localhost:3002/login');
+    process.env.NEXT_PUBLIC_ADMIN_URL = 'http://0.0.0.0:3002';
+    expect(getPortalLoginUrl('admin')).toBe('http://localhost:3002/login');
   });
 });

@@ -1,6 +1,7 @@
 'use client';
 
 import { signOut } from 'next-auth/react';
+import { getPortalLoginUrl } from '@eduai/shared';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
@@ -205,7 +206,7 @@ function DashboardShellInner({ title, portal, children }: DashboardShellProps) {
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="bg-primary/10 text-primary text-xs">{initials ?? 'U'}</AvatarFallback>
               </Avatar>
-              <Button variant="outline" size="sm" onClick={() => signOut({ callbackUrl: '/login' })}>
+              <Button variant="outline" size="sm" onClick={() => signOut({ callbackUrl: getPortalLoginUrl('web') })}>
                 <LogOut className="mr-2 h-4 w-4 hidden sm:inline" />
                 {t('common.nav.logout')}
               </Button>

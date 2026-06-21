@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut } from 'next-auth/react';
+import { getPortalLoginUrl } from '@eduai/shared';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import {
@@ -339,7 +340,7 @@ export function AdminShell({ user, children }: AdminShellProps) {
                     Settings
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/login' })}>
+                  <DropdownMenuItem onClick={() => signOut({ callbackUrl: getPortalLoginUrl('admin') })}>
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign out
                   </DropdownMenuItem>

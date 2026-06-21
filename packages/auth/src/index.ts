@@ -8,6 +8,7 @@ export {
   isAdminRole,
 } from './permissions';
 export type { PermissionDef } from './permissions';
+export { safeAuthRedirect } from './safe-redirect';
 
 export interface AuthUserSession {
   id: string;
