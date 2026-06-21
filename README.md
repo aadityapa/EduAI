@@ -64,22 +64,25 @@ On the web login page, use **Student / Teacher / Parent** tabs to switch demo ac
 
 ```
 frontend/
-  apps/        ← FRONTEND (UI only)
-    web/       :3000  Student, Teacher, Parent
-    admin/     :3002  Platform admin & CRM
-    mobile/    :8081  React Native / Expo
-  packages/    ui, i18n, analytics
+  web/         :3000  Student, Teacher, Parent
+  admin/       :3002  Platform admin & CRM
+  mobile/      :8081  React Native / Expo
+  shared-ui/   ui, i18n, analytics
+  assets/      shared frontend assets
+  public/      shared public assets
 
 backend/
-  services/    ← BACKEND (REST APIs only)
+  services/    REST APIs only
     identity-service/   :3001
     learning-service/   :3003
     ai-service/         :3004
     erp-service/        :3005
     billing-service/    :3006
-  packages/    database, nest-common, ai
-
-packages/      Cross-cutting shared libraries (auth, shared)
+  database/    Prisma schema, migrations, seed data
+  shared/      auth, shared, nest-common, ai
+  infrastructure/ Docker, Kubernetes, Terraform, monitoring
+  testing/     load tests, e2e tests, operational scripts
+  docs/        architecture, release, audit, and design docs
 ```
 
 Frontend apps call backend via `NEXT_PUBLIC_*_SERVICE_URL` — no business logic duplicated in Next.js routes.

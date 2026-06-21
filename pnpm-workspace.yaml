@@ -1,6 +1,9 @@
 packages:
-  - "frontend/apps/*"
-  - "frontend/packages/*"
+  - "frontend/web"
+  - "frontend/admin"
+  - "frontend/mobile"
+  - "frontend/shared-ui/*"
   - "backend/services/*"
-  - "backend/packages/*"
-  - "packages/*"
+  - "backend/shared/*"
+  - "backend/database"
+  - "backend/testing/load"

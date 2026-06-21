@@ -1,0 +1,12 @@
+{
+  "name": "@eduai/frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "pnpm --filter @eduai/web build && pnpm --filter @eduai/admin build && pnpm --filter @eduai/mobile build",
+    "dev": "pnpm --filter @eduai/web dev",
+    "lint": "pnpm --filter @eduai/web lint && pnpm --filter @eduai/admin lint && pnpm --filter @eduai/mobile lint",
+    "test": "pnpm --filter @eduai/web test && pnpm --filter @eduai/admin test && pnpm --filter @eduai/mobile test",
+    "typecheck": "pnpm --filter @eduai/web typecheck && pnpm --filter @eduai/admin typecheck && pnpm --filter @eduai/mobile typecheck"
+  }
+}
