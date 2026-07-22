@@ -54,8 +54,8 @@ export function StitchQuizBuilderWizard({ aiGeneratorHref }: { aiGeneratorHref: 
                   <Label htmlFor="quiz-count">Number of Questions</Label>
                   <Input id="quiz-count" type="number" value={questionCount} onChange={(e) => setQuestionCount(e.target.value)} />
                 </div>
-                <div className="rounded-xl border border-[#9334E6]/20 bg-[#9334E6]/5 p-4">
-                  <p className="text-sm font-semibold text-[#9334E6]">AI Assist</p>
+                <div className="rounded-xl border border-[#7C3AED]/20 bg-[#7C3AED]/5 p-4">
+                  <p className="text-sm font-semibold text-[#7C3AED]">AI Assist</p>
                   <p className="mt-1 text-sm text-muted-foreground">
                     Generate questions automatically from your lesson content.
                   </p>

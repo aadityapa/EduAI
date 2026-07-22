@@ -9,4 +9,4 @@ export const STITCH_IMAGES = {
   courseHistory: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAVEwoDykO-rBUqULpTIknNncvv6oDo6t4MSghLCGo59uV9sW0sLQS2CCkTrxnfOSD5PACM7bAegVTkazyXL76IH4LoPloI8ANUvO192pP3dqq90Lz56zkeqiOhrGJa6crbsWrR81Oxnk6H1ZtbiXGL6PAjigqmnUzz2nz8CVozw_GoNMnbYclpqM7x-4ScAjYZyPwnhn56BqiwP-2LfvXuhwPdzUNuToXuNR7-WJ_Uy9qAM_LmG3J0ubJmG5Web3u7AvU7jgG7Nf0',
 } as const;
 
-export const STITCH_TERTIARY = '#9334E6';
+export const STITCH_TERTIARY = '#7C3AED';

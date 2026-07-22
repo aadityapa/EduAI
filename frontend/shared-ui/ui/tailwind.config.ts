@@ -85,6 +85,7 @@ const config: Config = {
         },
         xp: 'hsl(var(--xp))',
         streak: 'hsl(var(--streak))',
+        achievement: 'hsl(var(--achievement))',
       },
       borderRadius: {
         DEFAULT: 'var(--radius)',

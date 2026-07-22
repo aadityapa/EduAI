@@ -10,8 +10,11 @@ const badgeVariants = cva(
         default: 'border-transparent bg-primary text-primary-foreground',
         secondary: 'border-transparent bg-secondary text-secondary-foreground',
         outline: 'text-foreground',
-        success: 'border-transparent bg-success text-white',
-        warning: 'border-transparent bg-warning text-white',
+        success: 'border-transparent bg-success text-success-foreground',
+        warning: 'border-transparent bg-warning text-warning-foreground',
+        danger: 'border-transparent bg-destructive text-destructive-foreground',
+        info: 'border-transparent bg-info text-info-foreground',
+        achievement: 'border-achievement/30 bg-achievement/10 font-semibold text-achievement',
       },
     },
     defaultVariants: {

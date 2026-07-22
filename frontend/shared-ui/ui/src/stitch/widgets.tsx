@@ -224,17 +224,17 @@ export function StitchTeacherAiPromo({ href, className }: { href: string; classN
   return (
     <div
       className={cn(
-        'stitch-card relative flex min-h-[240px] flex-col justify-between overflow-hidden border border-[#9334E6]/10 p-6',
+        'stitch-card relative flex min-h-[240px] flex-col justify-between overflow-hidden border border-[#7C3AED]/10 p-6',
         className,
       )}
     >
-      <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[#9334E6]/5 blur-3xl" />
+      <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[#7C3AED]/5 blur-3xl" />
       <div className="relative z-10">
         <div className="mb-4 flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#9334E6]/20">
-            <CheckCircle2 className="h-5 w-5 text-[#9334E6]" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#7C3AED]/20">
+            <CheckCircle2 className="h-5 w-5 text-[#7C3AED]" />
           </div>
-          <span className="font-semibold text-[#9334E6]">AI Question Generator</span>
+          <span className="font-semibold text-[#7C3AED]">AI Question Generator</span>
         </div>
         <p className="max-w-md text-muted-foreground">
           Instantly create high-quality multiple choice, short answer, and essay questions from any textbook page or PDF.
@@ -242,7 +242,7 @@ export function StitchTeacherAiPromo({ href, className }: { href: string; classN
       </div>
       <a
         href={href}
-        className="relative z-10 mt-6 inline-flex w-fit rounded-full bg-[#9334E6] px-8 py-2 text-sm font-bold text-white shadow-md transition hover:-translate-y-0.5"
+        className="relative z-10 mt-6 inline-flex w-fit rounded-full bg-[#7C3AED] px-8 py-2 text-sm font-bold text-white shadow-md transition hover:-translate-y-0.5"
       >
         Try Now
       </a>
@@ -269,7 +269,7 @@ export function StitchParentKpiCard({
 }) {
   const iconBg = {
     primary: 'bg-primary/10 text-primary',
-    tertiary: 'bg-[#9334E6]/10 text-[#9334E6]',
+    tertiary: 'bg-[#7C3AED]/10 text-[#7C3AED]',
     secondary: 'bg-success/10 text-success',
   } as const;
 

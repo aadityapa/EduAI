@@ -26,7 +26,7 @@ export function StitchTutorShell({
     <div className={cn('flex h-[calc(100vh-4rem)] overflow-hidden rounded-xl border bg-card', className)}>
       <aside className="hidden w-64 flex-col border-r bg-background p-4 md:flex">
         <div className="mb-4 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#9334E6] text-white shadow-[0_0_20px_rgba(134,33,217,0.15)]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#7C3AED] text-white shadow-[0_0_20px_rgba(134,33,217,0.15)]">
             <Bot className="h-5 w-5" />
           </div>
           <div>

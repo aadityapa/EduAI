@@ -3,7 +3,6 @@ import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { BookOpen, Flame, Sparkles, TrendingUp } from 'lucide-react';
 import { DashboardShell } from '@/components/dashboard-shell';
-import { ApiError } from '@/components/api-error';
 import { PageMotion } from '@/components/page-motion';
 import {
   getGamification,
@@ -12,7 +11,10 @@ import {
   LearningApiError,
 } from '@/lib/learning-api';
 import {
+  EmptyState,
+  ErrorState,
   KpiCard,
+  ProgressCard,
   STITCH_IMAGES,
   StitchAiPromo,
   StitchInsightPanel,
@@ -53,9 +55,23 @@ export default async function StudentDashboard() {
       : '/student/hub';
 
   const streakDays = gamification?.streak.currentStreak ?? 0;
+  const longestStreak = gamification?.streak.longestStreak ?? 0;
   const welcomeDescription = streakDays
     ? `You're on a ${streakDays}-day streak. Keep it up!`
     : 'Continue your learning journey — courses, quizzes, and AI tutor await.';
+
+  const lessonsCompleted = progress?.summary.completed ?? 0;
+  const lessonsTotal = progress?.summary.total ?? 0;
+  const masteryPct = lessonsTotal > 0 ? Math.round((lessonsCompleted / lessonsTotal) * 100) : 0;
+  const progressMicrocopy = !progress
+    ? 'Your progress will appear here once your courses load.'
+    : masteryPct >= 75
+      ? "You're excelling — keep the streak alive!"
+      : masteryPct >= 40
+        ? 'Solid progress. A few more lessons to go!'
+        : masteryPct > 0
+          ? 'Great start! Keep the momentum going.'
+          : 'Start your first lesson to begin your mastery journey.';
 
   return (
     <DashboardShell title="Student Dashboard" portal="student">
@@ -75,7 +91,12 @@ export default async function StudentDashboard() {
             }
           />
 
-          {loadError && <ApiError message={loadError} />}
+          {loadError && (
+            <ErrorState
+              title="Couldn't load your dashboard"
+              message={loadError}
+            />
+          )}
 
           <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <KpiCard
@@ -115,23 +136,57 @@ export default async function StudentDashboard() {
             />
           </section>
 
+          <section className="space-y-3">
+            <div>
+              <h3 className="text-lg font-semibold">Your Progress</h3>
+              <p className="text-sm text-muted-foreground">{progressMicrocopy}</p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <ProgressCard
+                title="Course Mastery"
+                value={lessonsCompleted}
+                max={lessonsTotal || Math.max(lessonsCompleted, 1)}
+                variant="primary"
+                sublabel={`${lessonsCompleted}/${lessonsTotal || lessonsCompleted} lessons complete`}
+                loading={!progress && !loadError}
+              />
+              <ProgressCard
+                title="Streak Momentum"
+                value={streakDays}
+                max={Math.max(longestStreak, 1)}
+                variant="streak"
+                sublabel={longestStreak ? `Personal best: ${longestStreak}-day streak` : 'Start today to build a streak'}
+                loading={!gamification && !loadError}
+              />
+            </div>
+          </section>
+
           <div className="grid gap-8 lg:grid-cols-3">
             <div className="space-y-4 lg:col-span-2">
               <div className="flex items-center justify-between px-1">
-                <h3 className="text-lg font-semibold">Recent Courses</h3>
+                <div>
+                  <h3 className="text-lg font-semibold">Recent Courses</h3>
+                  <p className="text-xs text-muted-foreground">Keep the momentum going</p>
+                </div>
                 <Link href="/student/courses" className="text-sm font-bold text-primary hover:underline">
                   View all
                 </Link>
               </div>
 
               {!enrollments?.length ? (
-                <p className="rounded-xl border bg-card p-6 text-sm text-muted-foreground">
-                  You are not enrolled in any courses yet.{' '}
-                  <Link href="/student/courses" className="font-medium text-primary hover:underline">
-                    Browse the catalog
-                  </Link>{' '}
-                  to get started.
-                </p>
+                <EmptyState
+                  icon={<BookOpen className="h-5 w-5" />}
+                  title="You're not enrolled in any courses yet"
+                  description="Browse the catalog to find your first course and start building your streak."
+                  action={
+                    <Link
+                      href="/student/courses"
+                      className="inline-flex items-center rounded-full bg-primary px-5 py-2 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+                    >
+                      Browse the catalog
+                    </Link>
+                  }
+                />
               ) : (
                 <div className="grid gap-4 md:grid-cols-3">
                   {enrollments.slice(0, 3).map((enrollment, index) => {

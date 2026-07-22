@@ -2,29 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Google Stitch / Material 3 inspired tokens */
+/* EduAI design tokens — indigo/violet EdTech identity, Material-adjacent surfaces */
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,400..700&family=Roboto:wght@400;500;700&display=swap');
 
 @layer base {
   :root {
-    /* Stitch palette — Google blue primary, neutral surfaces */
+    /* EduAI palette — indigo primary, violet secondary, warm achievement accents */
     --background: 210 20% 98%;
-    --foreground: 0 0% 13%;
+    --foreground: 222 24% 14%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 13%;
+    --card-foreground: 222 24% 14%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 13%;
-    --primary: 217 89% 51%;
+    --popover-foreground: 222 24% 14%;
+    --primary: 239 84% 67%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 217 76% 95%;
-    --secondary-foreground: 217 89% 35%;
+    --secondary: 262 83% 58%;
+    --secondary-foreground: 0 0% 100%;
     --muted: 220 14% 96%;
     --muted-foreground: 220 9% 46%;
-    --accent: 217 76% 95%;
-    --accent-foreground: 217 89% 40%;
-    --destructive: 0 84% 60%;
+    --accent: 243 85% 96%;
+    --accent-foreground: 243 75% 45%;
+    --destructive: 350 89% 60%;
     --destructive-foreground: 0 0% 100%;
-    --success: 142 71% 45%;
+    --success: 160 84% 39%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
@@ -32,17 +32,17 @@
     --info-foreground: 0 0% 100%;
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 217 89% 51%;
+    --ring: 239 84% 67%;
     --sidebar: 0 0% 100%;
-    --sidebar-foreground: 0 0% 13%;
+    --sidebar-foreground: 222 24% 14%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-accent: 217 89% 51%;
+    --sidebar-accent: 239 84% 67%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-muted: 220 14% 96%;
-    --chart-1: 217 89% 51%;
-    --chart-2: 142 71% 45%;
+    --chart-1: 239 84% 67%;
+    --chart-2: 160 84% 39%;
     --chart-3: 38 92% 50%;
-    --chart-4: 262 69% 50%;
+    --chart-4: 262 83% 58%;
     --chart-5: 199 89% 48%;
     --radius: 12px;
     --radius-sm: 8px;
@@ -60,8 +60,10 @@
     --motion-normal: 250ms;
     --motion-slow: 400ms;
     --motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
-    --xp: 45 93% 47%;
+    /* Achievement/gamification accents — gold XP, flame streak, coral celebration */
+    --xp: 43 96% 56%;
     --streak: 25 95% 53%;
+    --achievement: 351 95% 71%;
   }
 
   .dark {
@@ -71,37 +73,38 @@
     --card-foreground: 210 20% 98%;
     --popover: 224 47% 9%;
     --popover-foreground: 210 20% 98%;
-    --primary: 258 90% 66%;
+    --primary: 239 84% 72%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 262 69% 50%;
+    --secondary: 262 83% 66%;
     --secondary-foreground: 0 0% 100%;
     --muted: 215 28% 12%;
     --muted-foreground: 217 10% 65%;
-    --accent: 262 40% 18%;
-    --accent-foreground: 258 90% 80%;
-    --destructive: 0 62% 50%;
+    --accent: 243 45% 20%;
+    --accent-foreground: 239 90% 82%;
+    --destructive: 350 75% 55%;
     --destructive-foreground: 0 0% 100%;
-    --success: 142 71% 45%;
-    --warning: 38 92% 50%;
+    --success: 160 70% 45%;
+    --warning: 38 92% 55%;
     --border: 215 28% 17%;
     --input: 215 28% 17%;
-    --ring: 258 90% 66%;
+    --ring: 239 84% 72%;
     --sidebar: 224 47% 7%;
     --sidebar-foreground: 210 20% 98%;
     --sidebar-border: 215 28% 17%;
-    --sidebar-accent: 258 90% 66%;
+    --sidebar-accent: 239 84% 72%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-muted: 215 28% 12%;
-    --chart-1: 258 90% 66%;
-    --chart-2: 262 69% 50%;
-    --chart-3: 142 71% 45%;
-    --chart-4: 38 92% 50%;
-    --chart-5: 199 89% 48%;
+    --chart-1: 239 84% 72%;
+    --chart-2: 262 83% 66%;
+    --chart-3: 160 70% 45%;
+    --chart-4: 38 92% 55%;
+    --chart-5: 199 89% 55%;
     --glass-bg: 224 47% 9% / 0.65;
     --glass-border: 0 0% 100% / 0.08;
     --glass-shadow: 0 8px 32px hsl(0 0% 0% / 0.35);
-    --xp: 45 93% 50%;
-    --streak: 25 95% 55%;
+    --xp: 43 96% 62%;
+    --streak: 25 95% 58%;
+    --achievement: 351 90% 76%;
   }
 
   * {
@@ -129,24 +132,29 @@
   h4 {
     @apply text-lg font-medium;
   }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
 }
 
 @layer utilities {
   .portal-background {
     background:
-      radial-gradient(ellipse at 15% 40%, hsl(217 89% 51% / 0.12) 0%, transparent 55%),
-      radial-gradient(ellipse at 85% 15%, hsl(142 71% 45% / 0.08) 0%, transparent 45%),
+      radial-gradient(ellipse at 15% 40%, hsl(239 84% 67% / 0.12) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 15%, hsl(160 84% 39% / 0.08) 0%, transparent 45%),
       hsl(var(--background));
   }
 
-  /* Google Stitch auth layout — split hero + form */
+  /* EduAI auth layout — split hero + form */
   .stitch-auth-page {
     @apply flex min-h-screen flex-col lg:flex-row;
   }
 
   .stitch-auth-hero {
     @apply relative flex flex-1 flex-col justify-between overflow-hidden p-8 text-white lg:p-12;
-    background: linear-gradient(145deg, hsl(217 89% 45%) 0%, hsl(217 89% 58%) 45%, hsl(142 71% 42%) 100%);
+    background: linear-gradient(145deg, hsl(239 84% 60%) 0%, hsl(262 83% 56%) 55%, hsl(160 84% 40%) 100%);
   }
 
   .stitch-auth-hero-image {
@@ -157,7 +165,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(145deg, hsl(217 89% 45% / 0.85) 0%, hsl(217 89% 58% / 0.7) 100%);
+    background: linear-gradient(145deg, hsl(239 84% 60% / 0.85) 0%, hsl(262 83% 56% / 0.7) 100%);
     z-index: 1;
   }
 
@@ -187,11 +195,11 @@
   .stitch-elevated {
     box-shadow:
       0 1px 2px hsl(0 0% 0% / 0.06),
-      0 4px 12px hsl(217 89% 51% / 0.08);
+      0 4px 12px hsl(239 84% 67% / 0.08);
   }
 
   .stitch-welcome-banner {
-    background: linear-gradient(135deg, hsl(217 89% 51%) 0%, hsl(217 89% 45%) 40%, hsl(142 71% 42%) 100%);
+    background: linear-gradient(135deg, hsl(239 84% 62%) 0%, hsl(262 83% 56%) 55%, hsl(160 84% 42%) 100%);
   }
 
   .stitch-welcome-banner::after {
@@ -208,8 +216,8 @@
   }
 
   .stitch-ai-promo {
-    background: linear-gradient(135deg, hsl(270 70% 50%) 0%, hsl(217 89% 51%) 100%);
-    box-shadow: 0 8px 24px hsl(270 70% 50% / 0.25);
+    background: linear-gradient(135deg, hsl(262 83% 55%) 0%, hsl(239 84% 60%) 100%);
+    box-shadow: 0 8px 24px hsl(262 83% 55% / 0.25);
   }
 
   .stitch-nav-active {

@@ -84,21 +84,21 @@ export function StitchAiPromo({
         ) : (
           <div className="stitch-ai-promo h-full w-full" />
         )}
-        <div className="absolute inset-0 bg-[#9334E6]/20 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-[#7C3AED]/20 backdrop-blur-[2px]" />
       </div>
       <div className="flex flex-1 flex-col space-y-3 p-6">
         <div className="flex items-center gap-2">
-          <div className="rounded-lg bg-[#9334E6] p-1 text-white">
+          <div className="rounded-lg bg-[#7C3AED] p-1 text-white">
             <Brain className="h-4 w-4" aria-hidden="true" />
           </div>
-          <span className="text-xs font-bold uppercase tracking-widest text-[#9334E6]">Premium Feature</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-[#7C3AED]">Premium Feature</span>
         </div>
         <h4 className="text-lg font-bold leading-tight">{title}</h4>
         <p className="text-sm text-muted-foreground">{description}</p>
         <div className="mt-auto pt-2">
           <a
             href={href}
-            className="inline-flex w-full items-center justify-center rounded-full bg-[#9334E6] py-3 text-sm font-bold text-white shadow-lg shadow-[#9334E6]/30 transition-all hover:-translate-y-0.5 hover:shadow-[#9334E6]/50"
+            className="inline-flex w-full items-center justify-center rounded-full bg-[#7C3AED] py-3 text-sm font-bold text-white shadow-lg shadow-[#7C3AED]/30 transition-all hover:-translate-y-0.5 hover:shadow-[#7C3AED]/50"
           >
             {linkLabel}
           </a>
@@ -120,7 +120,7 @@ interface StitchRecentCourseCardProps {
 const accentStyles = {
   primary: 'bg-primary/10 text-primary',
   secondary: 'bg-success/10 text-success',
-  tertiary: 'bg-[#9334E6]/10 text-[#9334E6]',
+  tertiary: 'bg-[#7C3AED]/10 text-[#7C3AED]',
 } as const;
 
 /** Compact course card from Stitch student dashboard */
