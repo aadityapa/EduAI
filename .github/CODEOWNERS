@@ -1,0 +1,26 @@
+# CODEOWNERS
+#
+# This file defines who is automatically requested for review when a pull
+# request touches matching paths. Rules are evaluated top-to-bottom; the
+# LAST matching rule wins, so more specific paths should be listed after
+# the default catch-all below.
+#
+# CUSTOMIZE ME: replace the placeholder handle(s) below with the actual
+# GitHub usernames/teams responsible for each area (e.g. per-service leads
+# for backend/services/*, a frontend lead for frontend/*, a platform/DevOps
+# owner for backend/infrastructure/*). Until customized, every path falls
+# back to the default owner.
+
+# Default owner — applies to anything not matched by a more specific rule
+# below.
+*       @pawan
+
+# Example per-area customization (uncomment and adjust as the team grows):
+# /backend/services/identity-service/   @your-identity-service-owner
+# /backend/services/learning-service/   @your-learning-service-owner
+# /backend/services/ai-service/         @your-ai-service-owner
+# /backend/services/erp-service/        @your-erp-service-owner
+# /backend/services/billing-service/    @your-billing-service-owner
+# /frontend/                            @your-frontend-owner
+# /backend/infrastructure/              @your-platform-owner
+# /.github/                             @your-platform-owner

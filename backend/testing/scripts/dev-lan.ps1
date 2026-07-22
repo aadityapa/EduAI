@@ -6,9 +6,16 @@ Set-Location $Root
 $lanIp = (
   Get-NetIPAddress -AddressFamily IPv4 |
   Where-Object {
-    $_.IPAddress -like '192.168.*' -or
-    $_.IPAddress -like '10.*'
+    $_.PrefixOrigin -eq 'Dhcp' -or $_.PrefixOrigin -eq 'Manual'
   } |
+  Where-Object {
+    $_.InterfaceAlias -notmatch 'vEthernet|Hyper-V|Default Switch|WSL|Loopback|VirtualBox|VMware|Tailscale|TAP|TUN|VPN'
+  } |
+  Where-Object {
+    $_.IPAddress -notlike '169.254.*' -and
+    ($_.IPAddress -like '192.168.*' -or $_.IPAddress -like '10.*' -or $_.IPAddress -like '172.1[6-9].*' -or $_.IPAddress -like '172.2[0-9].*' -or $_.IPAddress -like '172.3[0-1].*')
+  } |
+  Sort-Object -Property SkipAsSource, InterfaceMetric |
   Select-Object -First 1 -ExpandProperty IPAddress
 )
 
