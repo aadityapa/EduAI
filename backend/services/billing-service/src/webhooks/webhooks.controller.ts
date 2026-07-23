@@ -1,5 +1,6 @@
 import { Body, Controller, Headers, Post, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import type { Request } from 'express';
 import { WebhooksService } from './webhooks.service';
 import { Public } from '../common/decorators';
@@ -12,6 +13,7 @@ export class WebhooksController {
 
   @Post('stripe')
   @Public()
+  @Throttle({ webhook: { limit: 120, ttl: 60000 } })
   async stripe(
     @Req() req: Request,
     @Body() body: Record<string, unknown>,
@@ -28,6 +30,7 @@ export class WebhooksController {
 
   @Post('razorpay')
   @Public()
+  @Throttle({ webhook: { limit: 120, ttl: 60000 } })
   async razorpay(
     @Req() req: Request,
     @Body() body: Record<string, unknown>,

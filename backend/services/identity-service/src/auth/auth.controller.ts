@@ -18,6 +18,7 @@ import {
   RegisterDto,
   ResetPasswordDto,
 } from './dto/auth.dto';
+import { LogoutDto } from './dto/logout.dto';
 import { apiResponse } from '../common/response.util';
 import { CurrentUser, Public } from '../common/decorators';
 import { JwtAuthGuard } from '../common/guards';
@@ -67,14 +68,17 @@ export class AuthController {
   @Post('logout')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  async logout(@CurrentUser() user: UserContext, @Body() body: { refresh_token?: string }) {
-    const data = await this.authService.logout(user.sub, body.refresh_token);
+  @Throttle({ mutate: { limit: 30, ttl: 60000 } })
+  async logout(@CurrentUser() user: UserContext, @Body() body: LogoutDto) {
+    const refresh = body.refreshToken ?? body.refresh_token;
+    const data = await this.authService.logout(user.sub, refresh);
     return apiResponse(data);
   }
 
   @Post('logout-all')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @Throttle({ mutate: { limit: 10, ttl: 60000 } })
   async logoutAll(@CurrentUser() user: UserContext) {
     const data = await this.authService.logoutAll(user.sub);
     return apiResponse(data);
@@ -83,6 +87,7 @@ export class AuthController {
   @Public()
   @Post('forgot-password')
   @HttpCode(200)
+  @Throttle({ auth: { limit: 5, ttl: 900000 } })
   async forgotPassword(@Body() dto: ForgotPasswordDto) {
     return apiResponse({
       message: 'If the email exists, a reset link will be sent.',
@@ -93,6 +98,7 @@ export class AuthController {
   @Public()
   @Post('reset-password')
   @HttpCode(200)
+  @Throttle({ auth: { limit: 5, ttl: 900000 } })
   async resetPassword(@Body() _dto: ResetPasswordDto) {
     return apiResponse({ message: 'Password reset stub — Sprint 2 implementation' });
   }
@@ -100,6 +106,7 @@ export class AuthController {
   @Public()
   @Post('login/otp')
   @HttpCode(200)
+  @Throttle({ auth: { limit: 5, ttl: 900000 } })
   async otpLogin(@Body() dto: OtpLoginDto) {
     return apiResponse({
       message: 'OTP login placeholder',

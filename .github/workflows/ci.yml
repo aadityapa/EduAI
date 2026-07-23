@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [master, main, develop]
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -28,6 +32,9 @@ jobs:
       DATABASE_URL: postgresql://eduai:eduai_dev@localhost:5432/eduai?schema=public
       JWT_SECRET: ci-test-secret-minimum-32-characters
       AUTH_SECRET: ci-auth-secret-minimum-32-characters
+      # Observability soft-disabled in CI (no collector / DSN)
+      OTEL_SDK_DISABLED: "true"
+      HTTP_ACCESS_LOG: "false"
 
     steps:
       - uses: actions/checkout@v4
@@ -44,6 +51,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Secret scan (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Dependency audit
+        run: pnpm audit --audit-level=high
+        continue-on-error: true
+
+      - name: Security scan scripts
+        run: pnpm exec node scripts/security/ci-security-scan.mjs
+
       - name: Generate Prisma client
         run: pnpm db:generate
 
@@ -56,8 +75,30 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
-      - name: Test
+      - name: Unit / integration tests
         run: pnpm test
+
+      - name: Coverage gate (critical packages)
+        run: pnpm test:coverage:critical
+
+      - name: OpenAPI contract fixtures
+        run: pnpm test:contract
 
       - name: Build
         run: pnpm build
+
+      - name: Storybook static build
+        run: pnpm build-storybook
+
+      - name: Install Playwright browser
+        run: pnpm --filter @eduai/e2e exec playwright install --with-deps chromium
+
+      - name: E2E smoke + a11y
+        run: pnpm --filter @eduai/e2e test:smoke
+
+      - name: Optional Chromatic
+        if: ${{ secrets.CHROMATIC_PROJECT_TOKEN != '' }}
+        continue-on-error: true
+        run: pnpm --filter @eduai/ui exec chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --exit-zero-on-changes
+        env:
+          CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}

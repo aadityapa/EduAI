@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { cn } from '../lib/utils';
 import { Input } from './input';
-import { Label } from './label';
 
 export type QuizQuestionType = 'mcq' | 'multi_select' | 'true_false' | 'fill_blank';
 

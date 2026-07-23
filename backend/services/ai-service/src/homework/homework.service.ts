@@ -1,6 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import type { AiConversation } from '@eduai/database';
 import type { AiClient } from '@eduai/ai';
+import { assertSafeExternalUrl } from '@eduai/shared';
 import { AI_CLIENT } from '../ai/ai-client.provider';
 import { ConversationService } from '../conversation/conversation.service';
 import { SecurityService } from '../security/security.service';
@@ -23,11 +24,13 @@ export class HomeworkService {
     let text = dto.text?.trim() ?? '';
 
     if (dto.imageUrl) {
+      this.assertSafeMediaUrl(dto.imageUrl);
       const ocrText = await this.extractFromImage(dto.imageUrl);
       text = text ? `${text}\n\n${ocrText}` : ocrText;
     }
 
     if (dto.pdfUrl) {
+      this.assertSafeMediaUrl(dto.pdfUrl);
       const pdfText = await this.extractFromPdf(dto.pdfUrl);
       text = text ? `${text}\n\n${pdfText}` : pdfText;
     }
@@ -124,6 +127,21 @@ export class HomeworkService {
       'Solve a variation with different numbers but same concept',
       'Explain the underlying principle in your own words',
     ];
+  }
+
+  private assertSafeMediaUrl(url: string): void {
+    try {
+      assertSafeExternalUrl(url, {
+        allowHttpInDev: true,
+        allowedHosts: process.env.UPLOAD_URL_ALLOWLIST?.split(',')
+          .map((s) => s.trim())
+          .filter(Boolean),
+      });
+    } catch (err) {
+      throw new BadRequestException(
+        err instanceof Error ? err.message : 'Unsafe media URL',
+      );
+    }
   }
 
   private async extractFromImage(imageUrl: string): Promise<string> {

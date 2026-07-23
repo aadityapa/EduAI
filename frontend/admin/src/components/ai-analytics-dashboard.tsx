@@ -1,34 +1,22 @@
 'use client';
 
+import { useMemo } from 'react';
+import type { ColumnDef, CsvColumn } from '@eduai/ui';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
+  DataTable,
+  EmptyState,
   KpiCard,
   LeaderboardRow,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Line,
-  LineChart,
-  XAxis,
-  YAxis,
 } from '@eduai/ui';
-import { Activity, AlertCircle, Coins, Users, Zap } from 'lucide-react';
+import { Activity, Coins, Users, Zap } from 'lucide-react';
 import { PageHeader } from './page-header';
-import { aiUsageData, chartConfig } from '@/lib/mock-data';
+import { ApiError } from '@/components/api-error';
 import type { AiDashboardRecord } from '@/lib/admin-api';
-
-const mockSubjects = [
-  { subject: 'Math', requests: 3200 },
-  { subject: 'Science', requests: 2800 },
-  { subject: 'English', requests: 2100 },
-  { subject: 'Hindi', requests: 1400 },
-];
+import { formatNumber } from '@/lib/format';
 
 function featureCount(entry: { type?: string; feature?: string; _count?: { id: number }; count?: number }): number {
   if (entry.count != null) return entry.count;
@@ -44,96 +32,162 @@ interface AiAnalyticsDashboardProps {
   error?: string | null;
 }
 
+type FeatureRow = { feature: string; count: number };
+type TopUserRow = AiDashboardRecord['topUsers'][number];
+
 export function AiAnalyticsDashboard({ initialData, error }: AiAnalyticsDashboardProps) {
   const data = initialData;
+
+  const featureRows: FeatureRow[] = useMemo(
+    () =>
+      (data?.featureUsage ?? []).map((f) => ({
+        feature: featureLabel(f),
+        count: featureCount(f),
+      })),
+    [data],
+  );
+
+  const featureColumns: ColumnDef<FeatureRow>[] = [
+    { accessorKey: 'feature', header: 'Feature' },
+    {
+      accessorKey: 'count',
+      header: 'Conversations',
+      cell: ({ row }) => formatNumber(row.original.count),
+    },
+  ];
+
+  const topUserColumns: ColumnDef<TopUserRow>[] = [
+    {
+      accessorKey: 'userId',
+      header: 'User',
+      cell: ({ row }) => row.original.userId.slice(0, 12),
+    },
+    {
+      accessorKey: 'tokensUsed',
+      header: 'Tokens',
+      cell: ({ row }) => formatNumber(row.original.tokensUsed),
+    },
+    { accessorKey: 'queryCount', header: 'Queries' },
+    {
+      accessorKey: 'estimatedCostUsd',
+      header: 'Cost (USD)',
+      cell: ({ row }) => `$${row.original.estimatedCostUsd.toFixed(2)}`,
+    },
+  ];
+
+  const featureExport: CsvColumn<FeatureRow>[] = [
+    { header: 'Feature', accessor: (r) => r.feature },
+    { header: 'Count', accessor: (r) => r.count },
+  ];
+
+  const userExport: CsvColumn<TopUserRow>[] = [
+    { header: 'User', accessor: (r) => r.userId },
+    { header: 'Tokens', accessor: (r) => r.tokensUsed },
+    { header: 'Queries', accessor: (r) => r.queryCount },
+    { header: 'Cost USD', accessor: (r) => r.estimatedCostUsd },
+  ];
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="AI Analytics"
-        description="Token usage, cost tracking, feature adoption, and trends"
+        description={
+          data?.dailyBudgetSample != null
+            ? `Token usage & cost from ai-service · daily budget sample ${formatNumber(data.dailyBudgetSample)} tokens`
+            : 'Token usage, cost tracking, and feature adoption from ai-service'
+        }
         breadcrumbs={[{ label: 'Admin', href: '/dashboard' }, { label: 'AI Analytics' }]}
       />
 
-      {error && (
-        <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
-          <AlertCircle className="h-4 w-4" /> {error}
-        </div>
+      {error && <ApiError title="AI analytics unavailable" message={error} />}
+
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
+          label="Total Tokens"
+          value={data ? formatNumber(data.totalTokens) : '—'}
+          icon={<Zap className="h-5 w-5" />}
+        />
+        <KpiCard
+          label="Total Queries"
+          value={data ? formatNumber(data.totalQueries) : '—'}
+          icon={<Activity className="h-5 w-5" />}
+        />
+        <KpiCard
+          label="Est. Cost (USD)"
+          value={data ? `$${data.estimatedCostUsd.toFixed(2)}` : '—'}
+          icon={<Coins className="h-5 w-5" />}
+        />
+        <KpiCard
+          label="Active Users"
+          value={String(data?.topUsers.length ?? 0)}
+          icon={<Users className="h-5 w-5" />}
+        />
+      </div>
+
+      {!error && !data ? (
+        <EmptyState
+          icon={<Zap className="h-5 w-5" />}
+          title="No AI usage yet"
+          description="Usage appears when ai-service records quota events."
+        />
+      ) : (
+        !error &&
+        data && (
+          <div className="grid gap-6 lg:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Top Users by Token Usage</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {data.topUsers.length ? (
+                  <>
+                    {data.topUsers.slice(0, 5).map((u, i) => (
+                      <LeaderboardRow
+                        key={u.userId}
+                        rank={i + 1}
+                        name={u.userId.slice(0, 12)}
+                        xp={u.tokensUsed}
+                        subtitle={`${u.queryCount} queries · $${u.estimatedCostUsd.toFixed(2)}`}
+                      />
+                    ))}
+                    <DataTable
+                      className="mt-4"
+                      columns={topUserColumns}
+                      data={data.topUsers}
+                      exportable
+                      exportFilename="ai-top-users"
+                      exportColumns={userExport}
+                      pageSize={10}
+                    />
+                  </>
+                ) : (
+                  <EmptyState title="No top users" description="No token usage recorded yet." />
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Feature Usage</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {featureRows.length ? (
+                  <DataTable
+                    columns={featureColumns}
+                    data={featureRows}
+                    searchKey="feature"
+                    exportable
+                    exportFilename="ai-features"
+                    exportColumns={featureExport}
+                  />
+                ) : (
+                  <EmptyState title="No feature usage" description="Feature breakdown appears after AI traffic." />
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        )
       )}
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <KpiCard label="Total Tokens" value={data?.totalTokens.toLocaleString() ?? '—'} icon={<Zap className="h-5 w-5" />} />
-        <KpiCard label="Total Queries" value={data?.totalQueries.toLocaleString() ?? '—'} icon={<Activity className="h-5 w-5" />} />
-        <KpiCard label="Est. Cost (USD)" value={data ? `$${data.estimatedCostUsd.toFixed(2)}` : '—'} icon={<Coins className="h-5 w-5" />} />
-        <KpiCard label="Active Users" value={String(data?.topUsers.length ?? 0)} icon={<Users className="h-5 w-5" />} />
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader><CardTitle className="text-base">Daily AI Usage</CardTitle></CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-[280px]">
-              <LineChart data={aiUsageData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" />
-                <YAxis />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Line type="monotone" dataKey="requests" stroke="var(--color-requests)" strokeWidth={2} />
-              </LineChart>
-            </ChartContainer>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader><CardTitle className="text-base">Usage by Subject</CardTitle></CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-[280px]">
-              <BarChart data={mockSubjects}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="subject" />
-                <YAxis />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="requests" fill="var(--color-requests)" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ChartContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader><CardTitle className="text-base">Top Users by Token Usage</CardTitle></CardHeader>
-          <CardContent className="space-y-2">
-            {data?.topUsers.length ? data.topUsers.map((u, i) => (
-              <LeaderboardRow
-                key={u.userId}
-                rank={i + 1}
-                name={u.userId.slice(0, 12)}
-                xp={u.tokensUsed}
-                subtitle={`${u.queryCount} queries · $${u.estimatedCostUsd.toFixed(2)}`}
-              />
-            )) : <p className="text-sm text-muted-foreground">No usage data yet.</p>}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader><CardTitle className="text-base">Feature Usage</CardTitle></CardHeader>
-          <CardContent>
-            {data?.featureUsage.length ? (
-              <ul className="space-y-2 text-sm">
-                {data.featureUsage.map((f) => (
-                  <li key={featureLabel(f)} className="flex justify-between rounded-lg bg-muted/50 px-3 py-2">
-                    <span className="capitalize">{featureLabel(f)}</span>
-                    <span>{featureCount(f).toLocaleString()} conversations</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-muted-foreground">No feature usage recorded yet.</p>
-            )}
-          </CardContent>
-        </Card>
-      </div>
     </div>
   );
 }

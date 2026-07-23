@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@eduai/ui';
+import { toast, Button } from '@eduai/ui';
 import { enrollCourseAction } from '@/lib/learning-actions';
 
 interface EnrollButtonProps {
@@ -18,7 +18,6 @@ export function EnrollButton({
 }: EnrollButtonProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
   const [enrolled, setEnrolled] = useState(alreadyEnrolled);
 
   if (enrolled) {
@@ -30,26 +29,24 @@ export function EnrollButton({
   }
 
   return (
-    <div className="space-y-2">
-      <Button
-        className="w-full sm:w-auto"
-        disabled={pending}
-        onClick={() => {
-          setError(null);
-          startTransition(async () => {
-            try {
-              await enrollCourseAction(courseId);
-              setEnrolled(true);
-              router.refresh();
-            } catch (err) {
-              setError(err instanceof Error ? err.message : 'Enrollment failed');
-            }
-          });
-        }}
-      >
-        {pending ? 'Enrolling…' : label}
-      </Button>
-      {error && <p className="text-sm text-destructive">{error}</p>}
-    </div>
+    <Button
+      className="w-full sm:w-auto"
+      disabled={pending}
+      loading={pending}
+      onClick={() => {
+        startTransition(async () => {
+          try {
+            await enrollCourseAction(courseId);
+            setEnrolled(true);
+            toast.success('Enrolled successfully');
+            router.refresh();
+          } catch (err) {
+            toast.error(err instanceof Error ? err.message : 'Enrollment failed');
+          }
+        });
+      }}
+    >
+      {pending ? 'Enrolling…' : label}
+    </Button>
   );
 }

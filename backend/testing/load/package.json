@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "load:500": "k6 run backend/testing/load/k6-student-journey.js",
+    "load:latency": "k6 run backend/testing/load/k6-latency-p95.js",
     "load:scale": "k6 run backend/testing/load/k6-scale-scenarios.js"
   }
 }

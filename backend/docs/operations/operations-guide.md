@@ -11,16 +11,20 @@
 
 ## Monitoring
 
-- **Grafana:** Import `backend/infrastructure/monitoring/grafana/dashboards/platform-overview.json`
-- **Alerts:** `backend/infrastructure/monitoring/alerting-rules.yml`
-- **Metrics:** Prometheus at `:9090` in monitoring namespace
+- **Grafana:** Import dashboards under `backend/infrastructure/monitoring/grafana/dashboards/` (platform-overview, ai-service, business-kpis)
+- **Alerts:** `backend/infrastructure/monitoring/alerting-rules.yml` (each alert links a runbook)
+- **Runbooks:** [`runbooks/`](runbooks/) — high error rate, latency, service down, deploy/rollback, Redis, resources
+- **On-call:** [`on-call-incident-response.md`](on-call-incident-response.md)
+- **Metrics:** scrape `/api/v1/metrics` on each Nest service; Prometheus at `:9090` in monitoring namespace
+- **Sentry / OTel:** env-gated; see `.env.example` and `sentry.env.example`
 
 ## Incident Response
 
-1. Check Grafana platform overview dashboard
-2. Identify failing service via health endpoints
-3. Roll back deployment if needed
-4. See `disaster-recovery.md` for DB recovery
+1. Acknowledge alert → open linked runbook
+2. Check Grafana platform overview / business KPIs
+3. Capture `traceId` from error envelope / structured logs
+4. Mitigate via feature flag or `kubectl rollout undo` ([`runbooks/deploy-rollback.md`](runbooks/deploy-rollback.md))
+5. See `disaster-recovery.md` for DB recovery; `pnpm validate:dr` for drill checklist
 
 ## Tenant Onboarding
 

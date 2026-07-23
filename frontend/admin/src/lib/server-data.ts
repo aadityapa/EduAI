@@ -1,5 +1,15 @@
 import { auth } from '@/auth';
-import { billingApi, erpApi, identityApi, aiAdminApi, AdminApiError } from './admin-api';
+import {
+  billingApi,
+  erpApi,
+  identityApi,
+  aiAdminApi,
+  learningApi,
+  AdminApiError,
+  type PaginationMeta,
+  type UserRecord,
+  type UsersListQuery,
+} from './admin-api';
 
 export type FetchResult<T> = { data: T | null; error?: string };
 
@@ -13,12 +23,18 @@ async function wrap<T>(fn: () => Promise<T>): Promise<FetchResult<T>> {
 }
 
 export async function getPlatformOverview() {
-  const [revenue, erp, users, ai] = await Promise.all([
+  const [revenue, erp, usersRaw, ai] = await Promise.all([
     wrap(() => billingApi.getRevenue()),
     wrap(() => erpApi.getAnalytics()),
     wrap(() => identityApi.getUsers({ page: 1, page_size: 1 })),
     wrap(() => aiAdminApi.getDashboard()),
   ]);
+
+  const users: FetchResult<{ total: number }> = usersRaw.error
+    ? { data: null, error: usersRaw.error }
+    : {
+        data: { total: usersRaw.data?.pagination?.total_items ?? usersRaw.data?.data.length ?? 0 },
+      };
 
   return { revenue, erp, users, ai };
 }
@@ -75,8 +91,43 @@ export async function getSchoolsPageData() {
   return wrap(() => erpApi.getSchools());
 }
 
-export async function getUsersPageData() {
-  return wrap(() => identityApi.getUsers({ page: 1, page_size: 100 }));
+export async function getAnalyticsPageData() {
+  const [erp, revenue] = await Promise.all([
+    wrap(() => erpApi.getAnalytics()),
+    wrap(() => billingApi.getRevenue()),
+  ]);
+  return { erp, revenue };
+}
+
+export async function getContentPageData() {
+  return wrap(() => learningApi.getCourses());
+}
+
+export async function getUsersPageData(query?: UsersListQuery): Promise<{
+  data: UserRecord[] | null;
+  pagination: PaginationMeta | null;
+  error?: string;
+}> {
+  try {
+    const result = await identityApi.getUsers({
+      page: query?.page ?? 1,
+      page_size: query?.page_size ?? 20,
+      role: query?.role,
+      status: query?.status,
+    });
+    return { data: result.data, pagination: result.pagination ?? null };
+  } catch (e) {
+    const message = e instanceof AdminApiError ? e.message : 'Service unavailable';
+    return { data: null, pagination: null, error: message };
+  }
+}
+
+export async function getShellChromeData() {
+  const [subs, activity] = await Promise.all([
+    wrap(() => billingApi.getSubscriptions()),
+    wrap(() => billingApi.getActivityLogs()),
+  ]);
+  return { subs, activity };
 }
 
 export async function requireAdminSession() {

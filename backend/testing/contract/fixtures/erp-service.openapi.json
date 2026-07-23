@@ -1,0 +1,13 @@
+{
+  "openapi": "3.0.0",
+  "info": { "title": "EduAI ERP Service", "version": "1.0" },
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "operationId": "Health_check",
+        "tags": ["health"],
+        "responses": { "200": { "description": "OK" } }
+      }
+    }
+  }
+}

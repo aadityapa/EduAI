@@ -1,10 +1,18 @@
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { useCallback } from 'react';
+import { FlatList, StyleSheet, Text } from 'react-native';
 import { useAuth } from '../../src/auth/AuthContext';
 import { fetchCourses } from '../../src/api/services';
-import { cacheGet, cacheSet } from '../../src/auth/storage';
 import { ProgressBar, StitchCard, StitchScreenHeader } from '../../src/components/stitch';
-import { Screen, tokens } from '../../src/components/ui';
+import {
+  EmptyState,
+  ErrorState,
+  LoadingState,
+  OfflineBanner,
+  Screen,
+  themedRefreshControl,
+  tokens,
+} from '../../src/components/ui';
+import { useCachedResource } from '../../src/hooks/useCachedResource';
 
 interface Course {
   id: string;
@@ -15,43 +23,59 @@ interface Course {
 
 export default function CoursesScreen() {
   const { tokens: authTokens } = useAuth();
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!authTokens) return;
-    fetchCourses(authTokens.accessToken)
-      .then((data) => {
-        const list = data as Course[];
-        setCourses(list);
-        return cacheSet('courses', list);
-      })
-      .catch(async () => {
-        const cached = await cacheGet<Course[]>('courses');
-        if (cached) setCourses(cached);
-      })
-      .finally(() => setLoading(false));
+  const fetcher = useCallback(() => {
+    if (!authTokens) return Promise.reject(new Error('Not signed in'));
+    return fetchCourses(authTokens.accessToken) as Promise<Course[]>;
   }, [authTokens]);
+
+  const { data, loading, refreshing, error, offline, reload } = useCachedResource<Course[]>(
+    authTokens ? 'courses' : null,
+    authTokens ? fetcher : null,
+  );
+
+  const courses = data ?? [];
 
   if (loading) {
     return (
-      <Screen style={styles.center}>
-        <ActivityIndicator color={tokens.colors.primaryBright} />
+      <Screen>
+        <LoadingState label="Loading courses…" />
+      </Screen>
+    );
+  }
+
+  if (error && courses.length === 0) {
+    return (
+      <Screen>
+        <ErrorState title="Couldn't load courses" body={error} onRetry={() => void reload()} />
       </Screen>
     );
   }
 
   return (
     <Screen>
-      <StitchScreenHeader title="Courses" actionLabel="Filter" />
+      <StitchScreenHeader title="Courses" />
       <FlatList
         data={courses}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
-        ListEmptyComponent={<Text style={styles.empty}>No courses available</Text>}
+        refreshControl={themedRefreshControl({
+          refreshing,
+          onRefresh: () => void reload(),
+        })}
+        ListHeaderComponent={<OfflineBanner visible={offline} />}
+        ListEmptyComponent={
+          <EmptyState
+            title="No courses available"
+            body="Courses from your board and class will appear here."
+            actionLabel="Retry"
+            onAction={() => void reload()}
+          />
+        }
         renderItem={({ item, index }) => {
           const progress = [75, 42, 90, 55][index % 4];
-          const accent = [tokens.colors.primaryBright, tokens.colors.secondary, tokens.colors.tertiary][index % 3];
+          const accent = [tokens.colors.primaryBright, tokens.colors.secondary, tokens.colors.tertiary][
+            index % 3
+          ];
           return (
             <StitchCard>
               <Text style={styles.title}>
@@ -69,9 +93,7 @@ export default function CoursesScreen() {
 }
 
 const styles = StyleSheet.create({
-  list: { padding: tokens.spacing.md, paddingBottom: 100 },
-  center: { justifyContent: 'center', alignItems: 'center' },
-  empty: { textAlign: 'center', color: tokens.colors.textMuted, marginTop: 40 },
+  list: { padding: tokens.spacing.md, paddingBottom: 100, flexGrow: 1 },
   title: { fontSize: tokens.fontSize.md, fontWeight: '700', color: tokens.colors.text },
   subtitle: { color: tokens.colors.textMuted, marginTop: 4, fontSize: tokens.fontSize.sm },
   pct: { fontSize: tokens.fontSize.xs, color: tokens.colors.textMuted, marginTop: 4 },

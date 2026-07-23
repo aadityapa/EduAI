@@ -1,32 +1,44 @@
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCallback } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../src/auth/AuthContext';
 import { fetchHub } from '../../src/api/services';
-import { cacheGet, cacheSet } from '../../src/auth/storage';
 import { StitchCard, StitchScreenHeader } from '../../src/components/stitch';
-import { Screen, tokens } from '../../src/components/ui';
+import {
+  EmptyState,
+  ErrorState,
+  LoadingState,
+  OfflineBanner,
+  Screen,
+  themedRefreshControl,
+  tokens,
+} from '../../src/components/ui';
+import { useCachedResource } from '../../src/hooks/useCachedResource';
 
 export default function HubScreen() {
   const { tokens: authTokens } = useAuth();
-  const [hub, setHub] = useState<Record<string, unknown> | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!authTokens) return;
-    fetchHub(authTokens.accessToken)
-      .then(async (data) => {
-        setHub(data);
-        await cacheSet('student_hub', data);
-      })
-      .catch(async () => setHub(await cacheGet('student_hub')))
-      .finally(() => setLoading(false));
+  const fetcher = useCallback(() => {
+    if (!authTokens) return Promise.reject(new Error('Not signed in'));
+    return fetchHub(authTokens.accessToken);
   }, [authTokens]);
+
+  const { data: hub, loading, refreshing, error, offline, reload } = useCachedResource(
+    authTokens ? 'student_hub' : null,
+    authTokens ? fetcher : null,
+  );
 
   if (loading) {
     return (
-      <Screen style={styles.center}>
-        <ActivityIndicator color={tokens.colors.primaryBright} />
+      <Screen>
+        <LoadingState label="Loading hub…" />
+      </Screen>
+    );
+  }
+
+  if (error && !hub) {
+    return (
+      <Screen>
+        <ErrorState title="Couldn't load hub" body={error} onRetry={() => void reload()} />
       </Screen>
     );
   }
@@ -39,7 +51,14 @@ export default function HubScreen() {
   return (
     <Screen>
       <StitchScreenHeader title="Learning Hub" />
-      <ScrollView contentContainerStyle={styles.list}>
+      <ScrollView
+        contentContainerStyle={styles.list}
+        refreshControl={themedRefreshControl({
+          refreshing,
+          onRefresh: () => void reload(),
+        })}
+      >
+        <OfflineBanner visible={offline} />
         <StitchCard>
           <Text style={styles.pathTitle}>
             {board} · Class {classLevel}
@@ -48,17 +67,30 @@ export default function HubScreen() {
         </StitchCard>
 
         <View style={styles.actionGrid}>
-          <Pressable style={[styles.actionTile, styles.lessonsTile]} onPress={() => router.push('/(student)/courses')}>
+          <Pressable
+            style={({ pressed }) => [styles.actionTile, styles.lessonsTile, pressed && styles.pressed]}
+            onPress={() => router.push('/(student)/courses')}
+            accessibilityRole="button"
+          >
             <Text style={styles.actionLabel}>Lessons</Text>
           </Pressable>
-          <Pressable style={[styles.actionTile, styles.practiceTile]} onPress={() => router.push('/(student)/quizzes')}>
+          <Pressable
+            style={({ pressed }) => [styles.actionTile, styles.practiceTile, pressed && styles.pressed]}
+            onPress={() => router.push('/(student)/quizzes')}
+            accessibilityRole="button"
+          >
             <Text style={styles.actionLabel}>Practice</Text>
           </Pressable>
         </View>
 
         <Text style={styles.sectionLabel}>Enrolled subjects</Text>
         {enrollments.length === 0 ? (
-          <Text style={styles.empty}>No enrollments yet — browse courses to get started.</Text>
+          <EmptyState
+            title="No enrollments yet"
+            body="Browse courses to get started."
+            actionLabel="Browse courses"
+            onAction={() => router.push('/(student)/courses')}
+          />
         ) : (
           enrollments.map((raw, i) => {
             const e = raw as { id?: string; course?: { title?: string; subject?: { name?: string } } };
@@ -77,7 +109,6 @@ export default function HubScreen() {
 }
 
 const styles = StyleSheet.create({
-  center: { justifyContent: 'center', alignItems: 'center' },
   list: { padding: tokens.spacing.md, paddingBottom: 100 },
   pathTitle: { fontSize: tokens.fontSize.md, fontWeight: '700', color: tokens.colors.text },
   pathSub: { fontSize: tokens.fontSize.sm, color: tokens.colors.textMuted, marginTop: 4 },
@@ -85,12 +116,15 @@ const styles = StyleSheet.create({
   actionTile: {
     flex: 1,
     borderRadius: tokens.radius.md,
+    minHeight: 56,
     paddingVertical: tokens.spacing.md,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   lessonsTile: { backgroundColor: tokens.colors.primaryBright + '18' },
   practiceTile: { backgroundColor: tokens.colors.secondary + '18' },
   actionLabel: { fontWeight: '700', fontSize: tokens.fontSize.sm, color: tokens.colors.text },
+  pressed: { opacity: 0.85 },
   sectionLabel: {
     fontSize: tokens.fontSize.sm,
     fontWeight: '700',
@@ -99,7 +133,6 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
-  empty: { color: tokens.colors.textMuted, textAlign: 'center', marginTop: 8 },
   enrollTitle: { fontWeight: '700', color: tokens.colors.text },
   enrollMeta: { fontSize: tokens.fontSize.xs, color: tokens.colors.textMuted, marginTop: 4 },
 });

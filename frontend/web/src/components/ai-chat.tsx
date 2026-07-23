@@ -2,9 +2,15 @@
 
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button, cn, StitchTutorShell } from '@eduai/ui';
-import { Bot, Loader2, Send, User } from 'lucide-react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import {
+  AiTutorChatBubble,
+  AiTutorComposer,
+  EmptyState,
+  Spinner,
+  StitchTutorShell,
+} from '@eduai/ui';
+import { Bot } from 'lucide-react';
 import { useLocale } from '@/components/locale-provider';
 
 export interface ChatMessage {
@@ -27,6 +33,7 @@ const AI_BASE = process.env.NEXT_PUBLIC_AI_SERVICE_URL ?? 'http://localhost:3004
 export function AiChat({ portal, subjectId, lessonId, classLevel }: AiChatProps) {
   const { data: session } = useSession();
   const { t, locale } = useLocale();
+  const shouldReduceMotion = useReducedMotion();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [conversationId, setConversationId] = useState<string>();
@@ -36,8 +43,10 @@ export function AiChat({ portal, subjectId, lessonId, classLevel }: AiChatProps)
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, streaming]);
+    bottomRef.current?.scrollIntoView({
+      behavior: shouldReduceMotion ? 'auto' : 'smooth',
+    });
+  }, [messages, streaming, shouldReduceMotion]);
 
   const sendMessage = useCallback(async () => {
     const text = input.trim();
@@ -182,6 +191,8 @@ export function AiChat({ portal, subjectId, lessonId, classLevel }: AiChatProps)
     setInput('');
   }, []);
 
+  void portal;
+
   return (
     <StitchTutorShell onNewChat={resetChat} className="h-[calc(100vh-8rem)]">
       <div className="flex flex-1 flex-col overflow-hidden">
@@ -192,78 +203,61 @@ export function AiChat({ portal, subjectId, lessonId, classLevel }: AiChatProps)
 
         <div className="flex-1 space-y-4 overflow-y-auto p-4">
           {messages.length === 0 && (
-            <p className="text-center text-sm text-muted-foreground">{t('ai.tutor.empty')}</p>
+            <EmptyState
+              icon={<Bot className="h-5 w-5" />}
+              title={t('ai.tutor.empty')}
+              description={t('ai.tutor.subtitle')}
+              className="border-0 bg-transparent"
+            />
           )}
           <AnimatePresence initial={false}>
-            {messages.map((msg) => (
-              <motion.div
-                key={msg.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={cn('flex gap-3', msg.role === 'user' ? 'justify-end' : 'justify-start')}
-              >
-                {msg.role === 'assistant' && (
-                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/10">
-                    <Bot className="h-4 w-4 text-primary" />
-                  </div>
-                )}
-                <div
-                  className={cn(
-                    'max-w-[80%] rounded-xl px-4 py-2 text-sm',
-                    msg.role === 'user'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-foreground',
-                  )}
+            {messages.map((msg) => {
+              const metaParts: string[] = [];
+              if (msg.sources && msg.sources.length > 0) {
+                metaParts.push(
+                  `${t('ai.tutor.sources')}: ${msg.sources.map((s) => s.label ?? s.id).join(', ')}`,
+                );
+              }
+              if (msg.tokensUsed !== undefined) {
+                metaParts.push(`${msg.tokensUsed} ${t('ai.tokens')}`);
+              }
+              return (
+                <motion.div
+                  key={msg.id}
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
                 >
-                  <p className="whitespace-pre-wrap">{msg.content}</p>
-                  {msg.sources && msg.sources.length > 0 && (
-                    <p className="mt-2 text-xs opacity-70">
-                      {t('ai.tutor.sources')}: {msg.sources.map((s) => s.label ?? s.id).join(', ')}
-                    </p>
-                  )}
-                  {msg.tokensUsed !== undefined && (
-                    <p className="mt-1 text-xs opacity-60">
-                      {msg.tokensUsed} {t('ai.tokens')}
-                    </p>
-                  )}
-                </div>
-                {msg.role === 'user' && (
-                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-muted">
-                    <User className="h-4 w-4" />
-                  </div>
-                )}
-              </motion.div>
-            ))}
+                  <AiTutorChatBubble
+                    message={{
+                      id: msg.id,
+                      role: msg.role,
+                      content: msg.content || (streaming && msg.role === 'assistant' ? '…' : ''),
+                      meta: metaParts.length ? metaParts.join(' · ') : undefined,
+                    }}
+                  />
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
           {streaming && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex items-center gap-2 text-sm text-muted-foreground"
-            >
-              <Loader2 className="h-4 w-4 animate-spin" />
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Spinner size="sm" />
               {t('ai.tutor.typing')}
-            </motion.div>
+            </div>
           )}
           <div ref={bottomRef} />
         </div>
 
-        <div className="border-t p-4">
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-              placeholder={t('ai.tutor.placeholder')}
-              disabled={loading}
-              className="flex-1 rounded-full border border-border bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-            />
-            <Button onClick={sendMessage} disabled={loading || !input.trim()} size="icon" className="rounded-full">
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            </Button>
-          </div>
-        </div>
+        <AiTutorComposer
+          value={input}
+          onChange={setInput}
+          onSubmit={sendMessage}
+          placeholder={t('ai.tutor.placeholder')}
+          disabled={loading}
+          loading={loading}
+          className="border-t p-4"
+        />
       </div>
     </StitchTutorShell>
   );

@@ -1,7 +1,9 @@
 import type { Config } from 'tailwindcss';
-import uiConfig from '@eduai/ui/tailwind.config';
+import eduaiPreset from '@eduai/ui/tailwind-preset';
 
-export default {
-  ...uiConfig,
+const config = {
+  ...eduaiPreset,
   content: ['./src/**/*.{ts,tsx}', '../shared-ui/ui/src/**/*.{ts,tsx}'],
-} satisfies Config;
+} as Config;
+
+export default config;

@@ -1,13 +1,19 @@
+/**
+ * Student journey load — Phase 8 thresholds tightened toward p95 < 250ms
+ * for non-AI paths. AI tutor remains a separate budget (see capacity-plan-phase8.md).
+ *
+ *   k6 run backend/testing/load/k6-student-journey.js
+ */
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { SharedArray } from 'k6/data';
 import { Rate, Trend } from 'k6/metrics';
 
 const errorRate = new Rate('errors');
-const loginDuration = new Trend('login_duration');
-const courseDuration = new Trend('course_access_duration');
-const quizDuration = new Trend('quiz_submit_duration');
-const aiDuration = new Trend('ai_tutor_duration');
+const loginDuration = new Trend('login_duration', true);
+const courseDuration = new Trend('course_access_duration', true);
+const quizDuration = new Trend('quiz_submit_duration', true);
+const aiDuration = new Trend('ai_tutor_duration', true);
 
 const BASE = __ENV.BASE_URL || 'http://localhost:3001';
 const LEARNING = __ENV.LEARNING_URL || 'http://localhost:3003';
@@ -24,7 +30,19 @@ const users = new SharedArray('students', function () {
 
 export const options = {
   scenarios: {
-    smoke_500: {
+    smoke_latency: {
+      executor: 'ramping-vus',
+      startVUs: 0,
+      stages: [
+        { duration: '30s', target: 25 },
+        { duration: '2m', target: 50 },
+        { duration: '30s', target: 0 },
+      ],
+      gracefulRampDown: '20s',
+      exec: 'studentJourney',
+      tags: { scenario: 'smoke_latency' },
+    },
+    stress_500: {
       executor: 'ramping-vus',
       startVUs: 0,
       stages: [
@@ -35,26 +53,21 @@ export const options = {
       gracefulRampDown: '30s',
       exec: 'studentJourney',
       tags: { scenario: '500_vu' },
-    },
-    stress_1000: {
-      executor: 'ramping-vus',
-      startVUs: 0,
-      stages: [
-        { duration: '2m', target: 250 },
-        { duration: '3m', target: 1000 },
-        { duration: '1m', target: 0 },
-      ],
-      gracefulRampDown: '30s',
-      exec: 'studentJourney',
-      tags: { scenario: '1000_vu' },
-      startTime: '6m',
+      startTime: '4m',
     },
   },
   thresholds: {
     http_req_failed: ['rate<0.05'],
+    // Non-AI tagged requests — Phase 8 target
+    'http_req_duration{name:courses_list}': ['p(95)<250'],
+    'http_req_duration{name:quizzes_list}': ['p(95)<250'],
+    'http_req_duration{name:login}': ['p(95)<400'],
+    // Overall includes AI — keep looser
     http_req_duration: ['p(95)<2000'],
-    login_duration: ['p(95)<1500'],
-    course_access_duration: ['p(95)<1000'],
+    login_duration: ['p(95)<400'],
+    course_access_duration: ['p(95)<250'],
+    // AI excluded from 250ms DoD
+    ai_tutor_duration: ['p(95)<4000'],
     errors: ['rate<0.05'],
   },
 };

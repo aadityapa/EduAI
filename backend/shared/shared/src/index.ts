@@ -70,10 +70,18 @@ export interface ApiResponse<T> {
 }
 
 export interface ApiError {
+  /** Phase 6 flat envelope (also nested under `error` for older clients) */
+  code?: string;
+  message?: string;
+  details?: Array<{ field?: string; code: string; message: string }>;
+  traceId?: string;
   error: {
     code: string;
     message: string;
     details?: Array<{ field?: string; code: string; message: string }>;
+    /** Preferred correlation id */
+    traceId?: string;
+    /** @deprecated Prefer `traceId` */
     request_id: string;
     documentation_url?: string;
   };
@@ -135,13 +143,17 @@ export function resolveJwtSecret(envValue?: string): string {
 
 const DEV_AUTH_SECRET = 'eduai-local-dev-auth-secret-32chars!!';
 
-/** Auth.js requires AUTH_SECRET (min 32 chars). Uses dev fallback when unset. */
+/**
+ * Auth.js requires AUTH_SECRET (min 32 chars).
+ * Phase 9: fail closed in production (same posture as resolveJwtSecret).
+ * Dev/test still use a local fallback so demo logins keep working.
+ */
 export function resolveAuthSecret(envValue?: string): string {
   const secret = envValue ?? process.env.AUTH_SECRET;
   if (secret && secret.length >= 32) return secret;
   if (process.env.NODE_ENV === 'production') {
-    console.warn(
-      '[EduAI] AUTH_SECRET is missing or too short. Set AUTH_SECRET (32+ chars) before production deploy.',
+    throw new Error(
+      'AUTH_SECRET environment variable is required in production (min 32 characters)',
     );
   }
   return DEV_AUTH_SECRET;
@@ -150,8 +162,47 @@ export function resolveAuthSecret(envValue?: string): string {
 /** Roles allowed on public self-registration */
 export const SELF_REGISTER_ROLES: RoleCode[] = ['student', 'parent'];
 
-export { withTimeout, DB_QUERY_TIMEOUT_MS } from './timeout.js';
+export {
+  withTimeout,
+  fetchWithTimeout,
+  DB_QUERY_TIMEOUT_MS,
+  HTTP_TIMEOUT_MS,
+} from './timeout.js';
 export { PORTS, FRONTEND_APPS, BACKEND_SERVICES, serviceUrl } from './ports.js';
+export {
+  encryptField,
+  decryptField,
+  hashVerificationSecret,
+  isFieldEncryptionConfigured,
+  resolveFieldEncryptionKey,
+} from './security/field-encryption.js';
+export {
+  assertSafeExternalUrl,
+  getUploadUrlAllowlist,
+  isBlockedInternalHost,
+  type UrlAllowlistOptions,
+} from './security/url-allowlist.js';
+export {
+  validateUploadFile,
+  scanUpload,
+  noopMalwareScan,
+  DEFAULT_MAX_UPLOAD_BYTES,
+  SAFE_UPLOAD_MIME_TYPES,
+  type UploadValidationInput,
+  type UploadValidationResult,
+  type MalwareScanResult,
+  type MalwareScanFn,
+} from './security/file-upload.js';
+export {
+  emitAnomaly,
+  recordFailedLogin,
+  clearFailedLogin,
+  setAnomalySink,
+  resetAnomalyStateForTests,
+  type AnomalyEvent,
+  type AnomalySeverity,
+  type AnomalySink,
+} from './security/anomaly.js';
 import { getAdminPortalUrl } from './url.js';
 
 export function getDashboardRoute(roles: RoleCode[]): string {

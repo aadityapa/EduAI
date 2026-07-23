@@ -12,13 +12,21 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
+    "test:e2e": "pnpm --filter @eduai/e2e test:smoke",
+    "test:e2e:a11y": "pnpm --filter @eduai/e2e test:a11y",
+    "test:contract": "pnpm --filter @eduai/contract-tests test",
+    "test:coverage:critical": "pnpm --filter @eduai/nest-common test:coverage && pnpm --filter @eduai/auth test:coverage",
+    "build-storybook": "pnpm --filter @eduai/ui build-storybook",
+    "storybook": "pnpm --filter @eduai/ui storybook",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "openapi:generate": "node backend/testing/scripts/openapi-generate.mjs",
     "db:generate": "pnpm --filter @eduai/database generate",
     "db:migrate": "pnpm --filter @eduai/database migrate:dev",
     "db:seed": "pnpm --filter @eduai/database seed",
     "db:studio": "pnpm --filter @eduai/database studio",
     "validate:billing": "node backend/testing/scripts/billing-validation.mjs",
     "validate:dr": "node backend/testing/scripts/dr-test-checklist.mjs",
+    "security:scan": "node scripts/security/ci-security-scan.mjs",
     "load:test": "k6 run backend/testing/load/k6-student-journey.js",
     "mvp:setup": "docker compose -f backend/infrastructure/docker/docker-compose.yml up -d && pnpm db:generate && pnpm db:migrate && pnpm db:seed",
     "dev:backend": "turbo run dev --parallel --filter=@eduai/identity-service --filter=@eduai/learning-service --filter=@eduai/ai-service --filter=@eduai/erp-service --filter=@eduai/billing-service",
@@ -40,9 +48,11 @@
   "devDependencies": {
     "@types/node": "^22.10.0",
     "eslint": "^9.16.0",
+    "openapi-typescript": "^7.4.4",
     "prettier": "^3.4.2",
     "turbo": "^2.3.3",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.0"
   },
   "pnpm": {
     "overrides": {

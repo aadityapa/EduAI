@@ -1,26 +1,47 @@
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { useCallback } from 'react';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useAuth } from '../../src/auth/AuthContext';
 import { fetchFees } from '../../src/api/services';
 import { StitchCard, StitchScreenHeader } from '../../src/components/stitch';
-import { Screen, tokens } from '../../src/components/ui';
+import {
+  EmptyState,
+  ErrorState,
+  LoadingState,
+  OfflineBanner,
+  Screen,
+  themedRefreshControl,
+  tokens,
+} from '../../src/components/ui';
+import { useCachedResource } from '../../src/hooks/useCachedResource';
+
+type FeeRow = { description?: string; amount?: number; status?: string };
 
 export default function FeesScreen() {
   const { tokens: authTokens } = useAuth();
-  const [fees, setFees] = useState<unknown[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!authTokens) return;
-    fetchFees(authTokens.accessToken)
-      .then(setFees)
-      .finally(() => setLoading(false));
+  const fetcher = useCallback(() => {
+    if (!authTokens) return Promise.reject(new Error('Not signed in'));
+    return fetchFees(authTokens.accessToken) as Promise<FeeRow[]>;
   }, [authTokens]);
+
+  const { data, loading, refreshing, error, offline, reload } = useCachedResource<FeeRow[]>(
+    authTokens ? 'parent_fees' : null,
+    authTokens ? fetcher : null,
+  );
+
+  const fees = data ?? [];
 
   if (loading) {
     return (
-      <Screen style={styles.center}>
-        <ActivityIndicator color={tokens.colors.primaryBright} />
+      <Screen>
+        <LoadingState label="Loading fees…" />
+      </Screen>
+    );
+  }
+
+  if (error && fees.length === 0) {
+    return (
+      <Screen>
+        <ErrorState title="Couldn't load fees" body={error} onRetry={() => void reload()} />
       </Screen>
     );
   }
@@ -32,20 +53,25 @@ export default function FeesScreen() {
         data={fees}
         keyExtractor={(_, i) => String(i)}
         contentContainerStyle={styles.list}
+        refreshControl={themedRefreshControl({
+          refreshing,
+          onRefresh: () => void reload(),
+        })}
+        ListHeaderComponent={<OfflineBanner visible={offline} />}
         ListEmptyComponent={
           <View style={styles.paidBanner}>
-            <Text style={styles.paidTitle}>Term 2 — Paid</Text>
-            <Text style={styles.paidMeta}>Receipt #EDU-2026-042</Text>
+            <Text style={styles.paidTitle}>All clear</Text>
+            <Text style={styles.paidMeta}>No outstanding fees from ERP right now.</Text>
+            <EmptyState title="No fee records" body="Pull to refresh when the school posts invoices." />
           </View>
         }
         renderItem={({ item }) => {
-          const f = item as { description?: string; amount?: number; status?: string };
-          const paid = f.status?.toLowerCase() === 'paid';
+          const paid = item.status?.toLowerCase() === 'paid';
           return (
             <StitchCard style={paid ? styles.paidCard : undefined}>
-              <Text style={styles.title}>{f.description ?? 'Fee'}</Text>
+              <Text style={styles.title}>{item.description ?? 'Fee'}</Text>
               <Text style={styles.meta}>
-                ₹{f.amount ?? 0} · {f.status}
+                ₹{item.amount ?? 0} · {item.status ?? '—'}
               </Text>
             </StitchCard>
           );
@@ -56,18 +82,18 @@ export default function FeesScreen() {
 }
 
 const styles = StyleSheet.create({
-  list: { padding: tokens.spacing.md, paddingBottom: 100 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  list: { padding: tokens.spacing.md, paddingBottom: 100, flexGrow: 1 },
   paidBanner: {
-    backgroundColor: '#dcfce7',
+    backgroundColor: tokens.colors.successContainer,
     borderRadius: tokens.radius.xl,
     padding: tokens.spacing.md,
     borderWidth: 1,
-    borderColor: '#86efac',
+    borderColor: tokens.colors.success + '55',
+    gap: tokens.spacing.sm,
   },
-  paidTitle: { fontWeight: '700', color: '#166534' },
-  paidMeta: { color: '#15803d', marginTop: 4, fontSize: tokens.fontSize.sm },
-  paidCard: { backgroundColor: '#f0fdf4', borderColor: '#bbf7d0' },
+  paidTitle: { fontWeight: '700', color: tokens.colors.onSuccessContainer },
+  paidMeta: { color: tokens.colors.onSuccessContainer, fontSize: tokens.fontSize.sm },
+  paidCard: { backgroundColor: tokens.colors.successContainer + '55', borderColor: tokens.colors.success + '44' },
   title: { fontWeight: '700', marginBottom: 4, color: tokens.colors.text },
   meta: { color: tokens.colors.textMuted, fontSize: tokens.fontSize.sm },
 });

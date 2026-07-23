@@ -9,6 +9,7 @@ dist
 out
 build
 *.tsbuildinfo
+storybook-static
 
 # Env
 .env

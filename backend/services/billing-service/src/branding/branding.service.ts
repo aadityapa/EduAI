@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { UserContext } from '../common/decorators';
+import type { UpdateBrandingDto } from './dto/branding.dto';
 
 @Injectable()
 export class BrandingService {
@@ -13,8 +14,8 @@ export class BrandingService {
     if (!branding) {
       return {
         tenantId: user.tenantId,
-        primaryColor: '#6366f1',
-        secondaryColor: '#8b5cf6',
+        primaryColor: '#1A73E8',
+        secondaryColor: '#9334E6',
         accentColor: '#f59e0b',
         fontFamily: 'Inter',
       };
@@ -22,14 +23,36 @@ export class BrandingService {
     return branding;
   }
 
-  async updateBranding(user: UserContext, data: Record<string, unknown>) {
-    return this.prisma.tenantBranding.upsert({
+  async updateBranding(user: UserContext, data: UpdateBrandingDto) {
+    const payload = {
+      ...(data.primaryColor !== undefined ? { primaryColor: data.primaryColor } : {}),
+      ...(data.secondaryColor !== undefined ? { secondaryColor: data.secondaryColor } : {}),
+      ...(data.accentColor !== undefined ? { accentColor: data.accentColor } : {}),
+      ...(data.fontFamily !== undefined ? { fontFamily: data.fontFamily } : {}),
+      ...(data.logoUrl !== undefined ? { logoUrl: data.logoUrl } : {}),
+      ...(data.faviconUrl !== undefined ? { faviconUrl: data.faviconUrl } : {}),
+    };
+
+    const branding = await this.prisma.tenantBranding.upsert({
       where: { tenantId: user.tenantId },
       create: {
         tenantId: user.tenantId,
-        ...(data as object),
+        ...payload,
       },
-      update: data as object,
+      update: payload,
     });
+
+    await this.prisma.auditLog.create({
+      data: {
+        tenantId: user.tenantId,
+        actorId: user.sub,
+        action: 'tenants:configure:own',
+        resourceType: 'tenant_branding',
+        resourceId: branding.id,
+        metadata: payload,
+      },
+    });
+
+    return branding;
   }
 }

@@ -164,12 +164,15 @@ model Tenant {
   documents          Document[]
   tenantSubscriptions TenantSubscription[]
   billingInvoices    BillingInvoice[]
+  billingWebhookEvents BillingWebhookEvent[]
   coupons            Coupon[]
   leads              Lead[]
   supportTickets     SupportTicket[]
   marketingCampaigns MarketingCampaign[]
   activityLogs       ActivityLog[]
   tenantBranding     TenantBranding?
+  consentRecords     ConsentRecord[]
+  dataSubjectRequests DataSubjectRequest[]
 
   @@map("tenants")
 }
@@ -256,6 +259,10 @@ model User {
   supportTickets        SupportTicket[]        @relation("TicketCreator")
   supportAssigned       SupportTicket[]        @relation("TicketAssignee")
   activityLogs          ActivityLog[]
+  consentSubjects       ConsentRecord[]        @relation("ConsentSubject")
+  consentGranters       ConsentRecord[]        @relation("ConsentGranter")
+  dsrSubjects           DataSubjectRequest[]   @relation("DsrSubject")
+  dsrRequesters         DataSubjectRequest[]   @relation("DsrRequester")
 
   @@unique([tenantId, email])
   @@index([tenantId, schoolId], map: "idx_users_tenant_school")
@@ -443,6 +450,8 @@ model Course {
 
   @@index([tenantId, status], map: "idx_courses_tenant_status")
   @@index([boardId, classLevel], map: "idx_courses_board_class")
+  @@index([tenantId, status, deletedAt], map: "idx_courses_tenant_status_deleted")
+  @@index([tenantId, boardId, classLevel, deletedAt], map: "idx_courses_tenant_board_class_deleted")
   @@map("courses")
 }
 
@@ -467,6 +476,7 @@ model Lesson {
   quizzes         Quiz[]
 
   @@index([chapterId, status], map: "idx_lessons_chapter")
+  @@index([chapterId, status, deletedAt], map: "idx_lessons_chapter_status_deleted")
   @@map("lessons")
 }
 
@@ -481,6 +491,7 @@ model LessonContent {
 
   lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
+  @@index([lessonId, sortOrder], map: "idx_lesson_contents_lesson")
   @@map("lesson_contents")
 }
 
@@ -497,6 +508,7 @@ model ContentResource {
 
   lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
+  @@index([lessonId, sortOrder], map: "idx_content_resources_lesson")
   @@map("content_resources")
 }
 
@@ -514,6 +526,7 @@ model CourseEnrollment {
 
   @@unique([tenantId, courseId, userId])
   @@index([tenantId, userId], map: "idx_enrollments_user")
+  @@index([tenantId, userId, status], map: "idx_enrollments_user_status")
   @@map("course_enrollments")
 }
 
@@ -559,6 +572,9 @@ model Quiz {
   questions Question[]
   attempts QuizAttempt[]
 
+  @@index([deletedAt, status], map: "idx_quizzes_deleted_status")
+  @@index([lessonId, deletedAt, status], map: "idx_quizzes_lesson_status")
+  @@index([tenantId, status], map: "idx_quizzes_tenant_status")
   @@map("quizzes")
 }
 
@@ -577,6 +593,7 @@ model Question {
   quiz    Quiz             @relation(fields: [quizId], references: [id], onDelete: Cascade)
   options QuestionOption[]
 
+  @@index([quizId, sortOrder], map: "idx_questions_quiz_sort")
   @@map("questions")
 }
 
@@ -589,6 +606,7 @@ model QuestionOption {
 
   question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
+  @@index([questionId, sortOrder], map: "idx_question_options_question")
   @@map("question_options")
 }
 
@@ -609,6 +627,8 @@ model QuizAttempt {
   quiz   Quiz   @relation(fields: [quizId], references: [id])
 
   @@index([tenantId, userId], map: "idx_quiz_attempts_user")
+  @@index([tenantId, userId, status], map: "idx_quiz_attempts_user_status")
+  @@index([quizId, userId], map: "idx_quiz_attempts_quiz_user")
   @@map("quiz_attempts")
 }
 
@@ -633,6 +653,7 @@ model ParentStudentLink {
   student User   @relation("StudentUser", fields: [studentId], references: [id])
 
   @@unique([tenantId, parentId, studentId])
+  @@index([tenantId, parentId, status], map: "idx_parent_links_parent_status")
   @@map("parent_student_links")
 }
 
@@ -648,6 +669,7 @@ model UserXp {
   user   User   @relation(fields: [userId], references: [id])
 
   @@unique([tenantId, userId])
+  @@index([tenantId, totalXp(sort: Desc)], map: "idx_user_xp_tenant_total")
   @@map("user_xp")
 }
 
@@ -1003,6 +1025,7 @@ model FeeInvoice {
 
   @@unique([tenantId, invoiceNumber])
   @@index([tenantId, studentId], map: "idx_fee_invoices_student")
+  @@index([tenantId, status], map: "idx_fee_invoices_tenant_status")
   @@map("fee_invoices")
 }
 
@@ -1312,6 +1335,9 @@ model TenantSubscription {
   currentPeriodStart   DateTime           @map("current_period_start") @db.Timestamptz
   currentPeriodEnd     DateTime           @map("current_period_end") @db.Timestamptz
   cancelAtPeriodEnd    Boolean            @default(false) @map("cancel_at_period_end")
+  dunningAttempts      Int                @default(0) @map("dunning_attempts")
+  lastDunningAt        DateTime?          @map("last_dunning_at") @db.Timestamptz
+  couponCode           String?            @map("coupon_code") @db.VarChar(50)
   createdAt            DateTime           @default(now()) @map("created_at") @db.Timestamptz
   updatedAt            DateTime           @updatedAt @map("updated_at") @db.Timestamptz
 
@@ -1320,6 +1346,7 @@ model TenantSubscription {
   invoices BillingInvoice[]
 
   @@index([tenantId], map: "idx_tenant_subscriptions_tenant")
+  @@index([status], map: "idx_tenant_subscriptions_status")
   @@map("tenant_subscriptions")
 }
 
@@ -1330,19 +1357,42 @@ model BillingInvoice {
   invoiceNumber  String          @map("invoice_number") @db.VarChar(50)
   amount         Decimal         @db.Decimal(12, 2)
   gstAmount      Decimal         @default(0) @map("gst_amount") @db.Decimal(12, 2)
+  discountAmount Decimal         @default(0) @map("discount_amount") @db.Decimal(12, 2)
   currency       String          @default("INR") @db.VarChar(3)
   status         FeeInvoiceStatus @default(issued)
   provider       BillingProvider @default(manual)
   externalId     String?         @map("external_id") @db.VarChar(255)
+  couponCode     String?         @map("coupon_code") @db.VarChar(50)
   dueDate        DateTime        @map("due_date") @db.Date
   paidAt         DateTime?       @map("paid_at") @db.Timestamptz
+  metadata       Json            @default("{}")
   createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz
 
   tenant       Tenant              @relation(fields: [tenantId], references: [id])
   subscription TenantSubscription? @relation(fields: [subscriptionId], references: [id])
 
   @@unique([tenantId, invoiceNumber])
+  @@index([externalId], map: "idx_billing_invoices_external")
+  @@index([status], map: "idx_billing_invoices_status")
   @@map("billing_invoices")
+}
+
+/// Idempotent webhook intake — unique per provider event id
+model BillingWebhookEvent {
+  id          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String?        @map("tenant_id") @db.Uuid
+  provider    BillingProvider
+  eventId     String         @map("event_id") @db.VarChar(255)
+  eventType   String         @map("event_type") @db.VarChar(100)
+  payloadHash String?        @map("payload_hash") @db.VarChar(64)
+  status      String         @default("processed") @db.VarChar(20)
+  processedAt DateTime       @default(now()) @map("processed_at") @db.Timestamptz
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id])
+
+  @@unique([provider, eventId], map: "uq_billing_webhook_event")
+  @@index([processedAt], map: "idx_billing_webhook_processed")
+  @@map("billing_webhook_events")
 }
 
 model Coupon {
@@ -1379,6 +1429,7 @@ model Lead {
   tenant Tenant? @relation(fields: [tenantId], references: [id])
 
   @@index([status], map: "idx_leads_status")
+  @@index([tenantId, status, createdAt(sort: Desc)], map: "idx_leads_tenant_status_created")
   @@map("leads")
 }
 
@@ -1458,4 +1509,101 @@ model TenantBranding {
   tenant Tenant @relation(fields: [tenantId], references: [id])
 
   @@map("tenant_branding")
+}
+
+// ============================================================
+// Phase 9: DPDP Consent & Data Subject Requests
+// ============================================================
+
+enum ConsentPurpose {
+  account_core
+  learning_analytics
+  ai_tutor
+  marketing
+  third_party_sharing
+  parental_oversight
+}
+
+enum ConsentStatus {
+  granted
+  withdrawn
+  pending_parental
+  expired
+}
+
+enum ParentalVerifyMethod {
+  email_otp
+  in_person
+  school_attestation
+  digital_signature
+}
+
+enum DsrRequestType {
+  access_export
+  erasure
+  correction
+  restrict_processing
+}
+
+enum DsrRequestStatus {
+  submitted
+  in_progress
+  awaiting_verification
+  completed
+  rejected
+  cancelled
+}
+
+/// Purpose-limited consent records (DPDP Act 2023). Parental consent for minors
+/// uses pending_parental → granted after verifiable verification evidence.
+model ConsentRecord {
+  id                 String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId           String                @map("tenant_id") @db.Uuid
+  subjectUserId      String                @map("subject_user_id") @db.Uuid
+  grantedByUserId    String                @map("granted_by_user_id") @db.Uuid
+  purpose            ConsentPurpose
+  status             ConsentStatus         @default(granted)
+  policyVersion      String                @default("2026.07") @map("policy_version") @db.VarChar(20)
+  /// Encrypted or redacted verification evidence (OTP hash, attestation ref). Never store raw OTP.
+  evidence           Json                  @default("{}")
+  parentalMethod     ParentalVerifyMethod? @map("parental_method")
+  parentalVerifiedAt DateTime?             @map("parental_verified_at") @db.Timestamptz
+  expiresAt          DateTime?             @map("expires_at") @db.Timestamptz
+  withdrawnAt        DateTime?             @map("withdrawn_at") @db.Timestamptz
+  createdAt          DateTime              @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt          DateTime              @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant    Tenant @relation(fields: [tenantId], references: [id])
+  subject   User   @relation("ConsentSubject", fields: [subjectUserId], references: [id])
+  grantedBy User   @relation("ConsentGranter", fields: [grantedByUserId], references: [id])
+
+  @@index([tenantId, subjectUserId, purpose], map: "idx_consent_subject_purpose")
+  @@index([tenantId, status, createdAt(sort: Desc)], map: "idx_consent_tenant_status")
+  @@map("consent_records")
+}
+
+/// Data principal rights requests: export / erase / correct / restrict (DPDP).
+model DataSubjectRequest {
+  id               String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String           @map("tenant_id") @db.Uuid
+  subjectUserId    String           @map("subject_user_id") @db.Uuid
+  requestedByUserId String          @map("requested_by_user_id") @db.Uuid
+  type             DsrRequestType
+  status           DsrRequestStatus @default(submitted)
+  purposeNote      String?          @map("purpose_note")
+  /// Opaque storage key / path for export artifact — never embed PII in this column.
+  exportArtifactRef String?         @map("export_artifact_ref") @db.VarChar(500)
+  resolutionNote   String?          @map("resolution_note")
+  dueAt            DateTime         @map("due_at") @db.Timestamptz
+  completedAt      DateTime?        @map("completed_at") @db.Timestamptz
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant      Tenant @relation(fields: [tenantId], references: [id])
+  subject     User   @relation("DsrSubject", fields: [subjectUserId], references: [id])
+  requestedBy User   @relation("DsrRequester", fields: [requestedByUserId], references: [id])
+
+  @@index([tenantId, status, createdAt(sort: Desc)], map: "idx_dsr_tenant_status")
+  @@index([tenantId, subjectUserId], map: "idx_dsr_subject")
+  @@map("data_subject_requests")
 }

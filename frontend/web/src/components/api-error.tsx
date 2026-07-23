@@ -1,24 +1,23 @@
-import { AlertCircle } from 'lucide-react';
-import { Card, CardContent } from '@eduai/ui';
+import { ErrorState } from '@eduai/ui';
+import { RetryRefreshButton } from '@/components/retry-refresh-button';
 
 interface ApiErrorProps {
   title?: string;
   message?: string;
+  retryLabel?: string;
 }
 
+/** Thin wrapper around `@eduai/ui` ErrorState with route-refresh recovery. */
 export function ApiError({
   title = 'Something went wrong',
   message = 'We could not load this content right now. Please try again later.',
+  retryLabel = 'Try again',
 }: ApiErrorProps) {
   return (
-    <Card className="border-destructive/30 bg-destructive/5">
-      <CardContent className="flex items-start gap-3 p-6">
-        <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" aria-hidden="true" />
-        <div>
-          <p className="font-medium text-destructive">{title}</p>
-          <p className="mt-1 text-sm text-muted-foreground">{message}</p>
-        </div>
-      </CardContent>
-    </Card>
+    <ErrorState
+      title={title}
+      message={message}
+      action={<RetryRefreshButton label={retryLabel} />}
+    />
   );
 }

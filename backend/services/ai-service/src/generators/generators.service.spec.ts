@@ -1,7 +1,7 @@
 import { GeneratorsService } from './generators.service';
 
 describe('GeneratorsService evaluateMockTest', () => {
-  const service = new GeneratorsService({} as never, {} as never, {} as never);
+  const service = new GeneratorsService({} as never, {} as never, {} as never, {} as never);
 
   it('evaluates MCQ answers correctly', () => {
     const result = service.evaluateMockTest(

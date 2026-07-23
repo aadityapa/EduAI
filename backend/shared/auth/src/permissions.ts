@@ -102,8 +102,14 @@ export const PERMISSIONS: PermissionDef[] = [
   // Notifications
   perm('notifications', 'send', 'school', 'Send school notifications'),
 
-  // Consent
+  // Consent / DPDP
+  perm('consent', 'manage', 'own', 'Manage own consent'),
   perm('consent', 'manage', 'linked', 'Manage linked child consent'),
+  perm('consent', 'read', 'tenant', 'Read tenant consent records'),
+  perm('privacy', 'export', 'own', 'Request own data export'),
+  perm('privacy', 'delete', 'own', 'Request own data erasure'),
+  perm('privacy', 'manage', 'linked', 'Request privacy actions for linked child'),
+  perm('privacy', 'manage', 'tenant', 'Process tenant data-subject requests'),
 ];
 
 /** Role → permission codes per docs/architecture/rbac-design.md */
@@ -127,6 +133,11 @@ export const ROLE_PERMISSIONS: Record<RoleCode, string[]> = {
     'ai:quota:manage:tenant',
     'billing:manage:tenant',
     'billing:manage:own',
+    'consent:manage:own',
+    'consent:read:tenant',
+    'privacy:export:own',
+    'privacy:delete:own',
+    'privacy:manage:tenant',
   ],
 
   school_admin: [
@@ -148,6 +159,11 @@ export const ROLE_PERMISSIONS: Record<RoleCode, string[]> = {
     'billing:read:school',
     'notifications:send:school',
     'ai:qpg:use:school',
+    'consent:manage:own',
+    'consent:read:tenant',
+    'privacy:export:own',
+    'privacy:delete:own',
+    'privacy:manage:tenant',
   ],
 
   teacher: [
@@ -172,6 +188,9 @@ export const ROLE_PERMISSIONS: Record<RoleCode, string[]> = {
     'leaderboard:read:class',
     'notifications:send:school',
     'billing:manage:own',
+    'consent:manage:own',
+    'privacy:export:own',
+    'privacy:delete:own',
   ],
 
   student: [
@@ -188,6 +207,9 @@ export const ROLE_PERMISSIONS: Record<RoleCode, string[]> = {
     'gamification:read:own',
     'leaderboard:read:class',
     'billing:manage:own',
+    'consent:manage:own',
+    'privacy:export:own',
+    'privacy:delete:own',
   ],
 
   parent: [
@@ -199,7 +221,11 @@ export const ROLE_PERMISSIONS: Record<RoleCode, string[]> = {
     'assessments:read:linked',
     'attendance:read:linked',
     'billing:manage:linked',
+    'consent:manage:own',
     'consent:manage:linked',
+    'privacy:export:own',
+    'privacy:delete:own',
+    'privacy:manage:linked',
     'ai:tutor:use:own',
   ],
 };

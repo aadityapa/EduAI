@@ -1,4 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
+import { estimateCostUsd } from '@eduai/ai';
 import { PrismaService } from '../prisma/prisma.service';
 import { CostService } from '../cost/cost.service';
 import type { UserContext } from '../common/decorators';
@@ -49,6 +50,10 @@ export class AnalyticsService {
     });
 
     const costSummary = await this.costService.getTenantCostSummary(user.tenantId);
+    const quota = await this.costService.getQuotaStatus(
+      user.tenantId,
+      targetUserId ?? user.sub,
+    );
 
     const conversationCounts = await this.prisma.aiConversation.groupBy({
       by: ['type'],
@@ -67,12 +72,13 @@ export class AnalyticsService {
       monthlyTokenBudget: tenant?.aiMonthlyTokenBudget ?? 0,
       totals,
       estimatedCostUsd: costSummary.estimatedCostUsd,
+      quota,
       featureUsage,
       daily: usageRecords.map((r) => ({
         date: r.usageDate.toISOString().split('T')[0],
         queryCount: r.queryCount,
         tokensUsed: r.tokensUsed,
-        estimatedCostUsd: (r.tokensUsed / 1_000_000) * 2.5,
+        estimatedCostUsd: estimateCostUsd('gpt-4o-mini', r.tokensUsed),
       })),
     };
   }
@@ -94,23 +100,31 @@ export class AnalyticsService {
     });
 
     const costSummary = await this.costService.getTenantCostSummary(user.tenantId);
+    const quotaSample = await this.costService.getQuotaStatus(user.tenantId, user.sub);
 
     return {
       tenantId: user.tenantId,
       totalTokens: costSummary.totalTokens,
       totalQueries: costSummary.totalQueries,
       estimatedCostUsd: costSummary.estimatedCostUsd,
+      dailyBudgetSample: quotaSample.budget,
       topUsers: perUser.map((u) => ({
         userId: u.userId,
         tokensUsed: u._sum.tokensUsed ?? 0,
         queryCount: u._sum.queryCount ?? 0,
-        estimatedCostUsd: ((u._sum.tokensUsed ?? 0) / 1_000_000) * 2.5,
+        estimatedCostUsd: estimateCostUsd('gpt-4o-mini', u._sum.tokensUsed ?? 0),
       })),
       featureUsage: await this.prisma.aiConversation.groupBy({
         by: ['type'],
         where: { tenantId: user.tenantId },
         _count: { id: true },
       }),
+      daily: costSummary.daily.map((r) => ({
+        date: r.usageDate.toISOString().split('T')[0],
+        tokensUsed: r.tokensUsed,
+        queryCount: r.queryCount,
+        estimatedCostUsd: estimateCostUsd('gpt-4o-mini', r.tokensUsed),
+      })),
     };
   }
 }

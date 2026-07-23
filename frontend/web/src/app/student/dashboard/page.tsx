@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { BookOpen, Flame, Sparkles, TrendingUp } from 'lucide-react';
 import { DashboardShell } from '@/components/dashboard-shell';
 import { PageMotion } from '@/components/page-motion';
+import { RetryRefreshButton } from '@/components/retry-refresh-button';
 import {
   getGamification,
   getMyEnrollments,
@@ -95,6 +96,7 @@ export default async function StudentDashboard() {
             <ErrorState
               title="Couldn't load your dashboard"
               message={loadError}
+              action={<RetryRefreshButton />}
             />
           )}
 

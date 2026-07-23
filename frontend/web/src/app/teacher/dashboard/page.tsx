@@ -7,6 +7,7 @@ import { ApiError } from '@/components/api-error';
 import { PageMotion } from '@/components/page-motion';
 import { getTeacherDashboard, ErpApiError } from '@/lib/erp-api';
 import {
+  EmptyState,
   KpiCard,
   ProgressBar,
   StitchPageHeader,
@@ -47,7 +48,7 @@ export default async function TeacherDashboard() {
     <DashboardShell title="Teacher Dashboard" portal="teacher">
       <PageMotion>
         {loadError && (
-          <div className="mb-6">
+          <div className="mb-4">
             <ApiError message={loadError} />
           </div>
         )}
@@ -55,14 +56,25 @@ export default async function TeacherDashboard() {
         <StitchPageHeader
           title={`Good morning, ${firstName}!`}
           description={`You have ${classCount} classes on your roster today.`}
+          action={
+            <Link
+              href="/teacher/quizzes/builder"
+              prefetch
+              className="inline-flex h-9 items-center rounded-full bg-primary px-4 text-sm font-bold text-primary-foreground"
+            >
+              Quiz Builder
+            </Link>
+          }
         />
 
-        <div className="mb-8 grid gap-6 md:grid-cols-12">
+        <div className="mb-6 grid gap-4 md:grid-cols-12">
           <StitchTeacherAiPromo href="/teacher/ai/generator" className="md:col-span-8" />
-          <div className="stitch-card flex flex-col justify-between p-6 md:col-span-4">
+          <div className="stitch-card flex flex-col justify-between p-4 md:col-span-4 md:p-5">
             <div>
               <div className="mb-2 flex items-center justify-between">
-                <span className="text-xs font-bold uppercase text-muted-foreground">Daily Attendance</span>
+                <span className="text-xs font-bold uppercase text-muted-foreground">
+                  Daily Attendance
+                </span>
                 <span className="rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-bold text-success">
                   Today
                 </span>
@@ -71,7 +83,11 @@ export default async function TeacherDashboard() {
               <p className="mt-1 text-sm text-muted-foreground">Across all classes</p>
             </div>
             <ProgressBar
-              value={classCount ? Math.min(100, ((dashboard?.todayAttendanceMarked ?? 0) / classCount) * 100) : 0}
+              value={
+                classCount
+                  ? Math.min(100, ((dashboard?.todayAttendanceMarked ?? 0) / classCount) * 100)
+                  : 0
+              }
               showPercentage={false}
               variant="lesson"
               className="mt-4"
@@ -79,7 +95,7 @@ export default async function TeacherDashboard() {
           </div>
         </div>
 
-        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <KpiCard icon={<GraduationCap className="h-5 w-5" />} label="My Classes" value={classCount} />
           <KpiCard
             icon={<ClipboardList className="h-5 w-5" />}
@@ -98,18 +114,33 @@ export default async function TeacherDashboard() {
           />
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-12">
+        <div className="grid gap-6 lg:grid-cols-12">
           <section className="lg:col-span-7">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Today&apos;s Schedule</h3>
-              <Link href="/teacher/classes" className="text-sm font-bold text-primary hover:underline">
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-base font-semibold">Today&apos;s Schedule</h3>
+              <Link
+                href="/teacher/classes"
+                prefetch
+                className="text-sm font-bold text-primary hover:underline"
+              >
                 View Calendar
               </Link>
             </div>
             {scheduleItems.length ? (
               <StitchScheduleCarousel items={scheduleItems} />
             ) : (
-              <p className="stitch-card p-6 text-sm text-muted-foreground">No classes scheduled.</p>
+              <EmptyState
+                title="No classes scheduled"
+                description="Your roster will appear here once classes are assigned."
+                action={
+                  <Link
+                    href="/teacher/classes"
+                    className="text-sm font-medium text-primary hover:underline"
+                  >
+                    Manage classes
+                  </Link>
+                }
+              />
             )}
           </section>
 
@@ -132,24 +163,31 @@ export default async function TeacherDashboard() {
           </section>
         </div>
 
-        <div className="mt-8 stitch-card p-6">
-          <h3 className="mb-4 text-lg font-semibold">My Classes</h3>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {dashboard?.classes?.map((cls) => (
-              <Link
-                key={cls.id}
-                href={`/teacher/classes/${cls.id}`}
-                className="rounded-xl border p-4 transition hover:bg-muted/50"
-              >
-                <p className="font-semibold">
-                  {cls.name} — {cls.section}
-                </p>
-                <p className="text-sm text-muted-foreground">{cls.studentCount} students</p>
-              </Link>
-            )) ?? (
-              <p className="text-sm text-muted-foreground">No classes assigned yet.</p>
-            )}
-          </div>
+        <div className="mt-6 stitch-card p-4 md:p-5">
+          <h3 className="mb-3 text-base font-semibold">My Classes</h3>
+          {!dashboard?.classes?.length ? (
+            <EmptyState
+              title="No classes assigned yet"
+              description="Ask your school admin to assign you to a class roster."
+              className="border-0 bg-transparent py-6"
+            />
+          ) : (
+            <div className="grid gap-2 sm:grid-cols-2">
+              {dashboard.classes.map((cls) => (
+                <Link
+                  key={cls.id}
+                  href={`/teacher/classes/${cls.id}`}
+                  prefetch
+                  className="rounded-lg border px-3 py-3 transition-colors hover:bg-muted/50"
+                >
+                  <p className="font-semibold">
+                    {cls.name} — {cls.section}
+                  </p>
+                  <p className="text-sm text-muted-foreground">{cls.studentCount} students</p>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </PageMotion>
     </DashboardShell>

@@ -1,9 +1,12 @@
+import Link from 'next/link';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
+import { Receipt } from 'lucide-react';
 import { DashboardShell } from '@/components/dashboard-shell';
 import { ApiError } from '@/components/api-error';
+import { PageMotion } from '@/components/page-motion';
 import { getParentFees, ErpApiError } from '@/lib/erp-api';
-import { Card, CardContent, CardHeader, CardTitle } from '@eduai/ui';
+import { EmptyState, FeeInvoiceCard, StitchPageHeader } from '@eduai/ui';
 
 export default async function ParentFeesPage() {
   const session = await auth();
@@ -21,32 +24,50 @@ export default async function ParentFeesPage() {
 
   return (
     <DashboardShell title="Fee Status" portal="parent">
-      {loadError && <div className="mb-6"><ApiError message={loadError} /></div>}
-      <div className="grid gap-6">
-        {fees?.map((item, i) => (
-          <Card key={i} className="glass-card">
-            <CardHeader>
-              <CardTitle>
-                {item.student.firstName} {item.student.lastName ?? ''}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex gap-6">
-                <div>
-                  <p className="text-sm text-muted-foreground">Outstanding</p>
-                  <p className="text-2xl font-bold">₹{item.summary.totalDue.toLocaleString('en-IN')}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Paid</p>
-                  <p className="text-2xl font-bold text-green-600">
-                    ₹{item.summary.totalPaid.toLocaleString('en-IN')}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <PageMotion>
+        <StitchPageHeader
+          title="Fee Status"
+          description="Calm overview of outstanding and paid school fees."
+        />
+
+        {loadError && (
+          <div className="mb-6">
+            <ApiError message={loadError} />
+          </div>
+        )}
+
+        {!loadError && !fees?.length && (
+          <EmptyState
+            icon={<Receipt className="h-5 w-5" />}
+            title="No fee records yet"
+            description="Once your school posts invoices, they will appear here."
+            action={
+              <Link href="/parent/dashboard" className="text-sm font-medium text-primary hover:underline">
+                Back to family overview
+              </Link>
+            }
+          />
+        )}
+
+        <div className="grid gap-5">
+          {fees?.map((item, i) => {
+            const due = item.summary.totalDue;
+            const paid = item.summary.totalPaid;
+            const status = due > 0 ? (paid > 0 ? 'due' : 'due') : 'paid';
+            return (
+              <FeeInvoiceCard
+                key={i}
+                invoiceNumber={`FEE-${i + 1}`}
+                title={`${item.student.firstName} ${item.student.lastName ?? ''}`.trim()}
+                amount={due > 0 ? due : paid}
+                currency="INR"
+                status={status}
+                studentName={`${item.student.firstName} ${item.student.lastName ?? ''}`.trim()}
+              />
+            );
+          })}
+        </div>
+      </PageMotion>
     </DashboardShell>
   );
 }

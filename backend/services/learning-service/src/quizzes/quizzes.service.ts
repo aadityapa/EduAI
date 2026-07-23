@@ -4,6 +4,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { AttemptStatus, ContentStatus } from '@eduai/database';
+import {
+  CurriculumCacheKeys,
+  QUIZ_CACHE_TTL_SEC,
+  getCurriculumCache,
+} from '@eduai/nest-common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { UserContext } from '../common/decorators';
 import { QuizEvaluationService } from './quiz-evaluation.service';
@@ -12,6 +17,8 @@ import { GamificationService } from '../gamification/gamification.service';
 
 @Injectable()
 export class QuizzesService {
+  private readonly cache = getCurriculumCache();
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly evaluationService: QuizEvaluationService,
@@ -19,6 +26,17 @@ export class QuizzesService {
   ) {}
 
   async getQuiz(user: UserContext, quizId: string) {
+    const cacheKey = CurriculumCacheKeys.quiz(quizId);
+    const cached = await this.cache.get<{
+      id: string;
+      title: string;
+      timeLimitMinutes: number | null;
+      passingScore: number;
+      lessonId: string | null;
+      questions: unknown[];
+    }>(cacheKey);
+    if (cached) return cached;
+
     const quiz = await this.prisma.quiz.findFirst({
       where: {
         id: quizId,
@@ -46,7 +64,7 @@ export class QuizzesService {
       throw new NotFoundException('Quiz not found');
     }
 
-    return {
+    const payload = {
       id: quiz.id,
       title: quiz.title,
       timeLimitMinutes: quiz.timeLimitMinutes,
@@ -61,6 +79,8 @@ export class QuizzesService {
         options: q.options,
       })),
     };
+    await this.cache.set(cacheKey, payload, QUIZ_CACHE_TTL_SEC);
+    return payload;
   }
 
   async startAttempt(user: UserContext, quizId: string) {

@@ -1,14 +1,29 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ContentStatus } from '@eduai/database';
+import {
+  CurriculumCacheKeys,
+  CURRICULUM_CACHE_TTL_SEC,
+  getCurriculumCache,
+} from '@eduai/nest-common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { UserContext } from '../common/decorators';
 import type { ListCoursesQuery } from './dto/courses.dto';
 
 @Injectable()
 export class CoursesService {
+  private readonly cache = getCurriculumCache();
+
   constructor(private readonly prisma: PrismaService) {}
 
   async listCatalog(user: UserContext, query: ListCoursesQuery) {
+    const cacheKey = CurriculumCacheKeys.catalog(user.tenantId, {
+      boardId: query.boardId,
+      classLevel: query.classLevel,
+      subjectId: query.subjectId,
+    });
+    const cached = await this.cache.get<ReturnType<CoursesService['mapCourse']>[]>(cacheKey);
+    if (cached) return cached;
+
     const courses = await this.prisma.course.findMany({
       where: {
         tenantId: user.tenantId,
@@ -25,10 +40,16 @@ export class CoursesService {
       orderBy: [{ sortOrder: 'asc' }, { title: 'asc' }],
     });
 
-    return courses.map((course) => this.mapCourse(course));
+    const mapped = courses.map((course) => this.mapCourse(course));
+    await this.cache.set(cacheKey, mapped, CURRICULUM_CACHE_TTL_SEC);
+    return mapped;
   }
 
   async getById(user: UserContext, courseId: string) {
+    const cacheKey = CurriculumCacheKeys.course(user.tenantId, courseId);
+    const cached = await this.cache.get<ReturnType<CoursesService['mapCourse']>>(cacheKey);
+    if (cached) return cached;
+
     const course = await this.prisma.course.findFirst({
       where: {
         id: courseId,
@@ -46,10 +67,25 @@ export class CoursesService {
       throw new NotFoundException('Course not found');
     }
 
-    return this.mapCourse(course);
+    const mapped = this.mapCourse(course);
+    await this.cache.set(cacheKey, mapped, CURRICULUM_CACHE_TTL_SEC);
+    return mapped;
   }
 
   async getLessons(user: UserContext, courseId: string) {
+    const cacheKey = CurriculumCacheKeys.courseLessons(user.tenantId, courseId);
+    const cached = await this.cache.get<{
+      courseId: string;
+      chapters: Array<{
+        id: string;
+        name: string;
+        chapterNumber: number;
+        description: string | null;
+        lessons: unknown[];
+      }>;
+    }>(cacheKey);
+    if (cached) return cached;
+
     const course = await this.prisma.course.findFirst({
       where: {
         id: courseId,
@@ -88,7 +124,7 @@ export class CoursesService {
       },
     });
 
-    return {
+    const payload = {
       courseId: course.id,
       chapters: chapters.map((chapter) => ({
         id: chapter.id,
@@ -98,6 +134,8 @@ export class CoursesService {
         lessons: chapter.lessons,
       })),
     };
+    await this.cache.set(cacheKey, payload, CURRICULUM_CACHE_TTL_SEC);
+    return payload;
   }
 
   private mapCourse(course: {

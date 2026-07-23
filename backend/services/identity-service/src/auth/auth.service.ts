@@ -10,13 +10,22 @@ import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 import { getPermissionsForRoles } from '@eduai/auth';
-import { SELF_REGISTER_ROLES, type JwtClaims, type RoleCode } from '@eduai/shared';
+import { getAccessTokenRevocation } from '@eduai/nest-common';
+import {
+  SELF_REGISTER_ROLES,
+  clearFailedLogin,
+  recordFailedLogin,
+  type JwtClaims,
+  type RoleCode,
+} from '@eduai/shared';
 import { Prisma } from '@eduai/database';
 import type { LoginDto, RegisterDto } from './dto/auth.dto';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
+  private readonly revocation = getAccessTokenRevocation();
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
@@ -37,17 +46,23 @@ export class AuthService {
     });
 
     if (!user?.passwordHash) {
+      await this.recordLoginFailure(tenantId, dto.email, ip);
       throw new UnauthorizedException('Invalid credentials');
     }
 
     const valid = await bcrypt.compare(dto.password, user.passwordHash);
     if (!valid) {
+      await this.recordLoginFailure(tenantId, dto.email, ip);
+      await this.audit(user.tenantId, user.id, 'auth:login_failed', ip);
       throw new UnauthorizedException('Invalid credentials');
     }
 
     if (user.status === 'suspended') {
+      await this.audit(user.tenantId, user.id, 'auth:login_blocked_suspended', ip);
       throw new UnauthorizedException('Account suspended');
     }
+
+    clearFailedLogin({ tenantId, email: dto.email, ip });
 
     const roles = user.userRoles.map((ur) => ur.role.code as RoleCode);
     const permissions = getPermissionsForRoles(roles);
@@ -160,11 +175,15 @@ export class AuthService {
         where: { userId, refreshTokenHash: hash },
       });
     }
+    // Best-effort short-lived access JWT cutoff (Redis when configured)
+    await this.revocation.revokeUser(userId);
     return { success: true };
   }
 
   async logoutAll(userId: string) {
     await this.prisma.userSession.deleteMany({ where: { userId } });
+    await this.revocation.revokeUser(userId);
+    await this.auditForUser(userId, 'auth:logout_all');
     return { success: true };
   }
 
@@ -260,5 +279,18 @@ export class AuthService {
         ipAddress: ip,
       },
     });
+  }
+
+  private async recordLoginFailure(tenantId: string, email: string, ip?: string) {
+    await recordFailedLogin({ tenantId, email, ip });
+  }
+
+  private async auditForUser(userId: string, action: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { tenantId: true },
+    });
+    if (!user) return;
+    await this.audit(user.tenantId, userId, action);
   }
 }

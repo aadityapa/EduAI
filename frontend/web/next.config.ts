@@ -16,9 +16,17 @@ process.env.AUTH_URL = webPublicUrl;
 process.env.NEXTAUTH_URL = webPublicUrl;
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@eduai/ui', '@eduai/auth', '@eduai/shared'],
+  transpilePackages: ['@eduai/ui', '@eduai/auth', '@eduai/shared', '@eduai/i18n'],
   experimental: {
     optimizePackageImports: ['@eduai/ui', 'lucide-react'],
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
+    ],
   },
 };
 

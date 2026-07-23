@@ -9,6 +9,8 @@ export interface ErrorStateProps extends React.HTMLAttributes<HTMLDivElement> {
   message?: string;
   onRetry?: () => void;
   retryLabel?: string;
+  /** Custom recovery control (e.g. RSC Link / refresh button) when `onRetry` is unavailable. */
+  action?: React.ReactNode;
 }
 
 /** Semantic error panel for failed data fetches — pairs with EmptyState/Skeleton. */
@@ -17,6 +19,7 @@ export function ErrorState({
   message = 'We could not load this content right now. Please try again.',
   onRetry,
   retryLabel = 'Try again',
+  action,
   className,
   ...props
 }: ErrorStateProps) {
@@ -27,12 +30,14 @@ export function ErrorState({
         <div className="flex-1 space-y-1">
           <p className="font-medium text-destructive">{title}</p>
           <p className="text-sm text-muted-foreground">{message}</p>
-          {onRetry && (
+          {action ? (
+            <div className="mt-2">{action}</div>
+          ) : onRetry ? (
             <Button variant="outline" size="sm" onClick={onRetry} className="mt-2">
               <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
               {retryLabel}
             </Button>
-          )}
+          ) : null}
         </div>
       </CardContent>
     </Card>

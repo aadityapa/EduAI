@@ -102,7 +102,7 @@ const ChartTooltipContent = React.forwardRef<
       formatter,
       color,
       nameKey,
-      labelKey,
+      labelKey: _labelKey,
     },
     ref,
   ) => {

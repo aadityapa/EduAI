@@ -1,26 +1,43 @@
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCallback } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useAuth } from '../../src/auth/AuthContext';
 import { fetchTeacherDashboard } from '../../src/api/services';
 import { MobileHeader, StitchCard } from '../../src/components/stitch';
-import { Screen, tokens } from '../../src/components/ui';
+import {
+  EmptyState,
+  ErrorState,
+  LoadingState,
+  OfflineBanner,
+  Screen,
+  themedRefreshControl,
+  tokens,
+} from '../../src/components/ui';
+import { useCachedResource } from '../../src/hooks/useCachedResource';
 
 export default function TeacherDashboard() {
   const { tokens: authTokens } = useAuth();
-  const [data, setData] = useState<Record<string, unknown> | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!authTokens) return;
-    fetchTeacherDashboard(authTokens.accessToken)
-      .then(setData)
-      .finally(() => setLoading(false));
+  const fetcher = useCallback(() => {
+    if (!authTokens) return Promise.reject(new Error('Not signed in'));
+    return fetchTeacherDashboard(authTokens.accessToken);
   }, [authTokens]);
+
+  const { data, loading, refreshing, error, offline, reload } = useCachedResource(
+    authTokens ? 'teacher_dashboard' : null,
+    authTokens ? fetcher : null,
+  );
 
   if (loading) {
     return (
-      <Screen style={styles.center}>
-        <ActivityIndicator color={tokens.colors.primaryBright} />
+      <Screen>
+        <LoadingState label="Loading dashboard…" />
+      </Screen>
+    );
+  }
+
+  if (error && !data) {
+    return (
+      <Screen>
+        <ErrorState title="Couldn't load dashboard" body={error} onRetry={() => void reload()} />
       </Screen>
     );
   }
@@ -30,7 +47,14 @@ export default function TeacherDashboard() {
   return (
     <Screen>
       <MobileHeader title="Teacher Portal" subtitle={`${classes.length} classes assigned`} />
-      <ScrollView contentContainerStyle={styles.list}>
+      <ScrollView
+        contentContainerStyle={styles.list}
+        refreshControl={themedRefreshControl({
+          refreshing,
+          onRefresh: () => void reload(),
+        })}
+      >
+        <OfflineBanner visible={offline} />
         <View style={styles.aiPromo}>
           <Text style={styles.aiPromoTitle}>AI Question Generator</Text>
           <Text style={styles.aiPromoBody}>Create quizzes in seconds</Text>
@@ -43,6 +67,19 @@ export default function TeacherDashboard() {
           </Text>
           <Text style={styles.cardBody}>Students: {(data?.totalStudents as number) ?? 0}</Text>
         </StitchCard>
+        {classes.length === 0 ? (
+          <EmptyState title="No classes yet" body="Assigned classes from ERP will show here." />
+        ) : (
+          classes.slice(0, 5).map((raw, i) => {
+            const c = raw as { id?: string; name?: string; grade?: string | number };
+            return (
+              <StitchCard key={c.id ?? String(i)}>
+                <Text style={styles.cardTitle}>{c.name ?? `Class ${i + 1}`}</Text>
+                <Text style={styles.cardBody}>{c.grade != null ? `Grade ${c.grade}` : 'Assigned'}</Text>
+              </StitchCard>
+            );
+          })
+        )}
       </ScrollView>
     </Screen>
   );
@@ -50,7 +87,6 @@ export default function TeacherDashboard() {
 
 const styles = StyleSheet.create({
   list: { padding: tokens.spacing.md, paddingBottom: 100 },
-  center: { justifyContent: 'center', alignItems: 'center' },
   aiPromo: {
     backgroundColor: tokens.colors.tertiary + '18',
     borderRadius: tokens.radius.xl,

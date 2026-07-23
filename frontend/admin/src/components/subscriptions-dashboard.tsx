@@ -1,25 +1,72 @@
 'use client';
 
-import { Badge, Card, CardContent, KpiCard } from '@eduai/ui';
-import { AlertCircle, CreditCard, RefreshCw, Users } from 'lucide-react';
+import { useMemo } from 'react';
+import type { ColumnDef, CsvColumn } from '@eduai/ui';
+import { Badge, DataTable, EmptyState, KpiCard } from '@eduai/ui';
+import { CreditCard, RefreshCw, Users } from 'lucide-react';
 import { PageHeader } from '@/components/page-header';
+import { ApiError } from '@/components/api-error';
 import type { SubscriptionRecord } from '@/lib/admin-api';
-
-function toNumber(value: number | { toNumber?: () => number } | undefined): number {
-  if (value == null) return 0;
-  if (typeof value === 'number') return value;
-  return value.toNumber?.() ?? Number(value);
-}
+import { formatInr, toNumber } from '@/lib/format';
 
 interface SubscriptionsDashboardProps {
   items?: SubscriptionRecord[] | null;
   error?: string | null;
 }
 
+type SubRow = {
+  id: string;
+  tenant: string;
+  slug: string;
+  plan: string;
+  mrr: number;
+  status: string;
+};
+
 export function SubscriptionsDashboard({ items, error }: SubscriptionsDashboardProps) {
-  const subs = items ?? [];
-  const activeSubs = subs.filter((s) => s.status === 'active' || s.status === 'trialing');
-  const totalMrr = activeSubs.reduce((sum, s) => sum + toNumber(s.plan?.priceMonthly), 0);
+  const rows: SubRow[] = useMemo(
+    () =>
+      (items ?? []).map((s) => ({
+        id: s.id,
+        tenant: s.tenant?.name ?? 'Tenant',
+        slug: s.tenant?.slug ?? '—',
+        plan: s.plan?.name ?? 'Plan',
+        mrr: toNumber(s.plan?.priceMonthly),
+        status: s.status,
+      })),
+    [items],
+  );
+
+  const activeSubs = rows.filter((s) => s.status === 'active' || s.status === 'trialing');
+  const totalMrr = activeSubs.reduce((sum, s) => sum + s.mrr, 0);
+
+  const columns: ColumnDef<SubRow>[] = [
+    { accessorKey: 'tenant', header: 'Tenant' },
+    { accessorKey: 'slug', header: 'Slug' },
+    { accessorKey: 'plan', header: 'Plan' },
+    {
+      accessorKey: 'mrr',
+      header: 'MRR',
+      cell: ({ row }) => formatInr(row.original.mrr),
+    },
+    {
+      accessorKey: 'status',
+      header: 'Status',
+      cell: ({ row }) => (
+        <Badge variant={row.original.status === 'active' ? 'success' : 'warning'}>
+          {row.original.status}
+        </Badge>
+      ),
+    },
+  ];
+
+  const exportColumns: CsvColumn<SubRow>[] = [
+    { header: 'Tenant', accessor: (r) => r.tenant },
+    { header: 'Slug', accessor: (r) => r.slug },
+    { header: 'Plan', accessor: (r) => r.plan },
+    { header: 'MRR', accessor: (r) => r.mrr },
+    { header: 'Status', accessor: (r) => r.status },
+  ];
 
   return (
     <div className="space-y-6">
@@ -29,41 +76,32 @@ export function SubscriptionsDashboard({ items, error }: SubscriptionsDashboardP
         breadcrumbs={[{ label: 'Admin', href: '/dashboard' }, { label: 'Subscriptions' }]}
       />
 
-      {error && (
-        <Card className="border-destructive/30">
-          <CardContent className="flex items-center gap-2 p-4 text-sm text-destructive">
-            <AlertCircle className="h-4 w-4" /> {error}
-          </CardContent>
-        </Card>
-      )}
+      {error && <ApiError title="Subscriptions unavailable" message={error} />}
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-3">
         <KpiCard icon={<CreditCard className="h-5 w-5" />} label="Active Subscriptions" value={activeSubs.length} />
-        <KpiCard icon={<Users className="h-5 w-5" />} label="Total Subscriptions" value={subs.length} />
-        <KpiCard icon={<RefreshCw className="h-5 w-5" />} label="Combined MRR" value={`₹${totalMrr.toLocaleString()}`} />
+        <KpiCard icon={<Users className="h-5 w-5" />} label="Total Subscriptions" value={rows.length} />
+        <KpiCard icon={<RefreshCw className="h-5 w-5" />} label="Combined MRR" value={formatInr(totalMrr)} />
       </div>
 
-      {subs.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No subscriptions found.</p>
+      {!error && rows.length === 0 ? (
+        <EmptyState
+          icon={<CreditCard className="h-5 w-5" />}
+          title="No subscriptions"
+          description="Subscriptions appear when billing data is seeded."
+        />
       ) : (
-        <div className="space-y-3">
-          {subs.map((sub) => (
-            <Card key={sub.id}>
-              <CardContent className="flex items-center justify-between p-4">
-                <div>
-                  <p className="font-medium">{sub.tenant?.name ?? 'Tenant'}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {sub.plan?.name ?? 'Plan'} · {sub.tenant?.slug}
-                  </p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span className="font-semibold">₹{toNumber(sub.plan?.priceMonthly).toLocaleString()}/mo</span>
-                  <Badge variant={sub.status === 'active' ? 'success' : 'warning'}>{sub.status}</Badge>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        !error && (
+          <DataTable
+            columns={columns}
+            data={rows}
+            searchKey="tenant"
+            searchPlaceholder="Search subscriptions…"
+            exportable
+            exportFilename="subscriptions"
+            exportColumns={exportColumns}
+          />
+        )
       )}
     </div>
   );

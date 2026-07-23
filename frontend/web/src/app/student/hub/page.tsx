@@ -2,12 +2,21 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
+import { Library } from 'lucide-react';
 import { DashboardShell } from '@/components/dashboard-shell';
 import { ApiError } from '@/components/api-error';
 import { HubFilters } from '@/components/hub-filters';
 import { PageMotion } from '@/components/page-motion';
 import { getHub, LearningApiError } from '@/lib/learning-api';
-import { Badge, Card, CardContent, CardHeader, CardTitle, StitchPageHeader } from '@eduai/ui';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  EmptyState,
+  LessonCard,
+  StitchPageHeader,
+} from '@eduai/ui';
 
 interface HubPageProps {
   searchParams: Promise<{
@@ -46,10 +55,10 @@ export default async function HubPage({ searchParams }: HubPageProps) {
     <DashboardShell title="Learning Hub" portal="student">
       <PageMotion>
         <div className="space-y-6">
-          <StitchPageHeader title="Learning Hub" description="Browse boards, subjects, chapters, and lessons." />
-          <p className="text-sm text-muted-foreground">
-            Browse curriculum by board, class, subject, and chapter.
-          </p>
+          <StitchPageHeader
+            title="Learning Hub"
+            description="Browse boards, subjects, chapters, and lessons."
+          />
 
           <Suspense fallback={null}>
             <HubFilters boards={allBoards.map((b) => ({ id: b.id, name: b.name }))} />
@@ -58,14 +67,26 @@ export default async function HubPage({ searchParams }: HubPageProps) {
           {loadError && <ApiError message={loadError} />}
 
           {!loadError && !allBoards.length && (
-            <p className="text-sm text-muted-foreground">No content matches your filters.</p>
+            <EmptyState
+              icon={<Library className="h-5 w-5" />}
+              title="No content matches your filters"
+              description="Adjust board, class, or subject filters to explore the curriculum."
+              action={
+                <Link
+                  href="/student/hub"
+                  className="inline-flex items-center rounded-full bg-primary px-5 py-2 text-sm font-bold text-primary-foreground"
+                >
+                  Clear filters
+                </Link>
+              }
+            />
           )}
 
           {allBoards.map((board) => (
             <div key={board.id} className="space-y-4">
-              <h2 className="text-xl font-semibold">{board.name}</h2>
+              <h2 className="font-display text-xl font-semibold">{board.name}</h2>
               {board.subjects.map((subject) => (
-                <Card key={subject.id} className="glass-card">
+                <Card key={subject.id} className="stitch-card">
                   <CardHeader>
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <CardTitle className="text-lg">
@@ -74,7 +95,8 @@ export default async function HubPage({ searchParams }: HubPageProps) {
                       {subject.courses[0] && (
                         <Link
                           href={`/student/courses/${subject.courses[0].id}`}
-                          className="text-sm text-primary hover:underline"
+                          prefetch
+                          className="text-sm font-medium text-primary hover:underline"
                         >
                           View course
                         </Link>
@@ -83,37 +105,46 @@ export default async function HubPage({ searchParams }: HubPageProps) {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {subject.chapters.map((chapter) => (
-                      <div key={chapter.id} className="space-y-2">
+                      <div key={chapter.id} className="space-y-3">
                         <h4 className="font-medium">
                           Ch. {chapter.chapterNumber}: {chapter.name}
                         </h4>
-                        <div className="grid gap-2">
-                          {chapter.lessons.map((lesson) => (
-                            <Link
-                              key={lesson.id}
-                              href={`/student/lessons/${lesson.id}`}
-                              className="flex items-center justify-between gap-3 rounded-lg border px-4 py-3 transition-colors hover:bg-muted/50"
-                            >
-                              <div>
-                                <p className="font-medium">{lesson.title}</p>
-                                <p className="text-xs capitalize text-muted-foreground">
-                                  {lesson.type.replace('_', ' ')}
-                                </p>
-                              </div>
-                              <Badge
-                                variant={
-                                  lesson.progress.status === 'completed'
-                                    ? 'success'
-                                    : lesson.progress.status === 'in_progress'
-                                      ? 'warning'
-                                      : 'secondary'
-                                }
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          {chapter.lessons.map((lesson) => {
+                            const status =
+                              lesson.progress.status === 'completed'
+                                ? 'completed'
+                                : lesson.progress.status === 'in_progress'
+                                  ? 'in_progress'
+                                  : 'available';
+                            return (
+                              <Link
+                                key={lesson.id}
+                                href={`/student/lessons/${lesson.id}`}
+                                prefetch
+                                className="block h-full motion-safe:transition-transform motion-safe:hover:scale-[1.01]"
                               >
-                                {lesson.progress.status.replace('_', ' ')}
-                              </Badge>
-                            </Link>
-                          ))}
+                                <LessonCard
+                                  title={lesson.title}
+                                  subject={lesson.type.replace('_', ' ')}
+                                  status={status}
+                                  durationMinutes={lesson.durationMinutes ?? undefined}
+                                  progress={
+                                    status === 'completed'
+                                      ? 100
+                                      : status === 'in_progress'
+                                        ? 40
+                                        : 0
+                                  }
+                                  className="h-full cursor-pointer"
+                                />
+                              </Link>
+                            );
+                          })}
                         </div>
+                        {!chapter.lessons.length && (
+                          <p className="text-sm text-muted-foreground">No lessons in this chapter yet.</p>
+                        )}
                       </div>
                     ))}
                   </CardContent>

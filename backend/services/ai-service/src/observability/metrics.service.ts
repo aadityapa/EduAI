@@ -1,39 +1,29 @@
 import { Injectable } from '@nestjs/common';
+import { getPrometheusRegistry } from '@eduai/nest-common';
 
-interface Counter {
-  value: number;
-  labels: Record<string, string>;
-}
-
+/**
+ * AI-specific counters; HTTP RED metrics come from nest-common middleware.
+ * Both share the `ai-service` Prometheus registry scraped at /api/v1/metrics.
+ */
 @Injectable()
 export class MetricsService {
-  private readonly counters = new Map<string, Counter>();
+  private readonly registry = getPrometheusRegistry('ai-service');
 
   increment(name: string, labels: Record<string, string> = {}, amount = 1): void {
-    const key = `${name}:${JSON.stringify(labels)}`;
-    const existing = this.counters.get(key);
-    if (existing) {
-      existing.value += amount;
-    } else {
-      this.counters.set(key, { value: amount, labels });
-    }
+    this.registry.incCounter(name, labels, amount);
   }
 
   getPrometheusMetrics(): string {
-    const lines: string[] = [];
-    for (const [key, counter] of this.counters) {
-      const name = key.split(':')[0];
-      const labelStr = Object.entries(counter.labels)
-        .map(([k, v]) => `${k}="${v}"`)
-        .join(',');
-      lines.push(`# TYPE ${name} counter`);
-      lines.push(`${name}{${labelStr}} ${counter.value}`);
-    }
-    return lines.join('\n');
+    return this.registry.render();
   }
 
   recordRequest(feature: string, status: 'success' | 'error', durationMs: number): void {
     this.increment('ai_requests_total', { feature, status });
-    this.increment('ai_request_duration_ms_sum', { feature }, durationMs);
+    this.registry.observeHistogram(
+      'ai_request_duration_ms',
+      durationMs,
+      { feature },
+      [50, 100, 250, 500, 1000, 2000, 4000, 8000, 16000],
+    );
   }
 }

@@ -1,0 +1,53 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Introduction" />
+
+# EduAI UI Kit
+
+Living design system for **`@eduai/ui`** — tokens, themes, and components shared by web, admin, and (via token mirror) mobile.
+
+## Themes
+
+Toggle the toolbar theme control:
+
+| Theme | HTML class | Notes |
+|-------|------------|--------|
+| Light | _(none)_ | Default Stitch-aligned palette |
+| Dark | `dark` | Elevated surfaces, brighter primary |
+| High contrast | `high-contrast` | Stronger borders / AA+ text |
+| Dark + HC | `dark high-contrast` | Stacked classes |
+
+Activation in apps: `next-themes` `attribute="class"` (web) or document `classList` (Storybook).
+
+## Tokens
+
+Semantic CSS variables in `src/globals.css`:
+
+- Surfaces: `--color-bg`, `--surface`, `--surface-elevated`, `--border`
+- Text: `--text`, `--text-muted`
+- Brand: `--primary` / `--primary-fg` (Stitch `#1A73E8`), `--secondary` / `--tertiary` (purple `#9334E6`)
+- Status: `--success`, `--warning`, `--destructive`, `--info`
+- Motion: `--motion-fast` 120ms, `--motion-normal` 200ms, `--motion-slow` 320ms (+ spring)
+- Spacing base: `--spacing-unit` **4px** (legacy 8px alias retained)
+
+Tailwind preset: `@eduai/ui/tailwind-preset`.
+
+## Typography
+
+| Role | Token / class | Face |
+|------|---------------|------|
+| UI body | `font-sans` | Inter + Noto Sans Devanagari |
+| Display / learners | `font-display` / `font-learner` | Plus Jakarta Sans |
+| Code | `font-mono` | system mono |
+
+Devanagari (hi/mr) loads via `next/font` (`Noto_Sans_Devanagari`) — no blocking Google CSS `@import` on the critical path.
+
+## White-label
+
+`TenantThemeProvider` maps `TenantBranding` hex colors → `--primary` / `--secondary` HSL channels at runtime.
+
+## Phase boundary
+
+**Phase 1** = tokens, themes, typography, motion, Storybook scaffold.  
+**Phase 2** = primitives + domain components, states, Storybook + a11y addon, ESLint/Vitest.  
+**Phase 3+** = portal overhauls consuming this kit — awaiting approval.

@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('AI Tutor Chat', () => {
+test.describe('AI Tutor Chat @smoke', () => {
   test('login page loads', async ({ page }) => {
     await page.goto('/login');
-    await expect(page.getByRole('heading')).toBeVisible();
+    await expect(page.getByRole('heading').first()).toBeVisible();
   });
 
   test('student AI tutor route requires auth', async ({ page }) => {
@@ -12,7 +12,7 @@ test.describe('AI Tutor Chat', () => {
   });
 });
 
-test.describe('Homework Assistant', () => {
+test.describe('Homework Assistant @smoke', () => {
   test('homework route requires auth', async ({ page }) => {
     await page.goto('/student/ai/homework');
     await expect(page).toHaveURL(/login/);

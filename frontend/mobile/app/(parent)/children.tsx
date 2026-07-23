@@ -1,52 +1,82 @@
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { useCallback } from 'react';
+import { FlatList, StyleSheet, Text } from 'react-native';
 import { useAuth } from '../../src/auth/AuthContext';
 import { fetchParentChildren } from '../../src/api/services';
-import { useTheme } from '../../src/theme/ThemeProvider';
+import { StitchCard, StitchScreenHeader } from '../../src/components/stitch';
+import {
+  EmptyState,
+  ErrorState,
+  LoadingState,
+  OfflineBanner,
+  Screen,
+  themedRefreshControl,
+  tokens,
+} from '../../src/components/ui';
+import { useCachedResource } from '../../src/hooks/useCachedResource';
 
 export default function ChildrenScreen() {
-  const { tokens } = useAuth();
-  const theme = useTheme();
-  const [children, setChildren] = useState<unknown[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { tokens: authTokens } = useAuth();
+  const fetcher = useCallback(() => {
+    if (!authTokens) return Promise.reject(new Error('Not signed in'));
+    return fetchParentChildren(authTokens.accessToken) as Promise<unknown[]>;
+  }, [authTokens]);
 
-  useEffect(() => {
-    if (!tokens) return;
-    fetchParentChildren(tokens.accessToken)
-      .then(setChildren)
-      .finally(() => setLoading(false));
-  }, [tokens]);
+  const { data, loading, refreshing, error, offline, reload } = useCachedResource<unknown[]>(
+    authTokens ? 'parent_children' : null,
+    authTokens ? fetcher : null,
+  );
+
+  const children = data ?? [];
 
   if (loading) {
     return (
-      <View style={styles.center}>
-        <ActivityIndicator color={theme.primaryColor} />
-      </View>
+      <Screen>
+        <LoadingState label="Loading children…" />
+      </Screen>
+    );
+  }
+
+  if (error && children.length === 0) {
+    return (
+      <Screen>
+        <ErrorState title="Couldn't load children" body={error} onRetry={() => void reload()} />
+      </Screen>
     );
   }
 
   return (
-    <FlatList
-      data={children}
-      keyExtractor={(_, i) => String(i)}
-      contentContainerStyle={styles.list}
-      renderItem={({ item }) => {
-        const c = item as { student?: { firstName?: string; email?: string } };
-        return (
-          <View style={styles.card}>
-            <Text style={styles.name}>{c.student?.firstName}</Text>
-            <Text style={styles.email}>{c.student?.email}</Text>
-          </View>
-        );
-      }}
-    />
+    <Screen>
+      <StitchScreenHeader title="Children" />
+      <FlatList
+        data={children}
+        keyExtractor={(_, i) => String(i)}
+        contentContainerStyle={styles.list}
+        refreshControl={themedRefreshControl({
+          refreshing,
+          onRefresh: () => void reload(),
+        })}
+        ListHeaderComponent={<OfflineBanner visible={offline} />}
+        ListEmptyComponent={
+          <EmptyState title="No linked children" body="Link a student account to see details here." />
+        }
+        renderItem={({ item }) => {
+          const c = item as { student?: { firstName?: string; lastName?: string; email?: string } };
+          return (
+            <StitchCard>
+              <Text style={styles.name}>
+                {c.student?.firstName} {c.student?.lastName}
+              </Text>
+              <Text style={styles.email}>{c.student?.email}</Text>
+            </StitchCard>
+          );
+        }}
+      />
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  list: { padding: 16 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  card: { backgroundColor: '#fff', borderRadius: 10, padding: 16, marginBottom: 12 },
-  name: { fontWeight: '600' },
-  email: { color: '#64748b', marginTop: 4 },
+  list: { padding: tokens.spacing.md, paddingBottom: 100, flexGrow: 1 },
+  name: { fontWeight: '700', fontSize: tokens.fontSize.md, color: tokens.colors.text },
+  email: { color: tokens.colors.textMuted, marginTop: 4, fontSize: tokens.fontSize.sm },
 });

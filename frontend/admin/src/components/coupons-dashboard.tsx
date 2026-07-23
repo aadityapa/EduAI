@@ -1,15 +1,13 @@
 'use client';
 
-import { Badge, Button, Card, CardContent, KpiCard } from '@eduai/ui';
-import { AlertCircle, Percent, Plus, Tag } from 'lucide-react';
+import { useMemo } from 'react';
+import type { ColumnDef, CsvColumn } from '@eduai/ui';
+import { Badge, Button, DataTable, EmptyState, KpiCard } from '@eduai/ui';
+import { Percent, Plus, Tag } from 'lucide-react';
 import { PageHeader } from '@/components/page-header';
+import { ApiError } from '@/components/api-error';
 import type { CouponRecord } from '@/lib/admin-api';
-
-function toNumber(value: number | { toNumber?: () => number } | undefined): number {
-  if (value == null) return 0;
-  if (typeof value === 'number') return value;
-  return value.toNumber?.() ?? Number(value);
-}
+import { toNumber } from '@/lib/format';
 
 function couponStatus(coupon: CouponRecord): string {
   if (!coupon.isActive) return 'inactive';
@@ -24,10 +22,58 @@ interface CouponsDashboardProps {
   error?: string | null;
 }
 
+type CouponRow = CouponRecord & { status: string; discount: number };
+
 export function CouponsDashboard({ coupons, error }: CouponsDashboardProps) {
-  const items = coupons ?? [];
-  const activeCount = items.filter((c) => couponStatus(c) === 'active').length;
-  const totalRedemptions = items.reduce((sum, c) => sum + c.usedCount, 0);
+  const rows: CouponRow[] = useMemo(
+    () =>
+      (coupons ?? []).map((c) => ({
+        ...c,
+        status: couponStatus(c),
+        discount: toNumber(c.discountPct),
+      })),
+    [coupons],
+  );
+
+  const activeCount = rows.filter((c) => c.status === 'active').length;
+  const totalRedemptions = rows.reduce((sum, c) => sum + c.usedCount, 0);
+
+  const columns: ColumnDef<CouponRow>[] = [
+    { accessorKey: 'code', header: 'Code' },
+    {
+      accessorKey: 'discount',
+      header: 'Discount',
+      cell: ({ row }) => `${row.original.discount}%`,
+    },
+    {
+      id: 'uses',
+      header: 'Uses',
+      cell: ({ row }) => `${row.original.usedCount}/${row.original.maxUses}`,
+    },
+    {
+      accessorKey: 'validUntil',
+      header: 'Valid until',
+      cell: ({ row }) => new Date(row.original.validUntil).toLocaleDateString(),
+    },
+    {
+      accessorKey: 'status',
+      header: 'Status',
+      cell: ({ row }) => (
+        <Badge variant={row.original.status === 'active' ? 'success' : 'outline'}>
+          {row.original.status}
+        </Badge>
+      ),
+    },
+  ];
+
+  const exportColumns: CsvColumn<CouponRow>[] = [
+    { header: 'Code', accessor: (r) => r.code },
+    { header: 'Discount %', accessor: (r) => r.discount },
+    { header: 'Used', accessor: (r) => r.usedCount },
+    { header: 'Max uses', accessor: (r) => r.maxUses },
+    { header: 'Status', accessor: (r) => r.status },
+    { header: 'Valid until', accessor: (r) => r.validUntil },
+  ];
 
   return (
     <div className="space-y-6">
@@ -35,43 +81,40 @@ export function CouponsDashboard({ coupons, error }: CouponsDashboardProps) {
         title="Coupons"
         description="Manage discount codes and promotional offers"
         breadcrumbs={[{ label: 'Admin', href: '/dashboard' }, { label: 'Coupons' }]}
-        actions={<Button size="sm"><Plus className="mr-2 h-4 w-4" />Create Coupon</Button>}
+        actions={
+          <Button size="sm">
+            <Plus className="me-2 h-4 w-4" />
+            Create Coupon
+          </Button>
+        }
       />
 
-      {error && (
-        <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
-          <AlertCircle className="h-4 w-4" /> {error}
-        </div>
-      )}
+      {error && <ApiError title="Coupons unavailable" message={error} />}
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-3">
         <KpiCard icon={<Tag className="h-5 w-5" />} label="Active Coupons" value={activeCount} />
         <KpiCard icon={<Percent className="h-5 w-5" />} label="Total Redemptions" value={totalRedemptions} />
-        <KpiCard icon={<Tag className="h-5 w-5" />} label="Total Coupons" value={items.length} />
+        <KpiCard icon={<Tag className="h-5 w-5" />} label="Total Coupons" value={rows.length} />
       </div>
 
-      {items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No coupons configured yet.</p>
+      {!error && rows.length === 0 ? (
+        <EmptyState
+          icon={<Tag className="h-5 w-5" />}
+          title="No coupons configured"
+          description="Create coupons via billing-service when ready."
+        />
       ) : (
-        <div className="space-y-3">
-          {items.map((c) => {
-            const status = couponStatus(c);
-            return (
-              <Card key={c.code}>
-                <CardContent className="flex items-center justify-between p-4">
-                  <div>
-                    <p className="font-mono font-semibold">{c.code}</p>
-                    <p className="text-sm text-muted-foreground">{toNumber(c.discountPct)}% off</p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-muted-foreground">{c.usedCount}/{c.maxUses} uses</span>
-                    <Badge variant={status === 'active' ? 'success' : 'outline'}>{status}</Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+        !error && (
+          <DataTable
+            columns={columns}
+            data={rows}
+            searchKey="code"
+            searchPlaceholder="Search coupons…"
+            exportable
+            exportFilename="coupons"
+            exportColumns={exportColumns}
+          />
+        )
       )}
     </div>
   );

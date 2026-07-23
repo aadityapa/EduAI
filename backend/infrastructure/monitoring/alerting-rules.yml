@@ -14,6 +14,7 @@ groups:
         annotations:
           summary: "High 5xx error rate on {{ $labels.service }}"
           description: "Service {{ $labels.service }} has exceeded 1% error rate for 5 minutes."
+          runbook_url: "docs/operations/runbooks/high-error-rate.md"
 
       - alert: HighLatencyP95
         expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, service)) > 0.5
@@ -24,6 +25,7 @@ groups:
         annotations:
           summary: "High p95 latency on {{ $labels.service }}"
           description: "Service {{ $labels.service }} p95 latency is above 500ms."
+          runbook_url: "docs/operations/runbooks/high-latency.md"
 
       - alert: IdentityServiceDown
         expr: up{job="identity-service"} == 0
@@ -34,6 +36,7 @@ groups:
         annotations:
           summary: "Identity service is unreachable"
           description: "Prometheus cannot scrape identity-service metrics."
+          runbook_url: "docs/operations/runbooks/service-down.md"
 
       - alert: LearningServiceDown
         expr: up{job="learning-service"} == 0
@@ -44,6 +47,7 @@ groups:
         annotations:
           summary: "Learning service is unreachable"
           description: "Prometheus cannot scrape learning-service metrics."
+          runbook_url: "docs/operations/runbooks/service-down.md"
 
       - alert: AIServiceHighLatency
         expr: histogram_quantile(0.95, sum(rate(ai_request_duration_ms_bucket[5m])) by (le)) > 4000
@@ -54,6 +58,7 @@ groups:
         annotations:
           summary: "AI service latency above 4s p95"
           description: "AI tutor/query latency is degrading user experience."
+          runbook_url: "docs/operations/runbooks/high-latency.md"
 
       - alert: PodCPUHigh
         expr: |
@@ -68,6 +73,7 @@ groups:
         annotations:
           summary: "Pod CPU usage above 80%"
           description: "Pod {{ $labels.pod }} is consuming more than 80% of its CPU limit."
+          runbook_url: "docs/operations/runbooks/resource-pressure.md"
 
       - alert: PodMemoryHigh
         expr: |
@@ -82,6 +88,7 @@ groups:
         annotations:
           summary: "Pod memory usage above 85%"
           description: "Pod {{ $labels.pod }} is consuming more than 85% of its memory limit."
+          runbook_url: "docs/operations/runbooks/resource-pressure.md"
 
       - alert: RedisCacheMissSpike
         expr: increase(redis_keyspace_misses_total[10m]) > 1000
@@ -92,3 +99,4 @@ groups:
         annotations:
           summary: "Redis cache miss spike detected"
           description: "Cache miss rate increased significantly in the last 10 minutes."
+          runbook_url: "docs/operations/runbooks/redis-cache.md"

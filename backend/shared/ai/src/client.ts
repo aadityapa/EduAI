@@ -5,6 +5,8 @@ import { PromptCache } from './cache/prompt-cache.js';
 import { guardPrompt } from './security/prompt-guard.js';
 import { filterContent } from './security/content-filter.js';
 import { mockStreamComplete } from './streaming/mock-stream.js';
+import { classifyIntent, type IntentClassification } from './intent/classifier.js';
+import { estimateCostUsd } from './pricing.js';
 import type { StreamChunk } from './streaming/types.js';
 import {
   HOMEWORK_SYSTEM_PROMPT,
@@ -45,6 +47,8 @@ export interface ChatContext {
   subject?: string;
   lessonTitle?: string;
   classLevel?: number;
+  /** Force model tier bypassing intent classifier */
+  forceTier?: 'cheap' | 'premium';
 }
 
 export class AiClient {
@@ -69,12 +73,20 @@ export class AiClient {
     return this.router.getActiveProviders();
   }
 
+  isMockOnly(): boolean {
+    return this.router.isMockOnly();
+  }
+
   getCostTracker(): CostTracker {
     return this.costTracker;
   }
 
   getResponseCache(): ResponseCache {
     return this.responseCache;
+  }
+
+  classify(message: string, feature?: string): IntentClassification {
+    return classifyIntent(message, feature);
   }
 
   checkTokenBudget(tokensNeeded = 0): boolean {
@@ -124,6 +136,7 @@ export class AiClient {
           model: chunk.model ?? 'mock-v1',
           feature: options?.context?.feature ?? 'tutor',
           tokensUsed: { prompt: 0, completion: totalTokens, total: totalTokens },
+          estimatedCostUsd: estimateCostUsd(chunk.model ?? 'mock-v1', totalTokens),
           timestamp: new Date(),
         });
         yield { ...chunk, content: filtered.filtered ?? fullContent };
@@ -136,7 +149,7 @@ export class AiClient {
   async chat(
     messages: ChatMessage[],
     options?: CompletionOptions & { context?: ChatContext },
-  ): Promise<ChatResult> {
+  ): Promise<ChatResult & { intent?: IntentClassification; cached?: boolean }> {
     const lastUser = [...messages].reverse().find((m) => m.role === 'user');
     if (lastUser) {
       const guard = guardPrompt(lastUser.content);
@@ -146,10 +159,15 @@ export class AiClient {
     }
 
     const feature = options?.context?.feature ?? 'tutor';
+    const intent = classifyIntent(lastUser?.content ?? '', feature);
+    const tier = options?.context?.forceTier ?? intent.tier;
     const cacheKey = JSON.stringify(messages);
-    const cached = this.enableCaching ? this.responseCache.get(feature, cacheKey, options?.model) : null;
-    if (cached) {
-      return cached;
+
+    if (this.enableCaching) {
+      const cached = await this.responseCache.getAsync(feature, cacheKey, options?.model);
+      if (cached) {
+        return { ...cached, intent, cached: true };
+      }
     }
 
     const systemPrompt = options?.systemPrompt ?? TUTOR_SYSTEM_PROMPT;
@@ -158,7 +176,11 @@ export class AiClient {
       this.promptCache.set(feature, systemPrompt, options?.context?.tenantId);
     }
 
-    const result = await this.router.complete(messages, { ...options, systemPrompt });
+    const result = await this.router.complete(messages, {
+      ...options,
+      systemPrompt,
+      tier,
+    });
 
     const filtered = filterContent(result.content);
     if (!filtered.allowed) {
@@ -178,14 +200,16 @@ export class AiClient {
       model: result.model,
       feature,
       tokensUsed: result.tokensUsed,
+      estimatedCostUsd: estimateCostUsd(result.model, result.tokensUsed.total),
+      tier,
       timestamp: new Date(),
     });
 
     if (this.enableCaching) {
-      this.responseCache.set(feature, cacheKey, result, options?.model);
+      await this.responseCache.setAsync(feature, cacheKey, result, options?.model ?? result.model);
     }
 
-    return result;
+    return { ...result, intent, cached: false };
   }
 
   async generateQuestions(
@@ -195,7 +219,7 @@ export class AiClient {
     const prompt = buildQuestionGenPrompt(params);
     const result = await this.router.complete(
       [{ role: 'user', content: prompt }],
-      { systemPrompt: QUESTION_GEN_SYSTEM_PROMPT },
+      { systemPrompt: QUESTION_GEN_SYSTEM_PROMPT, tier: 'premium' },
     );
 
     await this.costTracker.record({
@@ -205,6 +229,8 @@ export class AiClient {
       model: result.model,
       feature: 'question-gen',
       tokensUsed: result.tokensUsed,
+      estimatedCostUsd: estimateCostUsd(result.model, result.tokensUsed.total),
+      tier: 'premium',
       timestamp: new Date(),
     });
 
@@ -215,7 +241,7 @@ export class AiClient {
     const prompt = buildPlannerPrompt(params);
     const result = await this.router.complete(
       [{ role: 'user', content: prompt }],
-      { systemPrompt: PLANNER_SYSTEM_PROMPT },
+      { systemPrompt: PLANNER_SYSTEM_PROMPT, tier: 'premium' },
     );
 
     await this.costTracker.record({
@@ -225,6 +251,8 @@ export class AiClient {
       model: result.model,
       feature: 'planner',
       tokensUsed: result.tokensUsed,
+      estimatedCostUsd: estimateCostUsd(result.model, result.tokensUsed.total),
+      tier: 'premium',
       timestamp: new Date(),
     });
 
@@ -241,7 +269,7 @@ export class AiClient {
     const prompt = buildMockTestPrompt(params);
     const result = await this.router.complete(
       [{ role: 'user', content: prompt }],
-      { systemPrompt: MOCK_TEST_SYSTEM_PROMPT },
+      { systemPrompt: MOCK_TEST_SYSTEM_PROMPT, tier: 'premium' },
     );
 
     await this.costTracker.record({
@@ -251,6 +279,8 @@ export class AiClient {
       model: result.model,
       feature: 'mock-test',
       tokensUsed: result.tokensUsed,
+      estimatedCostUsd: estimateCostUsd(result.model, result.tokensUsed.total),
+      tier: 'premium',
       timestamp: new Date(),
     });
 
@@ -278,7 +308,7 @@ export class AiClient {
     const prompt = buildHomeworkPrompt(text);
     const result = await this.router.complete(
       [{ role: 'user', content: prompt }],
-      { systemPrompt: HOMEWORK_SYSTEM_PROMPT },
+      { systemPrompt: HOMEWORK_SYSTEM_PROMPT, tier: 'premium' },
     );
 
     await this.costTracker.record({
@@ -288,6 +318,8 @@ export class AiClient {
       model: result.model,
       feature: 'homework',
       tokensUsed: result.tokensUsed,
+      estimatedCostUsd: estimateCostUsd(result.model, result.tokensUsed.total),
+      tier: 'premium',
       timestamp: new Date(),
     });
 
@@ -313,7 +345,7 @@ export class AiClient {
     message: string,
     history: ChatMessage[] = [],
     context?: ChatContext,
-  ): Promise<ChatResult> {
+  ): Promise<ChatResult & { intent?: IntentClassification; cached?: boolean }> {
     const userContent = buildTutorUserPrompt(message, {
       subject: context?.subject,
       lessonTitle: context?.lessonTitle,

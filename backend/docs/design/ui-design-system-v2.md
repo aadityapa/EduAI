@@ -1,125 +1,138 @@
 # EduAI Design System v2
 
-**Version:** 2.0  
+**Version:** 2.1 (Phase 1 foundation)  
 **Package:** `@eduai/ui`  
-**Font:** Inter (via `next/font/google`)
+**Fonts:** Inter (UI) + Plus Jakarta Sans (display/learner) + Noto Sans Devanagari via `next/font`  
+**Palette:** Stitch Google Blue primary `#1A73E8` / deep `#005BBF`; tertiary purple `#9334E6`  
+**ADR:** [`../architecture/adr/001-design-token-architecture.md`](../architecture/adr/001-design-token-architecture.md)
 
 ---
 
 ## Design Principles
 
-1. **8px grid** — All spacing aligns to multiples of 8px
-2. **Enterprise clarity** — Stripe/Vercel/Linear-level information hierarchy
-3. **Dark mode first-class** — All tokens have light + dark variants
-4. **Accessible by default** — WCAG AA focus rings, keyboard nav, ARIA labels
+1. **4px base grid** — `--spacing-unit: 4px`; legacy 8px `grid-*` aliases retained
+2. **Stitch-aligned brand** — Blue primary, purple AI secondary, green success
+3. **Themes first-class** — Light + dark + high-contrast (class strategy)
+4. **Accessible by default** — WCAG 2.2 AA contrast targets; focus-visible rings; `prefers-reduced-motion`
+5. **White-label ready** — `TenantThemeProvider` maps `TenantBranding` → CSS variables
 
 ---
 
 ## Color Tokens
 
-| Token | Light | Hex Reference | Usage |
-|-------|-------|---------------|-------|
-| `--primary` | `262 69% 50%` | `#6D28D9` | CTAs, active nav, brand |
-| `--secondary` | `258 90% 66%` | `#8B5CF6` | Accents, secondary actions |
-| `--success` | `142 71% 45%` | `#22C55E` | Positive states |
-| `--warning` | `38 92% 50%` | `#F59E0B` | Caution states |
-| `--destructive` | `0 84% 60%` | `#EF4444` | Errors, destructive actions |
+| Token | Light (approx hex) | Usage |
+|-------|-------------------|-------|
+| `--primary` | `#1A73E8` | CTAs, links, active nav |
+| `--primary-deep` | `#005BBF` | Hero gradients, emphasis |
+| `--primary-fg` / `--primary-foreground` | `#FFFFFF` | Text on primary |
+| `--secondary` / `--tertiary` | `#9334E6` | AI features, brand accent |
+| `--success` | `#34A853` | Positive / progress |
+| `--warning` | `#F59E0B` | Caution |
+| `--destructive` | `#D93025` | Errors, destructive actions |
+| `--info` | `#0EA5E9` | Informational |
+| `--color-bg` / `--background` | `#F8FAFD` | Page background |
+| `--surface` / `--card` | `#FFFFFF` | Cards, panels |
+| `--surface-elevated` | `#EEF2F7` | Raised panels |
+| `--text` / `--foreground` | `#1F1F1F` | Primary text |
+| `--text-muted` / `--muted-foreground` | `#5F6368` | Secondary text |
+| `--border` | `#DADCE0` | Borders, dividers |
+| `--xp` / `--streak` / `--achievement` | gold / orange / coral | Gamification |
 
-### Sidebar Tokens
-- `--sidebar`, `--sidebar-foreground`, `--sidebar-border`
-- `--sidebar-accent`, `--sidebar-accent-foreground`, `--sidebar-muted`
+### Sidebar & chart
 
-### Chart Tokens
-- `--chart-1` through `--chart-5` — Recharts theming
+- `--sidebar`, `--sidebar-foreground`, `--sidebar-border`, `--sidebar-accent`, `--sidebar-muted`
+- `--chart-1` … `--chart-5`
+
+---
+
+## Themes
+
+| Theme | Activation |
+|-------|------------|
+| Light | default `:root` |
+| Dark | `class="dark"` on `<html>` |
+| High contrast | `class="high-contrast"` |
+| Dark + HC | `class="dark high-contrast"` |
+
+Web: `next-themes` with `attribute="class"` and `themes={['light','dark','high-contrast']}`.
 
 ---
 
 ## Typography Scale
 
-| Class | Size | Weight | Usage |
-|-------|------|--------|-------|
-| `text-display-lg` | 48px | 600 | Hero headings |
-| `text-display-md` | 36px | 600 | Page titles |
-| `text-display-sm` | 30px | 600 | Section titles |
-| `text-2xl` | 24px | 600 | Card titles |
-| `text-lg` | 18px | 500 | Subheadings |
-| `text-base` | 16px | 400 | Body |
-| `text-sm` | 14px | 400 | Secondary text |
-| `text-xs` | 12px | 400 | Labels, captions |
+| Token / class | Size | Usage |
+|---------------|------|-------|
+| `text-display` / `--text-display` | 48px | Hero / learner display |
+| `text-h1` … `text-h6` | 36 → 16px | Headings |
+| `text-body` / `text-body-sm` | 16 / 14px | Body |
+| `text-label` | 14px | Form labels |
+| `text-caption` | 12px | Helpers, meta |
+| `text-code` / `font-mono` | 14px | Code |
+
+**Faces:** `font-sans` (Inter + Devanagari), `font-display` / `font-learner` (Plus Jakarta Sans).  
+Stitch reference: Google Sans Flex / Roboto — not loaded at runtime (see ADR).
 
 ---
 
-## Spacing (8px Grid)
+## Spacing
 
-Tailwind utilities: `grid-1` (8px) through `grid-8` (64px)
-
-Standard padding:
-- Card content: `p-6` (24px)
-- Page content: `p-6` (24px)
-- Sidebar items: `px-3 py-2` (12px / 8px)
+- Base: `--spacing-unit` = **4px** (Tailwind default scale is already 4px-based)
+- Legacy aliases: `grid-1` (8px) … `grid-8` (64px), `--spacing-unit-legacy`
 
 ---
 
-## Border Radius
+## Radius / shadow / z-index / motion
 
-| Token | Value |
-|-------|-------|
-| `--radius-sm` | 6px |
-| `--radius` | 8px |
-| `--radius-lg` | 12px |
-| `--radius-xl` | 16px |
+| Concern | Tokens |
+|---------|--------|
+| Radius | `--radius-sm` 8, `--radius` 12, `--radius-lg` 16, `--radius-xl` 24 |
+| Shadow | `--shadow-sm` / `md` / `lg` (soft elevation) |
+| Z-index | `--z-dropdown` 50 → `--z-tooltip` 500 |
+| Motion | `--motion-fast` 120ms, `--motion-normal` 200ms, `--motion-slow` 320ms, `--motion-spring` |
 
 ---
 
-## Dark Mode
-
-Activated via `class="dark"` on `<html>` (next-themes).
+## White-label
 
 ```tsx
-import { ThemeProvider } from 'next-themes';
+import { TenantThemeProvider } from '@eduai/ui';
 
-<ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+<TenantThemeProvider
+  theme={{
+    primaryColor: branding.primaryColor,
+    secondaryColor: branding.secondaryColor,
+    accentColor: branding.accentColor,
+    fontFamily: branding.fontFamily,
+    appName: branding.mobileAppName ?? 'EduAI',
+    logoUrl: branding.logoUrl,
+  }}
+>
   {children}
-</ThemeProvider>
+</TenantThemeProvider>
 ```
+
+Maps hex → `--primary`, `--secondary`, `--ring`, etc. at runtime.
 
 ---
 
 ## Component Library
 
-### Primitives
-Button, Input, Label, Card, Avatar, Badge, Separator, ScrollArea, Skeleton
+Primitives and composites live in `@eduai/ui` (Phase 2 expands coverage). Storybook: `pnpm --filter @eduai/ui storybook`.
 
-### Overlays
-Dialog, Sheet (Drawer), DropdownMenu, Tooltip, Command (⌘K palette)
-
-### Data Display
-Table, DataTable, KpiCard, StatCard, ChartContainer + Recharts wrappers
-
-### Composite
-ActivityFeed, KanbanBoard, FileUploader, ProgressBar, LeaderboardRow
-
-### Feedback
-Toaster (Sonner), toast()
-
----
-
-## Usage
+### Usage
 
 ```tsx
 import '@eduai/ui/globals.css';
-import { Button, KpiCard, DataTable, toast } from '@eduai/ui';
+import { Button, TenantThemeProvider } from '@eduai/ui';
 ```
 
-Tailwind config extends from `@eduai/ui/tailwind.config`.
+Tailwind:
 
----
+```ts
+import eduaiPreset from '@eduai/ui/tailwind-preset';
 
-## Motion
-
-- Page transitions: Framer Motion `AnimatePresence`
-- Sidebar collapse: 200ms ease-in-out
-- Reduced motion: respects `prefers-reduced-motion`
+export default { ...eduaiPreset, content: ['./src/**/*.{ts,tsx}'] };
+```
 
 ---
 
@@ -127,6 +140,8 @@ Tailwind config extends from `@eduai/ui/tailwind.config`.
 
 | File | Purpose |
 |------|---------|
-| `frontend/shared-ui/ui/src/globals.css` | CSS custom properties |
-| `frontend/shared-ui/ui/tailwind.config.ts` | Tailwind theme extension |
-| `frontend/shared-ui/ui/src/index.ts` | Public exports |
+| `frontend/shared-ui/ui/src/globals.css` | CSS custom properties + utilities |
+| `frontend/shared-ui/ui/tailwind-preset.ts` | Shared Tailwind theme |
+| `frontend/shared-ui/ui/tailwind.config.ts` | Package config (fixed content paths) |
+| `frontend/mobile/src/theme/tokens.ts` | Mobile hex mirror |
+| `frontend/shared-ui/ui/stories/*` | Storybook UI kit |

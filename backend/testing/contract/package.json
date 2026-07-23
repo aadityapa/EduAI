@@ -1,0 +1,9 @@
+{
+  "name": "@eduai/contract-tests",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test": "node verify-openapi-contracts.mjs",
+    "typecheck": "echo 'contract scripts are plain JS'"
+  }
+}

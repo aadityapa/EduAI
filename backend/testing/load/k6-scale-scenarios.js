@@ -22,7 +22,8 @@ export const options = {
   duration: selected.duration,
   thresholds: {
     http_req_failed: ['rate<0.10'],
-    http_req_duration: ['p(95)<3000'],
+    // Health-only scale probe — keep loose; use k6-latency-p95.js for DoD
+    http_req_duration: ['p(95)<250'],
   },
 };
 

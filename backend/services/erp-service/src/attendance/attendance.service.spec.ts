@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AttendanceService } from './attendance.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -54,5 +55,33 @@ describe('AttendanceService', () => {
     const result = await service.getClassAttendance(user as never, 'class-1', '2025-06-21');
     expect(result.records).toHaveLength(1);
     expect(result.classId).toBe('class-1');
+  });
+
+  it('refuses markAttendance for class outside tenant (404)', async () => {
+    mockPrisma.academicClass.findFirst.mockResolvedValue(null);
+    await expect(
+      service.markAttendance(user as never, {
+        classId: 'other-tenant-class',
+        date: '2025-06-21',
+        entries: [{ studentId: 'student-1', status: 'present' }],
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+    expect(mockPrisma.attendanceRecord.upsert).not.toHaveBeenCalled();
+  });
+
+  it('scopes markAttendance class lookup to caller tenantId', async () => {
+    mockPrisma.academicClass.findFirst.mockResolvedValue({ id: 'class-1' });
+    mockPrisma.attendanceRecord.upsert.mockResolvedValue({ id: 'rec-1', status: 'present' });
+    mockPrisma.logActivity.mockResolvedValue(undefined);
+
+    await service.markAttendance(user as never, {
+      classId: 'class-1',
+      date: '2025-06-21',
+      entries: [{ studentId: 'student-1', status: 'present' }],
+    });
+
+    expect(mockPrisma.academicClass.findFirst).toHaveBeenCalledWith({
+      where: { id: 'class-1', tenantId: 'tenant-1' },
+    });
   });
 });

@@ -1,8 +1,23 @@
 'use client';
 
-import { Badge, Card, CardContent, CardHeader, CardTitle, KanbanBoard, KpiCard, StitchSlaBanner, type KanbanColumn } from '@eduai/ui';
-import { AlertCircle, Clock, Headphones, CheckCircle, AlertTriangle } from 'lucide-react';
+import { useMemo } from 'react';
+import type { ColumnDef, CsvColumn } from '@eduai/ui';
+import {
+  Badge,
+  DataTable,
+  EmptyState,
+  KanbanBoard,
+  KpiCard,
+  StitchSlaBanner,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  type KanbanColumn,
+} from '@eduai/ui';
+import { AlertTriangle, CheckCircle, Clock, Headphones } from 'lucide-react';
 import { PageHeader } from './page-header';
+import { ApiError } from '@/components/api-error';
 import type { TicketRecord } from '@/lib/admin-api';
 
 const TICKET_STAGES = [
@@ -32,7 +47,45 @@ export function SupportCenter({ tickets, error }: { tickets: TicketRecord[] | nu
   const items = tickets ?? [];
   const open = items.filter((t) => t.status === 'open' || t.status === 'in_progress').length;
   const resolved = items.filter((t) => t.status === 'resolved' || t.status === 'closed').length;
-  const columns = toTicketKanban(items);
+  const highOpen = items.filter(
+    (t) => t.priority === 'high' && (t.status === 'open' || t.status === 'in_progress'),
+  ).length;
+  const kanban = toTicketKanban(items);
+
+  const tableColumns: ColumnDef<TicketRecord>[] = useMemo(
+    () => [
+      { accessorKey: 'subject', header: 'Subject' },
+      {
+        accessorKey: 'priority',
+        header: 'Priority',
+        cell: ({ row }) => (
+          <Badge variant={row.original.priority === 'high' ? 'danger' : 'secondary'}>
+            {row.original.priority}
+          </Badge>
+        ),
+      },
+      { accessorKey: 'status', header: 'Status' },
+      {
+        id: 'requester',
+        header: 'Requester',
+        cell: ({ row }) => row.original.createdBy?.email ?? '—',
+      },
+      {
+        accessorKey: 'description',
+        header: 'Description',
+        cell: ({ row }) => row.original.description?.slice(0, 60) ?? '—',
+      },
+    ],
+    [],
+  );
+
+  const exportColumns: CsvColumn<TicketRecord>[] = [
+    { header: 'Subject', accessor: (r) => r.subject },
+    { header: 'Priority', accessor: (r) => r.priority },
+    { header: 'Status', accessor: (r) => r.status },
+    { header: 'Requester', accessor: (r) => r.createdBy?.email ?? '' },
+    { header: 'Description', accessor: (r) => r.description },
+  ];
 
   return (
     <div className="space-y-6">
@@ -42,46 +95,55 @@ export function SupportCenter({ tickets, error }: { tickets: TicketRecord[] | nu
         breadcrumbs={[{ label: 'Admin', href: '/dashboard' }, { label: 'Support' }]}
       />
 
-      {error && (
-        <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
-          <AlertCircle className="h-4 w-4" /> {error}
-        </div>
-      )}
+      {error && <ApiError title="Tickets unavailable" message={error} />}
 
-      {open > 0 && items.some((t) => t.priority === 'high') && (
+      {highOpen > 0 && (
         <StitchSlaBanner
-          message={`${items.filter((t) => t.priority === 'high' && (t.status === 'open' || t.status === 'in_progress')).length} high-priority ticket(s) may breach SLA`}
+          message={`${highOpen} high-priority ticket(s) may breach SLA`}
           actionLabel="Review Now"
           actionHref="#tickets"
         />
       )}
 
-      <div className="grid gap-4 sm:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-4">
         <KpiCard icon={<Headphones className="h-5 w-5" />} label="Open / Active" value={open} />
         <KpiCard icon={<CheckCircle className="h-5 w-5" />} label="Resolved" value={resolved} />
         <KpiCard icon={<Clock className="h-5 w-5" />} label="Total" value={items.length} />
-        <KpiCard icon={<AlertTriangle className="h-5 w-5" />} label="High Priority" value={items.filter((t) => t.priority === 'high').length} />
+        <KpiCard icon={<AlertTriangle className="h-5 w-5" />} label="High Priority" value={highOpen} />
       </div>
 
-      {items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No support tickets yet.</p>
+      {!error && items.length === 0 ? (
+        <EmptyState
+          icon={<Headphones className="h-5 w-5" />}
+          title="No support tickets"
+          description="Tickets appear when CRM is seeded or customers open issues."
+        />
       ) : (
-        <div id="tickets">
-          <KanbanBoard columns={columns} />
-        </div>
+        !error && (
+          <div id="tickets">
+            <Tabs defaultValue="table">
+              <TabsList>
+                <TabsTrigger value="table">Table</TabsTrigger>
+                <TabsTrigger value="kanban">Kanban</TabsTrigger>
+              </TabsList>
+              <TabsContent value="table" className="mt-6">
+                <DataTable
+                  columns={tableColumns}
+                  data={items}
+                  searchKey="subject"
+                  searchPlaceholder="Search tickets…"
+                  exportable
+                  exportFilename="tickets"
+                  exportColumns={exportColumns}
+                />
+              </TabsContent>
+              <TabsContent value="kanban" className="mt-6">
+                <KanbanBoard columns={kanban} />
+              </TabsContent>
+            </Tabs>
+          </div>
+        )
       )}
-
-      <Card>
-        <CardHeader><CardTitle className="text-base">Knowledge Base</CardTitle></CardHeader>
-        <CardContent className="space-y-2">
-          {['Getting started with EduAI', 'AI tutor configuration', 'Billing and subscriptions FAQ'].map((article) => (
-            <div key={article} className="flex items-center justify-between rounded-lg border p-3 text-sm">
-              <span>{article}</span>
-              <Badge variant="secondary">Published</Badge>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
     </div>
   );
 }

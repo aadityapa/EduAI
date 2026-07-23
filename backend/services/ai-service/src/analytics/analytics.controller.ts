@@ -29,4 +29,15 @@ export class AnalyticsController {
     const data = await this.analyticsService.getTenantDashboard(user);
     return apiResponse(data);
   }
+
+  @Get('quota')
+  @RequireAnyPermission(
+    'ai:tutor:use:own',
+    'ai:quota:manage:tenant',
+    'analytics:read:tenant',
+  )
+  async getQuota(@CurrentUser() user: UserContext) {
+    const data = await this.analyticsService.getUsage(user);
+    return apiResponse(data.quota);
+  }
 }

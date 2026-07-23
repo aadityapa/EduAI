@@ -129,10 +129,26 @@ export class UsersService {
     if (!actor.permissions.includes('users:delete:tenant')) {
       throw new ForbiddenException();
     }
+    const existing = await this.prisma.user.findFirst({
+      where: { id, tenantId: actor.tenantId, deletedAt: null },
+    });
+    if (!existing) throw new NotFoundException('User not found');
+
     await this.prisma.user.update({
-      where: { id, tenantId: actor.tenantId },
+      where: { id },
       data: { deletedAt: new Date(), status: 'inactive' },
     });
+
+    await this.prisma.auditLog.create({
+      data: {
+        tenantId: actor.tenantId,
+        actorId: actor.sub,
+        action: 'users:delete:tenant',
+        resourceType: 'user',
+        resourceId: id,
+      },
+    });
+
     return { deleted: true };
   }
 

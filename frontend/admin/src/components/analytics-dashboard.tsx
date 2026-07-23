@@ -1,96 +1,101 @@
 'use client';
 
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  KpiCard,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Pie,
-  PieChart,
-  Cell,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-} from '@eduai/ui';
+import { EmptyState, KpiCard, Card, CardContent, CardHeader, CardTitle } from '@eduai/ui';
 import { BarChart3, Eye, MousePointer, Users } from 'lucide-react';
 import { PageHeader } from '@/components/page-header';
-import { chartConfig, engagementData, userGrowthData } from '@/lib/mock-data';
+import { ApiError } from '@/components/api-error';
+import type { ErpAnalyticsRecord } from '@/lib/admin-api';
+import { formatInr, formatNumber } from '@/lib/format';
 
-const deviceData = [
-  { name: 'Desktop', value: 45, color: 'hsl(var(--chart-1))' },
-  { name: 'Mobile', value: 42, color: 'hsl(var(--chart-2))' },
-  { name: 'Tablet', value: 13, color: 'hsl(var(--chart-3))' },
-];
+interface AnalyticsDashboardProps {
+  erp: ErpAnalyticsRecord | null;
+  revenue: Record<string, number> | null;
+  error?: string | null;
+}
 
-export function AnalyticsDashboard() {
+export function AnalyticsDashboard({ erp, revenue, error }: AnalyticsDashboardProps) {
+  const students = erp?.engagement?.students ?? 0;
+  const teachers = erp?.engagement?.teachers ?? 0;
+  const classes = erp?.engagement?.classes ?? 0;
+  const assignments = erp?.engagement?.activeAssignments ?? 0;
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Platform Analytics"
-        description="Traffic, engagement, and user behavior insights"
+        description="Live tenant engagement from ERP — historical traffic series deferred to analytics-service"
         breadcrumbs={[{ label: 'Admin', href: '/dashboard' }, { label: 'Analytics' }]}
       />
 
-      <div className="grid gap-4 sm:grid-cols-4">
-        <KpiCard icon={<Users className="h-5 w-5" />} label="Monthly Active Users" value="19,200" trend={{ value: 8.4 }} />
-        <KpiCard icon={<Eye className="h-5 w-5" />} label="Page Views" value="842K" trend={{ value: 12 }} />
-        <KpiCard icon={<MousePointer className="h-5 w-5" />} label="Avg Session" value="24 min" trend={{ value: 5 }} />
-        <KpiCard icon={<BarChart3 className="h-5 w-5" />} label="Bounce Rate" value="22%" trend={{ value: -3 }} />
+      {error && <ApiError title="Analytics unavailable" message={error} />}
+
+      <div className="grid gap-3 sm:grid-cols-4">
+        <KpiCard
+          icon={<Users className="h-5 w-5" />}
+          label="Students"
+          value={formatNumber(students)}
+        />
+        <KpiCard icon={<Eye className="h-5 w-5" />} label="Teachers" value={formatNumber(teachers)} />
+        <KpiCard
+          icon={<MousePointer className="h-5 w-5" />}
+          label="Active classes"
+          value={formatNumber(classes)}
+        />
+        <KpiCard
+          icon={<BarChart3 className="h-5 w-5" />}
+          label="Attendance today"
+          value={`${erp?.attendance?.rate ?? 0}%`}
+        />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader><CardTitle className="text-base">User Growth</CardTitle></CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-[280px]">
-              <BarChart data={userGrowthData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="students" fill="var(--color-students)" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ChartContainer>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader><CardTitle className="text-base">Device Breakdown</CardTitle></CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="mx-auto h-[280px]">
-              <PieChart>
-                <Pie data={deviceData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label>
-                  {deviceData.map((entry) => (
-                    <Cell key={entry.name} fill={entry.color} />
-                  ))}
-                </Pie>
-                <ChartTooltip content={<ChartTooltipContent />} />
-              </PieChart>
-            </ChartContainer>
-          </CardContent>
-        </Card>
-
-        <Card className="lg:col-span-2">
-          <CardHeader><CardTitle className="text-base">Engagement Over Time</CardTitle></CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-[280px]">
-              <BarChart data={engagementData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="week" />
-                <YAxis />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="sessions" fill="var(--color-sessions)" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ChartContainer>
-          </CardContent>
-        </Card>
-      </div>
+      {!error && !erp && !revenue ? (
+        <EmptyState
+          icon={<BarChart3 className="h-5 w-5" />}
+          title="No analytics yet"
+          description="Start ERP + billing services to load tenant metrics."
+        />
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Engagement</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm">
+              <p className="flex justify-between">
+                <span>Active assignments</span>
+                <span className="font-semibold">{assignments}</span>
+              </p>
+              <p className="flex justify-between">
+                <span>Attendance marked today</span>
+                <span className="font-semibold">{erp?.attendance?.marked ?? 0}</span>
+              </p>
+              <p className="flex justify-between">
+                <span>AI queries (ERP)</span>
+                <span className="font-semibold">{formatNumber(erp?.ai?.totalQueries ?? 0)}</span>
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Commercial</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm">
+              <p className="flex justify-between">
+                <span>MRR</span>
+                <span className="font-semibold">{formatInr(revenue?.mrr ?? 0)}</span>
+              </p>
+              <p className="flex justify-between">
+                <span>Outstanding fees</span>
+                <span className="font-semibold">{formatInr(erp?.fees?.outstandingAmount ?? 0)}</span>
+              </p>
+              <p className="flex justify-between">
+                <span>Open fee invoices</span>
+                <span className="font-semibold">{erp?.fees?.invoiceCount ?? 0}</span>
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

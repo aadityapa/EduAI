@@ -1,8 +1,22 @@
-name: Deploy Staging
+name: Deploy
 
 on:
   push:
-    branches: [master]
+    branches: [master, main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Deploy target"
+        required: true
+        default: staging
+        type: choice
+        options:
+          - staging
+          - production
+      skip_tests:
+        description: "Skip pre-deploy tests (emergency only)"
+        type: boolean
+        default: false
 
 env:
   AWS_REGION: ap-south-1
@@ -12,6 +26,7 @@ env:
 
 jobs:
   build-and-test:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.skip_tests != true }}
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -32,6 +47,7 @@ jobs:
       DATABASE_URL: postgresql://eduai:eduai_dev@localhost:5432/eduai?schema=public
       JWT_SECRET: ci-test-secret-minimum-32-characters
       AUTH_SECRET: ci-auth-secret-minimum-32-characters
+      OTEL_SDK_DISABLED: "true"
 
     steps:
       - uses: actions/checkout@v4
@@ -68,8 +84,14 @@ jobs:
 
   deploy-staging:
     needs: build-and-test
-    if: ${{ secrets.AWS_DEPLOY_ROLE_ARN != '' && secrets.AWS_ACCOUNT_ID != '' }}
+    if: |
+      always() &&
+      (needs.build-and-test.result == 'success' || needs.build-and-test.result == 'skipped') &&
+      secrets.AWS_DEPLOY_ROLE_ARN != '' &&
+      secrets.AWS_ACCOUNT_ID != '' &&
+      (github.event_name != 'workflow_dispatch' || inputs.target == 'staging')
     runs-on: ubuntu-latest
+    environment: staging
     permissions:
       id-token: write
       contents: read
@@ -123,10 +145,11 @@ jobs:
           docker push $ECR_REGISTRY/eduai/${{ matrix.service }}:$IMAGE_TAG
           docker push $ECR_REGISTRY/eduai/${{ matrix.service }}:latest-staging
 
-  apply-kubernetes:
+  apply-kubernetes-staging:
     needs: deploy-staging
     if: ${{ secrets.AWS_DEPLOY_ROLE_ARN != '' && secrets.AWS_ACCOUNT_ID != '' }}
     runs-on: ubuntu-latest
+    environment: staging
     permissions:
       id-token: write
       contents: read
@@ -143,6 +166,11 @@ jobs:
       - name: Update kubeconfig
         run: aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_REGION
 
+      - name: Record previous revision (rollback)
+        id: prev
+        run: |
+          echo "identity=$(kubectl get deployment identity-service -n $K8S_NAMESPACE -o jsonpath='{.metadata.annotations.deployment\.kubernetes\.io/revision}' 2>/dev/null || echo 0)" >> $GITHUB_OUTPUT
+
       - name: Apply Kubernetes manifests
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
@@ -152,10 +180,21 @@ jobs:
           done
 
       - name: Wait for rollout
+        id: rollout
         run: |
+          set -e
           kubectl rollout status deployment/identity-service -n $K8S_NAMESPACE --timeout=5m
           kubectl rollout status deployment/learning-service -n $K8S_NAMESPACE --timeout=5m
           kubectl rollout status deployment/web -n $K8S_NAMESPACE --timeout=5m
+
+      - name: Automatic rollback on failed health
+        if: failure()
+        run: |
+          echo "Rollout or smoke failed — rolling back identity/learning/web"
+          kubectl rollout undo deployment/identity-service -n $K8S_NAMESPACE || true
+          kubectl rollout undo deployment/learning-service -n $K8S_NAMESPACE || true
+          kubectl rollout undo deployment/web -n $K8S_NAMESPACE || true
+          kubectl rollout status deployment/identity-service -n $K8S_NAMESPACE --timeout=3m || true
 
       - name: Smoke test staging
         run: |
@@ -166,3 +205,57 @@ jobs:
               curl -fsS http://learning-service:3003/api/v1/health &&
               curl -fsS http://web:3000/
             '
+
+  deploy-production:
+    needs: [build-and-test, apply-kubernetes-staging]
+    if: |
+      always() &&
+      needs.apply-kubernetes-staging.result == 'success' &&
+      secrets.AWS_DEPLOY_ROLE_ARN != '' &&
+      (github.event_name == 'workflow_dispatch' && inputs.target == 'production')
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      # GitHub Environment protection rules: require reviewers before this job runs
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      EKS_CLUSTER_NAME: eduai-prod-eks
+      K8S_NAMESPACE: eduai-prod
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update kubeconfig (prod)
+        run: aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_REGION
+
+      - name: Gate migrations
+        run: |
+          echo "Apply Prisma migrations via documented runbook before image cutover."
+          echo "See backend/docs/operations/runbooks/deploy-rollback.md"
+
+      - name: Apply prod manifests
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+        run: |
+          for manifest in backend/infrastructure/kubernetes/*.yaml; do
+            envsubst < "$manifest" | kubectl apply -f -
+          done
+
+      - name: Wait for prod rollout
+        run: |
+          kubectl rollout status deployment/identity-service -n $K8S_NAMESPACE --timeout=8m
+          kubectl rollout status deployment/web -n $K8S_NAMESPACE --timeout=8m
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          kubectl rollout undo deployment/identity-service -n $K8S_NAMESPACE || true
+          kubectl rollout undo deployment/web -n $K8S_NAMESPACE || true

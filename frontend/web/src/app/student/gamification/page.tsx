@@ -1,16 +1,18 @@
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
-import { Award, Sparkles } from 'lucide-react';
+import { Award, Sparkles, Trophy } from 'lucide-react';
 import { DashboardShell } from '@/components/dashboard-shell';
 import { ApiError } from '@/components/api-error';
 import { PageMotion } from '@/components/page-motion';
 import { getGamification, getLeaderboard, LearningApiError } from '@/lib/learning-api';
 import {
-  Badge,
+  BadgeShowcase,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
+  CoinCounter,
+  EmptyState,
   LeaderboardRow,
   StitchPageHeader,
   StatCard,
@@ -33,11 +35,23 @@ export default async function GamificationPage() {
     loadError = err instanceof LearningApiError ? err.message : 'Failed to load gamification data';
   }
 
+  const showcaseBadges =
+    gamification?.badges.map((entry) => ({
+      id: entry.id,
+      name: entry.badge.name,
+      description: entry.badge.description ?? undefined,
+      earned: true,
+      earnedAt: entry.earnedAt,
+    })) ?? [];
+
   return (
     <DashboardShell title="Achievements" portal="student">
       <PageMotion>
         <div className="space-y-6">
-          <StitchPageHeader title="Achievements & Leaderboard" description="Track XP, streaks, badges, and rank." />
+          <StitchPageHeader
+            title="Achievements & Leaderboard"
+            description="Track XP, streaks, badges, and rank."
+          />
           {loadError && <ApiError message={loadError} />}
 
           <div className="grid gap-4 md:grid-cols-3">
@@ -45,14 +59,18 @@ export default async function GamificationPage() {
               icon={<Sparkles className="h-5 w-5" />}
               label="Total XP"
               value={gamification?.xp.totalXp ?? '—'}
-              description={
-                gamification ? `Level ${gamification.xp.currentLevel}` : undefined
-              }
+              description={gamification ? `Level ${gamification.xp.currentLevel}` : undefined}
             />
             <StatCard
               icon={<Award className="h-5 w-5" />}
               label="Coins"
-              value={gamification?.coins.balance ?? '—'}
+              value={
+                gamification ? (
+                  <CoinCounter coins={gamification.coins.balance} size="sm" />
+                ) : (
+                  '—'
+                )
+              }
             />
             <StatCard
               icon={<Sparkles className="h-5 w-5" />}
@@ -72,32 +90,12 @@ export default async function GamificationPage() {
               <CardHeader>
                 <CardTitle>Badges</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                {!gamification?.badges.length ? (
-                  <p className="text-sm text-muted-foreground">
-                    Complete lessons and quizzes to earn badges.
-                  </p>
-                ) : (
-                  gamification.badges.map((entry) => (
-                    <div
-                      key={entry.id}
-                      className="flex items-start gap-3 rounded-lg border p-3"
-                    >
-                      <Badge variant="outline">{entry.badge.category ?? 'Badge'}</Badge>
-                      <div>
-                        <p className="font-medium">{entry.badge.name}</p>
-                        {entry.badge.description && (
-                          <p className="text-sm text-muted-foreground">
-                            {entry.badge.description}
-                          </p>
-                        )}
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          Earned {new Date(entry.earnedAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  ))
-                )}
+              <CardContent>
+                <BadgeShowcase
+                  badges={showcaseBadges}
+                  emptyLabel="Complete lessons and quizzes to earn badges."
+                  columns={3}
+                />
               </CardContent>
             </Card>
 
@@ -108,11 +106,15 @@ export default async function GamificationPage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 {!leaderboard?.length ? (
-                  <p className="text-sm text-muted-foreground">No leaderboard data yet.</p>
+                  <EmptyState
+                    icon={<Trophy className="h-5 w-5" />}
+                    title="No leaderboard data yet"
+                    description="Earn XP by completing lessons to appear on the board."
+                    className="border-0 bg-transparent py-6"
+                  />
                 ) : (
                   leaderboard.map((entry) => {
-                    const name =
-                      `${entry.user.firstName} ${entry.user.lastName ?? ''}`.trim();
+                    const name = `${entry.user.firstName} ${entry.user.lastName ?? ''}`.trim();
                     return (
                       <LeaderboardRow
                         key={entry.userId}

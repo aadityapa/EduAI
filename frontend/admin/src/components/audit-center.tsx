@@ -1,29 +1,20 @@
 'use client';
 
-import { ActivityFeed, Input, Tabs, TabsContent, TabsList, TabsTrigger } from '@eduai/ui';
-import { AlertCircle, Search } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import type { ColumnDef, CsvColumn } from '@eduai/ui';
+import {
+  DataTable,
+  EmptyState,
+  Input,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@eduai/ui';
+import { Search, Shield } from 'lucide-react';
 import { PageHeader } from './page-header';
+import { ApiError } from '@/components/api-error';
 import type { ActivityRecord, AuditRecord } from '@/lib/admin-api';
-
-function mapAudit(logs: AuditRecord[]) {
-  return logs.map((l) => ({
-    id: l.id,
-    title: l.action,
-    description: l.resource ?? '',
-    timestamp: new Date(l.createdAt).toLocaleString(),
-    type: 'info' as const,
-  }));
-}
-
-function mapActivity(logs: ActivityRecord[]) {
-  return logs.map((l) => ({
-    id: l.id,
-    title: l.action,
-    description: JSON.stringify(l.metadata ?? {}).slice(0, 80),
-    timestamp: new Date(l.createdAt).toLocaleString(),
-    type: 'info' as const,
-  }));
-}
 
 export function AuditCenter({
   auditLogs,
@@ -34,8 +25,78 @@ export function AuditCenter({
   activityLogs: ActivityRecord[] | null;
   error?: string;
 }) {
-  const audit = auditLogs ?? [];
-  const activity = activityLogs ?? [];
+  const [filter, setFilter] = useState('');
+
+  const filteredAudit = useMemo(() => {
+    const audit = auditLogs ?? [];
+    const q = filter.toLowerCase();
+    if (!q) return audit;
+    return audit.filter(
+      (l) =>
+        l.action.toLowerCase().includes(q) ||
+        (l.resource ?? '').toLowerCase().includes(q) ||
+        (l.userId ?? '').toLowerCase().includes(q),
+    );
+  }, [auditLogs, filter]);
+
+  const filteredActivity = useMemo(() => {
+    const activity = activityLogs ?? [];
+    const q = filter.toLowerCase();
+    if (!q) return activity;
+    return activity.filter(
+      (l) =>
+        l.action.toLowerCase().includes(q) ||
+        JSON.stringify(l.metadata ?? {})
+          .toLowerCase()
+          .includes(q),
+    );
+  }, [activityLogs, filter]);
+
+  const auditColumns: ColumnDef<AuditRecord>[] = [
+    { accessorKey: 'action', header: 'Action' },
+    {
+      accessorKey: 'resource',
+      header: 'Resource',
+      cell: ({ row }) => row.original.resource ?? '—',
+    },
+    {
+      accessorKey: 'userId',
+      header: 'User',
+      cell: ({ row }) => row.original.userId?.slice(0, 12) ?? '—',
+    },
+    {
+      accessorKey: 'createdAt',
+      header: 'When',
+      cell: ({ row }) => new Date(row.original.createdAt).toLocaleString(),
+    },
+  ];
+
+  const activityColumns: ColumnDef<ActivityRecord>[] = [
+    { accessorKey: 'action', header: 'Action' },
+    {
+      id: 'metadata',
+      header: 'Metadata',
+      cell: ({ row }) => JSON.stringify(row.original.metadata ?? {}).slice(0, 80),
+    },
+    {
+      accessorKey: 'createdAt',
+      header: 'When',
+      cell: ({ row }) => new Date(row.original.createdAt).toLocaleString(),
+    },
+  ];
+
+  const auditExport: CsvColumn<AuditRecord>[] = [
+    { header: 'Action', accessor: (r) => r.action },
+    { header: 'Resource', accessor: (r) => r.resource ?? '' },
+    { header: 'User', accessor: (r) => r.userId ?? '' },
+    { header: 'Created At', accessor: (r) => r.createdAt },
+  ];
+
+  const activityExport: CsvColumn<ActivityRecord>[] = [
+    { header: 'Action', accessor: (r) => r.action },
+    { header: 'Metadata', accessor: (r) => JSON.stringify(r.metadata ?? {}) },
+    { header: 'Created At', accessor: (r) => r.createdAt },
+  ];
 
   return (
     <div className="space-y-6">
@@ -45,37 +106,63 @@ export function AuditCenter({
         breadcrumbs={[{ label: 'Admin', href: '/dashboard' }, { label: 'Audit Logs' }]}
       />
 
-      {error && (
-        <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
-          <AlertCircle className="h-4 w-4" /> {error}
-        </div>
-      )}
+      {error && <ApiError title="Audit unavailable" message={error} />}
 
       <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input placeholder="Filter logs…" className="pl-9" aria-label="Filter audit logs" />
+        <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          placeholder="Filter logs…"
+          className="ps-9"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          aria-label="Filter audit logs"
+        />
       </div>
 
-      <Tabs defaultValue="audit">
-        <TabsList>
-          <TabsTrigger value="audit">Audit ({audit.length})</TabsTrigger>
-          <TabsTrigger value="activity">Activity ({activity.length})</TabsTrigger>
-        </TabsList>
-        <TabsContent value="audit" className="mt-4">
-          {audit.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No audit logs recorded yet.</p>
-          ) : (
-            <ActivityFeed items={mapAudit(audit)} />
-          )}
-        </TabsContent>
-        <TabsContent value="activity" className="mt-4">
-          {activity.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No activity logs recorded yet.</p>
-          ) : (
-            <ActivityFeed items={mapActivity(activity)} />
-          )}
-        </TabsContent>
-      </Tabs>
+      {!error && (
+        <Tabs defaultValue="audit">
+          <TabsList>
+            <TabsTrigger value="audit">Audit ({filteredAudit.length})</TabsTrigger>
+            <TabsTrigger value="activity">Activity ({filteredActivity.length})</TabsTrigger>
+          </TabsList>
+          <TabsContent value="audit" className="mt-4">
+            {filteredAudit.length === 0 ? (
+              <EmptyState
+                icon={<Shield className="h-5 w-5" />}
+                title="No audit logs"
+                description="Privileged actions will appear here as they occur."
+              />
+            ) : (
+              <DataTable
+                columns={auditColumns}
+                data={filteredAudit}
+                exportable
+                exportFilename="audit-logs"
+                exportColumns={auditExport}
+                pageSize={25}
+              />
+            )}
+          </TabsContent>
+          <TabsContent value="activity" className="mt-4">
+            {filteredActivity.length === 0 ? (
+              <EmptyState
+                icon={<Shield className="h-5 w-5" />}
+                title="No activity logs"
+                description="Platform activity will appear when services emit events."
+              />
+            ) : (
+              <DataTable
+                columns={activityColumns}
+                data={filteredActivity}
+                exportable
+                exportFilename="activity-logs"
+                exportColumns={activityExport}
+                pageSize={25}
+              />
+            )}
+          </TabsContent>
+        </Tabs>
+      )}
     </div>
   );
 }

@@ -99,6 +99,10 @@ Frontend apps call backend via `NEXT_PUBLIC_*_SERVICE_URL` — no business logic
 | `pnpm mvp:dev` | Backend + frontend together |
 | `pnpm build` | Build all packages |
 | `pnpm test` | Run tests |
+| `pnpm test:e2e` | Playwright portal smoke |
+| `pnpm test:contract` | OpenAPI contract fixtures |
+| `pnpm build-storybook` | Static Storybook (`@eduai/ui`) |
+| `pnpm validate:dr` | DR checklist + health pings |
 
 ---
 
@@ -106,9 +110,14 @@ Frontend apps call backend via `NEXT_PUBLIC_*_SERVICE_URL` — no business logic
 
 | Doc | Path |
 |-----|------|
-| MVP quickstart | [`docs/release/mvp-quickstart.md`](docs/release/mvp-quickstart.md) |
-| Port allocation | [`docs/architecture/port-allocation.md`](docs/architecture/port-allocation.md) |
-| Beta launch | [`docs/release/beta-launch-guide.md`](docs/release/beta-launch-guide.md) |
+| ₹100 Cr roadmap | [`backend/docs/execution/hundred-cr-roadmap.md`](backend/docs/execution/hundred-cr-roadmap.md) |
+| Program status / DoD | [`backend/docs/execution/hundred-cr-program-status.md`](backend/docs/execution/hundred-cr-program-status.md) |
+| On-call runbooks | [`backend/docs/operations/runbooks/`](backend/docs/operations/runbooks/) |
+| Deploy / rollback | [`backend/docs/operations/runbooks/deploy-rollback.md`](backend/docs/operations/runbooks/deploy-rollback.md) |
+| Launch readiness | [`backend/docs/release/v1-launch-readiness.md`](backend/docs/release/v1-launch-readiness.md) |
+| MVP quickstart | [`backend/docs/release/mvp-quickstart.md`](backend/docs/release/mvp-quickstart.md) |
+| Port allocation | [`backend/docs/architecture/port-allocation.md`](backend/docs/architecture/port-allocation.md) |
+| Beta launch | [`backend/docs/release/beta-launch-guide.md`](backend/docs/release/beta-launch-guide.md) |
 
 ---
 

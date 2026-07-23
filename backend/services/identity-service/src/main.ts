@@ -1,19 +1,26 @@
 import { NestFactory } from '@nestjs/core';
-import { configureNestApp } from '@eduai/nest-common';
+import { configureNestApp, initObservability } from '@eduai/nest-common';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
+  await initObservability({ serviceName: 'identity-service' });
   const app = await NestFactory.create(AppModule);
+  const port = Number(process.env.PORT ?? 3001);
 
   configureNestApp(app, {
     serviceName: 'identity-service',
+    port,
     swagger: {
       title: 'EduAI Identity Service',
-      description: 'Authentication and user management API',
+      description: 'Authentication, users, sessions, and tenant-scoped RBAC',
+      tags: [
+        { name: 'auth', description: 'Login, refresh, logout, registration' },
+        { name: 'users', description: 'Profile and tenant user administration' },
+        { name: 'health', description: 'Liveness / readiness' },
+      ],
     },
   });
 
-  const port = process.env.PORT ?? 3001;
   await app.listen(port);
   console.log(`Identity service running on http://localhost:${port}`);
   if (process.env.NODE_ENV !== 'production' || process.env.ENABLE_SWAGGER === 'true') {

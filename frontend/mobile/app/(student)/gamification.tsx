@@ -1,31 +1,42 @@
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCallback } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useAuth } from '../../src/auth/AuthContext';
 import { fetchGamification } from '../../src/api/services';
-import { cacheGet, cacheSet } from '../../src/auth/storage';
 import { MetricChip, StitchCard, StitchScreenHeader } from '../../src/components/stitch';
-import { Screen, tokens } from '../../src/components/ui';
+import {
+  ErrorState,
+  LoadingState,
+  OfflineBanner,
+  Screen,
+  themedRefreshControl,
+  tokens,
+} from '../../src/components/ui';
+import { useCachedResource } from '../../src/hooks/useCachedResource';
 
 export default function GamificationScreen() {
   const { tokens: authTokens } = useAuth();
-  const [xp, setXp] = useState<Record<string, unknown> | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!authTokens) return;
-    fetchGamification(authTokens.accessToken)
-      .then(async (data) => {
-        setXp(data);
-        await cacheSet('student_xp', data);
-      })
-      .catch(async () => setXp(await cacheGet('student_xp')))
-      .finally(() => setLoading(false));
+  const fetcher = useCallback(() => {
+    if (!authTokens) return Promise.reject(new Error('Not signed in'));
+    return fetchGamification(authTokens.accessToken);
   }, [authTokens]);
+
+  const { data: xp, loading, refreshing, error, offline, reload } = useCachedResource(
+    authTokens ? 'student_xp' : null,
+    authTokens ? fetcher : null,
+  );
 
   if (loading) {
     return (
-      <Screen style={styles.center}>
-        <ActivityIndicator color={tokens.colors.primaryBright} />
+      <Screen>
+        <LoadingState label="Loading rewards…" />
+      </Screen>
+    );
+  }
+
+  if (error && !xp) {
+    return (
+      <Screen>
+        <ErrorState title="Couldn't load rewards" body={error} onRetry={() => void reload()} />
       </Screen>
     );
   }
@@ -38,7 +49,14 @@ export default function GamificationScreen() {
   return (
     <Screen>
       <StitchScreenHeader title="Rewards" />
-      <ScrollView contentContainerStyle={styles.list}>
+      <ScrollView
+        contentContainerStyle={styles.list}
+        refreshControl={themedRefreshControl({
+          refreshing,
+          onRefresh: () => void reload(),
+        })}
+      >
+        <OfflineBanner visible={offline} />
         <View style={styles.metricRow}>
           <View style={styles.xpCard}>
             <Text style={styles.xpValue}>{totalXp.toLocaleString()}</Text>
@@ -63,7 +81,9 @@ export default function GamificationScreen() {
 
         <StitchCard>
           <Text style={styles.cardTitle}>Badges</Text>
-          <Text style={styles.cardBody}>Complete quizzes and maintain your streak to unlock new badges.</Text>
+          <Text style={styles.cardBody}>
+            Complete quizzes and maintain your streak to unlock new badges.
+          </Text>
         </StitchCard>
       </ScrollView>
     </Screen>
@@ -71,7 +91,6 @@ export default function GamificationScreen() {
 }
 
 const styles = StyleSheet.create({
-  center: { justifyContent: 'center', alignItems: 'center' },
   list: { padding: tokens.spacing.md, paddingBottom: 100 },
   metricRow: { flexDirection: 'row', gap: tokens.spacing.sm, marginBottom: tokens.spacing.md },
   xpCard: {
@@ -83,7 +102,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: tokens.colors.border,
   },
-  xpValue: { fontSize: tokens.fontSize.xl, fontWeight: '700', color: tokens.colors.tertiary },
+  xpValue: { fontSize: tokens.fontSize.xl, fontWeight: '700', color: tokens.colors.xp },
   xpLabel: { fontSize: tokens.fontSize.xs, color: tokens.colors.textMuted, marginTop: 4 },
   streakCard: {
     flex: 1,
@@ -94,7 +113,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: tokens.colors.border,
   },
-  streakValue: { fontSize: tokens.fontSize.xl, fontWeight: '700', color: tokens.colors.error },
+  streakValue: { fontSize: tokens.fontSize.xl, fontWeight: '700', color: tokens.colors.streak },
   streakLabel: { fontSize: tokens.fontSize.xs, color: tokens.colors.textMuted, marginTop: 4 },
   cardTitle: { fontWeight: '700', fontSize: tokens.fontSize.md, color: tokens.colors.text, marginBottom: 6 },
   cardBody: { color: tokens.colors.textMuted, fontSize: tokens.fontSize.sm, lineHeight: 20 },

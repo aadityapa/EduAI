@@ -131,4 +131,21 @@ describe('ProgressService', () => {
 
     expect(gamificationService.awardLessonComplete).not.toHaveBeenCalled();
   });
+
+  it('scopes progress writes to caller tenantId', async () => {
+    await service.updateLessonProgress(user, 'lesson-1', {
+      status: LessonProgressStatus.completed,
+      timeSpent: 30,
+    });
+
+    expect(prisma.lessonProgress.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          tenantId: 'tenant-1',
+          userId: 'user-1',
+          lessonId: 'lesson-1',
+        }),
+      }),
+    );
+  });
 });

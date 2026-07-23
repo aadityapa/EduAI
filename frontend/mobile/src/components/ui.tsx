@@ -6,10 +6,21 @@ import {
   View,
   type ViewStyle,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { tokens } from '../theme/tokens';
+import { MIN_TAP } from './feedback';
 
 export function Screen({ children, style }: { children: React.ReactNode; style?: ViewStyle }) {
-  return <View style={[styles.screen, style]}>{children}</View>;
+  return (
+    <SafeAreaView style={[styles.screen, style]} edges={['top', 'left', 'right']}>
+      {children}
+    </SafeAreaView>
+  );
+}
+
+/** Alias kept for call sites that want explicit naming. */
+export function SafeScreen(props: { children: React.ReactNode; style?: ViewStyle }) {
+  return <Screen {...props} />;
 }
 
 export function Card({ children, style }: { children: React.ReactNode; style?: ViewStyle }) {
@@ -47,9 +58,16 @@ export function PrimaryButton({
   const isOutline = variant === 'outline';
   return (
     <Pressable
-      style={[styles.button, isOutline && styles.buttonOutline]}
+      style={({ pressed }) => [
+        styles.button,
+        isOutline && styles.buttonOutline,
+        pressed && styles.pressed,
+        loading && styles.disabled,
+      ]}
       onPress={onPress}
       disabled={loading}
+      accessibilityRole="button"
+      hitSlop={4}
     >
       {loading ? (
         <ActivityIndicator color={isOutline ? tokens.colors.primary : '#fff'} />
@@ -75,11 +93,7 @@ const styles = StyleSheet.create({
     borderRadius: tokens.radius.md,
     padding: tokens.spacing.md,
     marginBottom: tokens.spacing.sm,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
+    ...tokens.shadow.sm,
   },
   kpi: {
     flex: 1,
@@ -94,8 +108,10 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: tokens.colors.primaryBright,
     borderRadius: tokens.radius.full,
-    padding: tokens.spacing.md,
+    minHeight: MIN_TAP,
+    paddingHorizontal: tokens.spacing.md,
     alignItems: 'center',
+    justifyContent: 'center',
     marginVertical: tokens.spacing.xs,
   },
   buttonOutline: {
@@ -105,6 +121,8 @@ const styles = StyleSheet.create({
   },
   buttonText: { color: '#fff', fontWeight: '600', fontSize: tokens.fontSize.md },
   buttonTextOutline: { color: tokens.colors.primary },
+  pressed: { opacity: 0.88 },
+  disabled: { opacity: 0.6 },
   badge: {
     alignSelf: 'flex-start',
     paddingHorizontal: 10,
@@ -116,3 +134,4 @@ const styles = StyleSheet.create({
 });
 
 export { tokens };
+export { EmptyState, ErrorState, LoadingState, OfflineBanner, themedRefreshControl, MIN_TAP } from './feedback';

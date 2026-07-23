@@ -8,16 +8,30 @@ export interface ThrottlerPreset {
   limit: number;
 }
 
-const DEFAULT_PRESETS: ThrottlerPreset[] = [
-  { name: 'default', ttl: 60000, limit: 120 },
-  { name: 'auth', ttl: 900000, limit: 20 },
+/**
+ * Named throttler presets (apply via `@Throttle({ auth: { … } })` etc.).
+ * - default: general API
+ * - auth: login/register/refresh (stricter)
+ * - mutate: POST/PATCH/DELETE high-value writes
+ * - webhook: payment provider callbacks
+ * - ai: generative endpoints (services may still add their own `ai` preset)
+ */
+export const DEFAULT_THROTTLER_PRESETS: ThrottlerPreset[] = [
+  { name: 'default', ttl: 60_000, limit: 120 },
+  { name: 'auth', ttl: 900_000, limit: 20 },
+  { name: 'mutate', ttl: 60_000, limit: 40 },
+  { name: 'webhook', ttl: 60_000, limit: 120 },
 ];
 
 export function buildThrottlerModule(
   extraPresets: ThrottlerPreset[] = [],
   redisUrl?: string,
 ) {
-  const throttlers = [...DEFAULT_PRESETS, ...extraPresets];
+  const byName = new Map<string, ThrottlerPreset>();
+  for (const p of [...DEFAULT_THROTTLER_PRESETS, ...extraPresets]) {
+    byName.set(p.name, p);
+  }
+  const throttlers = [...byName.values()];
   const options: ThrottlerModuleOptions = { throttlers };
 
   if (redisUrl) {

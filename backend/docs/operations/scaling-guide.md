@@ -17,15 +17,17 @@ HPA auto-scales identity and learning at CPU > 70%.
 ## Database
 
 - RDS db.r6g.large → db.r6g.xlarge for 2x capacity
-- Read replicas for analytics queries
-- PgBouncer connection pooling (add to K8s)
+- Read replicas for analytics / catalog (`DATABASE_READ_URL` → `prismaRead`)
+- PgBouncer connection pooling — see [connection-pooling.md](./connection-pooling.md)
+  - Local: `docker compose --profile pooling up -d` (port 6432)
 
 ## Cache Layer
 
-- ElastiCache Redis for:
-  - Rate limiting (replace in-memory Throttler)
-  - Course catalog cache (TTL 5min)
-  - Session store
+- ElastiCache / local Redis for:
+  - Rate limiting (`RedisThrottlerStorage`)
+  - **Course catalog / hub / quiz cache** (TTL 5 min, explicit invalidation via `invalidateCurriculumCache`)
+  - Access-token revocation + idempotency keys
+  - BullMQ job queues (`@eduai/jobs`)
 
 ## CDN
 
@@ -35,10 +37,10 @@ HPA auto-scales identity and learning at CPU > 70%.
 ## AI Scaling
 
 - Token quota per tenant/user (implemented)
-- Queue-based AI requests at 10k+ concurrent (v2.0)
+- Queue-based AI requests via BullMQ when `AI_JOBS_ASYNC=true` + Redis
 - Model routing via `@eduai/ai` provider abstraction
 
-## Multi-Region (v2.0)
+## Multi-Region (v2.0 / Phase 11)
 
 - Primary: ap-south-1 (Mumbai)
 - DR: ap-southeast-1 (Singapore)

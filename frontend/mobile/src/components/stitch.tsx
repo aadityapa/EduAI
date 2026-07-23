@@ -7,6 +7,9 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { tokens } from '../theme/tokens';
+import { mapEnrollmentsToCourses } from '../utils/courses';
+
+export { mapEnrollmentsToCourses };
 
 type TabRoute = { key: string; name: string; params?: object };
 export type StitchTabBarProps = {
@@ -240,29 +243,6 @@ export function StitchTabBar(props: StitchTabBarProps) {
   );
 }
 
-const COURSE_ACCENTS = [tokens.colors.primaryBright, tokens.colors.secondary, tokens.colors.tertiary];
-const COURSE_ICONS = ['∑', '⚗', '📜', '📐', '🌍'];
-
-export function mapEnrollmentsToCourses(enrollments: unknown[]): {
-  id: string;
-  title: string;
-  progress: number;
-  icon: string;
-  accent: string;
-}[] {
-  return enrollments.slice(0, 6).map((raw, i) => {
-    const e = raw as { id?: string; course?: { title?: string; subject?: { name?: string } }; progress?: number };
-    const title = e.course?.subject?.name ?? e.course?.title ?? `Course ${i + 1}`;
-    return {
-      id: e.id ?? String(i),
-      title,
-      progress: e.progress ?? [85, 42, 90, 60, 30][i % 5],
-      icon: COURSE_ICONS[i % COURSE_ICONS.length],
-      accent: COURSE_ACCENTS[i % COURSE_ACCENTS.length],
-    };
-  });
-}
-
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
@@ -289,9 +269,9 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: tokens.fontSize.lg, fontWeight: '700', color: tokens.colors.primary },
   headerSubtitle: { fontSize: tokens.fontSize.xs, color: tokens.colors.textMuted, marginTop: 2 },
   settingsBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -437,11 +417,13 @@ const styles = StyleSheet.create({
   tabItem: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 6,
+    justifyContent: 'center',
+    minHeight: 48,
+    paddingVertical: 8,
     paddingHorizontal: 4,
     borderRadius: tokens.radius.full,
   },
   tabItemActive: { backgroundColor: tokens.colors.secondaryContainer },
-  tabLabel: { fontSize: 10, fontWeight: '500', color: tokens.colors.textMuted, textAlign: 'center' },
+  tabLabel: { fontSize: 11, fontWeight: '500', color: tokens.colors.textMuted, textAlign: 'center' },
   tabLabelActive: { color: tokens.colors.onSecondaryContainer, fontWeight: '700' },
 });

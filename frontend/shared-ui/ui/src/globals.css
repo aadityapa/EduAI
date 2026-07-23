@@ -2,53 +2,93 @@
 @tailwind components;
 @tailwind utilities;
 
-/* EduAI design tokens — indigo/violet EdTech identity, Material-adjacent surfaces */
-@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,400..700&family=Roboto:wght@400;500;700&display=swap');
+/*
+  EduAI design tokens (Phase 1)
+  Source of truth for web + admin. Mobile mirrors hex values in
+  frontend/mobile/src/theme/tokens.ts.
+
+  Palette: Stitch Google Blue primary (#1A73E8 / #005bbf), tertiary purple
+  for AI accents, Material-adjacent surfaces. All pairings target WCAG 2.2 AA.
+
+  Themes (class strategy on <html>):
+    - default / :root  → light
+    - .dark            → dark
+    - .high-contrast   → high-contrast (stacks with .dark)
+*/
 
 @layer base {
   :root {
-    /* EduAI palette — indigo primary, violet secondary, warm achievement accents */
-    --background: 210 20% 98%;
-    --foreground: 222 24% 14%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 24% 14%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 24% 14%;
-    --primary: 239 84% 67%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 262 83% 58%;
+    /* ── Semantic aliases (master prompt names) ── */
+    --color-bg: 210 56% 98%;
+    --surface: 0 0% 100%;
+    --surface-elevated: 210 40% 96%;
+    --border: 210 8% 87%;
+    --text: 0 0% 12%;
+    --text-muted: 210 5% 39%;
+    --primary: 217 89% 51%;
+    --primary-fg: 0 0% 100%;
+    --primary-deep: 211 100% 37%;
+    --primary-container: 217 90% 91%;
+    --on-primary-container: 217 90% 15%;
+
+    /* shadcn / existing component aliases (keep in sync with semantic set) */
+    --background: var(--color-bg);
+    --foreground: var(--text);
+    --card: var(--surface);
+    --card-foreground: var(--text);
+    --popover: var(--surface);
+    --popover-foreground: var(--text);
+    --primary-foreground: var(--primary-fg);
+    /* Secondary = Stitch tertiary purple (AI / brand accent) */
+    --secondary: 271 78% 55%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
-    --accent: 243 85% 96%;
-    --accent-foreground: 243 75% 45%;
-    --destructive: 350 89% 60%;
+    --tertiary: 271 78% 55%;
+    --tertiary-foreground: 0 0% 100%;
+    --muted: 210 40% 96%;
+    --muted-foreground: var(--text-muted);
+    --accent: 217 90% 95%;
+    --accent-foreground: 211 100% 32%;
+    --destructive: 4 71% 50%;
     --destructive-foreground: 0 0% 100%;
-    --success: 160 84% 39%;
+    --success: 142 53% 39%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
+    --warning: 38 92% 46%;
     --warning-foreground: 0 0% 100%;
-    --info: 199 89% 48%;
+    --info: 199 89% 42%;
     --info-foreground: 0 0% 100%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 239 84% 67%;
+    --input: var(--border);
+    --ring: var(--primary);
     --sidebar: 0 0% 100%;
-    --sidebar-foreground: 222 24% 14%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-accent: 239 84% 67%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-muted: 220 14% 96%;
-    --chart-1: 239 84% 67%;
-    --chart-2: 160 84% 39%;
-    --chart-3: 38 92% 50%;
-    --chart-4: 262 83% 58%;
-    --chart-5: 199 89% 48%;
+    --sidebar-foreground: var(--text);
+    --sidebar-border: var(--border);
+    --sidebar-accent: var(--primary);
+    --sidebar-accent-foreground: var(--primary-fg);
+    --sidebar-muted: 210 40% 96%;
+    --chart-1: 217 89% 51%;
+    --chart-2: 142 53% 39%;
+    --chart-3: 38 92% 46%;
+    --chart-4: 271 78% 55%;
+    --chart-5: 199 89% 42%;
+
+    /* Gamification accents */
+    --xp: 43 96% 50%;
+    --streak: 25 95% 48%;
+    --achievement: 351 85% 60%;
+
+    /* Radius — soft, friendly */
     --radius: 12px;
     --radius-sm: 8px;
     --radius-lg: 16px;
-    --radius-xl: 28px;
-    --spacing-unit: 8px;
+    --radius-xl: 24px;
+
+    /*
+      Spacing: 4px base grid (master prompt).
+      --spacing-unit-legacy (8px) kept for gradual migration of 8px layouts.
+    */
+    --spacing-unit: 4px;
+    --spacing-unit-legacy: 8px;
+
+    /* Elevation */
     --glass-bg: 0 0% 100% / 0.72;
     --glass-border: 0 0% 100% / 0.35;
     --glass-blur: 16px;
@@ -56,55 +96,181 @@
     --shadow-sm: 0 1px 2px hsl(224 71% 4% / 0.05);
     --shadow-md: 0 4px 12px hsl(224 71% 4% / 0.08);
     --shadow-lg: 0 12px 40px hsl(224 71% 4% / 0.12);
-    --motion-fast: 150ms;
-    --motion-normal: 250ms;
-    --motion-slow: 400ms;
+
+    /* Motion — 120 / 200 / 320ms (+ spring) */
+    --motion-instant: 80ms;
+    --motion-fast: 120ms;
+    --motion-normal: 200ms;
+    --motion-slow: 320ms;
     --motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
-    /* Achievement/gamification accents — gold XP, flame streak, coral celebration */
-    --xp: 43 96% 56%;
-    --streak: 25 95% 53%;
-    --achievement: 351 95% 71%;
+    --motion-ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --motion-ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --motion-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* Z-index layers */
+    --z-base: 0;
+    --z-dropdown: 50;
+    --z-sticky: 100;
+    --z-overlay: 200;
+    --z-modal: 300;
+    --z-toast: 400;
+    --z-tooltip: 500;
+
+    /*
+      Typography — CSS vars for next/font injection:
+        --font-inter (UI), --font-display (learner/friendly),
+        --font-noto-devanagari (hi/mr), --font-mono
+      Fallback stack includes Devanagari-capable system fonts.
+    */
+    --font-sans-stack: var(--font-inter), var(--font-noto-devanagari), 'Noto Sans Devanagari',
+      'Segoe UI', system-ui, sans-serif;
+    --font-display-stack: var(--font-display), var(--font-inter), var(--font-noto-devanagari),
+      'Noto Sans Devanagari', system-ui, sans-serif;
+    --font-mono-stack: var(--font-mono), ui-monospace, 'Cascadia Code', 'Segoe UI Mono', monospace;
+
+    /* Type scale (rem @ 16px root) */
+    --text-display: 3rem;
+    --text-h1: 2.25rem;
+    --text-h2: 1.875rem;
+    --text-h3: 1.5rem;
+    --text-h4: 1.25rem;
+    --text-h5: 1.125rem;
+    --text-h6: 1rem;
+    --text-body: 1rem;
+    --text-body-sm: 0.875rem;
+    --text-label: 0.875rem;
+    --text-caption: 0.75rem;
+    --text-code: 0.875rem;
+    --leading-display: 1.1;
+    --leading-heading: 1.25;
+    --leading-body: 1.5;
+    --leading-label: 1.25;
+
+    /* White-label hooks (overridden by TenantThemeProvider at runtime) */
+    --brand-primary: #1a73e8;
+    --brand-secondary: #9334e6;
+    --brand-accent: #f59e0b;
   }
 
   .dark {
-    --background: 224 47% 6%;
-    --foreground: 210 20% 98%;
-    --card: 224 47% 9%;
-    --card-foreground: 210 20% 98%;
-    --popover: 224 47% 9%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 239 84% 72%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 262 83% 66%;
+    --color-bg: 224 47% 6%;
+    --surface: 224 47% 9%;
+    --surface-elevated: 224 40% 12%;
+    --border: 215 28% 18%;
+    --text: 210 40% 98%;
+    --text-muted: 217 10% 65%;
+    --primary: 217 89% 58%;
+    --primary-fg: 0 0% 100%;
+    --primary-deep: 217 89% 68%;
+    --primary-container: 217 50% 22%;
+    --on-primary-container: 217 90% 90%;
+    --background: var(--color-bg);
+    --foreground: var(--text);
+    --card: var(--surface);
+    --card-foreground: var(--text);
+    --popover: var(--surface);
+    --popover-foreground: var(--text);
+    --primary-foreground: var(--primary-fg);
+    --secondary: 271 70% 68%;
     --secondary-foreground: 0 0% 100%;
+    --tertiary: 271 70% 68%;
+    --tertiary-foreground: 0 0% 100%;
     --muted: 215 28% 12%;
-    --muted-foreground: 217 10% 65%;
-    --accent: 243 45% 20%;
-    --accent-foreground: 239 90% 82%;
-    --destructive: 350 75% 55%;
+    --muted-foreground: var(--text-muted);
+    --accent: 217 40% 18%;
+    --accent-foreground: 217 90% 82%;
+    --destructive: 4 70% 55%;
     --destructive-foreground: 0 0% 100%;
-    --success: 160 70% 45%;
-    --warning: 38 92% 55%;
-    --border: 215 28% 17%;
-    --input: 215 28% 17%;
-    --ring: 239 84% 72%;
+    --success: 142 50% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 52%;
+    --warning-foreground: 0 0% 10%;
+    --info: 199 89% 52%;
+    --info-foreground: 0 0% 100%;
+    --input: var(--border);
+    --ring: var(--primary);
     --sidebar: 224 47% 7%;
-    --sidebar-foreground: 210 20% 98%;
-    --sidebar-border: 215 28% 17%;
-    --sidebar-accent: 239 84% 72%;
-    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-foreground: var(--text);
+    --sidebar-border: var(--border);
+    --sidebar-accent: var(--primary);
+    --sidebar-accent-foreground: var(--primary-fg);
     --sidebar-muted: 215 28% 12%;
-    --chart-1: 239 84% 72%;
-    --chart-2: 262 83% 66%;
-    --chart-3: 160 70% 45%;
-    --chart-4: 38 92% 55%;
+    --chart-1: 217 89% 58%;
+    --chart-2: 271 70% 68%;
+    --chart-3: 142 50% 45%;
+    --chart-4: 38 92% 52%;
     --chart-5: 199 89% 55%;
     --glass-bg: 224 47% 9% / 0.65;
     --glass-border: 0 0% 100% / 0.08;
     --glass-shadow: 0 8px 32px hsl(0 0% 0% / 0.35);
-    --xp: 43 96% 62%;
-    --streak: 25 95% 58%;
-    --achievement: 351 90% 76%;
+    --shadow-sm: 0 1px 2px hsl(0 0% 0% / 0.2);
+    --shadow-md: 0 4px 12px hsl(0 0% 0% / 0.3);
+    --shadow-lg: 0 12px 40px hsl(0 0% 0% / 0.4);
+    --xp: 43 96% 58%;
+    --streak: 25 95% 55%;
+    --achievement: 351 80% 70%;
+  }
+
+  /* High-contrast: stronger borders, max text contrast, AA+ pairings */
+  .high-contrast {
+    --color-bg: 0 0% 100%;
+    --surface: 0 0% 100%;
+    --surface-elevated: 0 0% 96%;
+    --border: 0 0% 20%;
+    --text: 0 0% 0%;
+    --text-muted: 0 0% 20%;
+    --primary: 211 100% 32%;
+    --primary-fg: 0 0% 100%;
+    --primary-deep: 211 100% 25%;
+    --secondary: 271 100% 35%;
+    --secondary-foreground: 0 0% 100%;
+    --tertiary: 271 100% 35%;
+    --muted: 0 0% 92%;
+    --muted-foreground: 0 0% 20%;
+    --accent: 217 100% 90%;
+    --accent-foreground: 211 100% 20%;
+    --destructive: 4 100% 35%;
+    --success: 144 100% 22%;
+    --warning: 38 100% 30%;
+    --info: 199 100% 30%;
+    --ring: 211 100% 32%;
+    --background: var(--color-bg);
+    --foreground: var(--text);
+    --card: var(--surface);
+    --card-foreground: var(--text);
+    --input: var(--border);
+    --shadow-sm: 0 0 0 1px hsl(0 0% 0% / 0.4);
+    --shadow-md: 0 0 0 2px hsl(0 0% 0% / 0.5);
+    --shadow-lg: 0 0 0 3px hsl(0 0% 0% / 0.6);
+  }
+
+  .dark.high-contrast {
+    --color-bg: 0 0% 0%;
+    --surface: 0 0% 5%;
+    --surface-elevated: 0 0% 10%;
+    --border: 0 0% 80%;
+    --text: 0 0% 100%;
+    --text-muted: 0 0% 85%;
+    --primary: 217 100% 70%;
+    --primary-fg: 0 0% 0%;
+    --primary-deep: 217 100% 80%;
+    --secondary: 271 100% 75%;
+    --secondary-foreground: 0 0% 0%;
+    --tertiary: 271 100% 75%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 85%;
+    --accent: 217 50% 20%;
+    --accent-foreground: 217 100% 90%;
+    --destructive: 4 100% 65%;
+    --success: 142 80% 55%;
+    --warning: 38 100% 55%;
+    --info: 199 100% 60%;
+    --ring: 217 100% 70%;
+    --background: var(--color-bg);
+    --foreground: var(--text);
+    --card: var(--surface);
+    --card-foreground: var(--text);
+    --input: var(--border);
   }
 
   * {
@@ -113,24 +279,61 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Google Sans Flex', 'Roboto', system-ui, sans-serif;
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    font-family: var(--font-sans-stack);
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'tnum';
+  }
+
+  .font-display {
+    font-family: var(--font-display-stack);
+  }
+
+  .font-learner {
+    font-family: var(--font-display-stack);
   }
 
   h1 {
-    @apply text-3xl font-semibold tracking-tight;
+    font-size: var(--text-h1);
+    line-height: var(--leading-heading);
+    @apply font-semibold tracking-tight;
   }
 
   h2 {
-    @apply text-2xl font-semibold tracking-tight;
+    font-size: var(--text-h2);
+    line-height: var(--leading-heading);
+    @apply font-semibold tracking-tight;
   }
 
   h3 {
-    @apply text-xl font-semibold tracking-tight;
+    font-size: var(--text-h3);
+    line-height: var(--leading-heading);
+    @apply font-semibold tracking-tight;
   }
 
   h4 {
-    @apply text-lg font-medium;
+    font-size: var(--text-h4);
+    line-height: var(--leading-heading);
+    @apply font-medium;
+  }
+
+  h5 {
+    font-size: var(--text-h5);
+    line-height: var(--leading-heading);
+    @apply font-medium;
+  }
+
+  h6 {
+    font-size: var(--text-h6);
+    line-height: var(--leading-heading);
+    @apply font-medium;
+  }
+
+  code,
+  kbd,
+  pre,
+  .font-mono {
+    font-family: var(--font-mono-stack);
+    font-size: var(--text-code);
+    font-feature-settings: 'tnum';
   }
 
   :focus-visible {
@@ -140,10 +343,45 @@
 }
 
 @layer utilities {
+  .text-display {
+    font-family: var(--font-display-stack);
+    font-size: var(--text-display);
+    line-height: var(--leading-display);
+    @apply font-semibold tracking-tight;
+  }
+
+  .text-label {
+    font-size: var(--text-label);
+    line-height: var(--leading-label);
+    @apply font-medium;
+  }
+
+  .text-caption {
+    font-size: var(--text-caption);
+    line-height: var(--leading-label);
+    @apply text-muted-foreground;
+  }
+
+  .bg-surface {
+    background-color: hsl(var(--surface));
+  }
+
+  .bg-surface-elevated {
+    background-color: hsl(var(--surface-elevated));
+  }
+
+  .text-text {
+    color: hsl(var(--text));
+  }
+
+  .text-text-muted {
+    color: hsl(var(--text-muted));
+  }
+
   .portal-background {
     background:
-      radial-gradient(ellipse at 15% 40%, hsl(239 84% 67% / 0.12) 0%, transparent 55%),
-      radial-gradient(ellipse at 85% 15%, hsl(160 84% 39% / 0.08) 0%, transparent 45%),
+      radial-gradient(ellipse at 15% 40%, hsl(var(--primary) / 0.1) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 15%, hsl(var(--success) / 0.08) 0%, transparent 45%),
       hsl(var(--background));
   }
 
@@ -154,7 +392,12 @@
 
   .stitch-auth-hero {
     @apply relative flex flex-1 flex-col justify-between overflow-hidden p-8 text-white lg:p-12;
-    background: linear-gradient(145deg, hsl(239 84% 60%) 0%, hsl(262 83% 56%) 55%, hsl(160 84% 40%) 100%);
+    background: linear-gradient(
+      145deg,
+      hsl(var(--primary-deep)) 0%,
+      hsl(var(--primary)) 45%,
+      hsl(var(--secondary)) 100%
+    );
   }
 
   .stitch-auth-hero-image {
@@ -165,7 +408,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(145deg, hsl(239 84% 60% / 0.85) 0%, hsl(262 83% 56% / 0.7) 100%);
+    background: linear-gradient(145deg, hsl(var(--primary-deep) / 0.85) 0%, hsl(var(--secondary) / 0.7) 100%);
     z-index: 1;
   }
 
@@ -195,11 +438,16 @@
   .stitch-elevated {
     box-shadow:
       0 1px 2px hsl(0 0% 0% / 0.06),
-      0 4px 12px hsl(239 84% 67% / 0.08);
+      0 4px 12px hsl(var(--primary) / 0.08);
   }
 
   .stitch-welcome-banner {
-    background: linear-gradient(135deg, hsl(239 84% 62%) 0%, hsl(262 83% 56%) 55%, hsl(160 84% 42%) 100%);
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--secondary)) 55%,
+      hsl(var(--success)) 100%
+    );
   }
 
   .stitch-welcome-banner::after {
@@ -216,8 +464,8 @@
   }
 
   .stitch-ai-promo {
-    background: linear-gradient(135deg, hsl(262 83% 55%) 0%, hsl(239 84% 60%) 100%);
-    box-shadow: 0 8px 24px hsl(262 83% 55% / 0.25);
+    background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--primary)) 100%);
+    box-shadow: 0 8px 24px hsl(var(--secondary) / 0.25);
   }
 
   .stitch-nav-active {
@@ -264,6 +512,22 @@
     background: linear-gradient(180deg, hsl(var(--sidebar)) 0%, hsl(var(--sidebar) / 0.95) 100%);
   }
 
+  .duration-fast {
+    transition-duration: var(--motion-fast);
+  }
+
+  .duration-normal {
+    transition-duration: var(--motion-normal);
+  }
+
+  .duration-slow {
+    transition-duration: var(--motion-slow);
+  }
+
+  .ease-spring {
+    transition-timing-function: var(--motion-spring);
+  }
+
   @media (prefers-reduced-transparency: reduce) {
     .glass-card {
       backdrop-filter: none;
@@ -279,6 +543,7 @@
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
   }
 }

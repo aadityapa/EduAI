@@ -1,0 +1,19 @@
+{
+  "name": "@eduai/api-clients",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Generated OpenAPI TypeScript clients for EduAI Nest services",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./identity": "./identity.ts",
+    "./learning": "./learning.ts",
+    "./ai": "./ai.ts",
+    "./erp": "./erp.ts",
+    "./billing": "./billing.ts"
+  },
+  "scripts": {
+    "generate": "node ../../../backend/testing/scripts/openapi-generate.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  }
+}

@@ -1,17 +1,18 @@
 import { Tabs } from 'expo-router';
-import { useTheme } from '../../src/theme/ThemeProvider';
+import { StitchTabBar, type StitchTabBarProps } from '../../src/components/stitch';
+import { tokens } from '../../src/theme/tokens';
 
 export default function ParentLayout() {
-  const theme = useTheme();
   return (
     <Tabs
+      tabBar={(props) => <StitchTabBar {...(props as unknown as StitchTabBarProps)} />}
       screenOptions={{
-        tabBarActiveTintColor: theme.primaryColor,
-        headerStyle: { backgroundColor: theme.primaryColor },
-        headerTintColor: '#fff',
+        headerShown: false,
+        tabBarActiveTintColor: tokens.colors.onSecondaryContainer,
+        tabBarInactiveTintColor: tokens.colors.textMuted,
       }}
     >
-      <Tabs.Screen name="index" options={{ title: 'Dashboard' }} />
+      <Tabs.Screen name="index" options={{ title: 'Home' }} />
       <Tabs.Screen name="children" options={{ title: 'Children' }} />
       <Tabs.Screen name="fees" options={{ title: 'Fees' }} />
       <Tabs.Screen name="notifications" options={{ title: 'Alerts' }} />

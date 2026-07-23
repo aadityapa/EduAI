@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
-import { Bell, CalendarCheck, CreditCard, TrendingUp } from 'lucide-react';
+import { Bell, CalendarCheck, CreditCard, TrendingUp, Users } from 'lucide-react';
 import { DashboardShell } from '@/components/dashboard-shell';
 import { ApiError } from '@/components/api-error';
 import { LinkChildForm } from '@/components/link-child-form';
@@ -14,6 +14,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  EmptyState,
   StitchPageHeader,
   StitchParentKpiCard,
   StitchProgressTimeline,
@@ -49,13 +50,15 @@ export default async function ParentDashboard() {
           action={
             firstChild ? (
               <Button asChild variant="outline" className="rounded-full">
-                <Link href={`/parent/children/${firstChild.student.id}/dashboard`}>Child Dashboard</Link>
+                <Link href={`/parent/children/${firstChild.student.id}/dashboard`} prefetch>
+                  Child Dashboard
+                </Link>
               </Button>
             ) : undefined
           }
         />
 
-        <div className="mb-8 grid gap-4 md:grid-cols-3">
+        <div className="mb-8 grid gap-5 md:grid-cols-3">
           <StitchParentKpiCard
             icon={<CalendarCheck className="h-5 w-5" />}
             label="Attendance Rate"
@@ -80,9 +83,9 @@ export default async function ParentDashboard() {
           />
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="space-y-6 lg:col-span-2">
-            <Card className="stitch-card">
+        <div className="grid gap-8 lg:grid-cols-3">
+          <div className="space-y-8 lg:col-span-2">
+            <Card className="stitch-card border-0 shadow-sm">
               <CardHeader>
                 <CardTitle>Linked children</CardTitle>
               </CardHeader>
@@ -90,9 +93,12 @@ export default async function ParentDashboard() {
                 {loadError && <ApiError message={loadError} />}
 
                 {!loadError && !children?.length && (
-                  <p className="text-sm text-muted-foreground">
-                    No linked students yet. Use the form to connect your child&apos;s account.
-                  </p>
+                  <EmptyState
+                    icon={<Users className="h-5 w-5" />}
+                    title="No linked students yet"
+                    description="Use the form to connect your child's account and start tracking progress."
+                    className="border-0 bg-transparent"
+                  />
                 )}
 
                 {children?.map((link) => {
@@ -100,21 +106,30 @@ export default async function ParentDashboard() {
                   return (
                     <div
                       key={link.linkId}
-                      className="flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4"
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/60 bg-muted/20 p-4"
                     >
                       <div>
                         <p className="font-medium">{name}</p>
                         <p className="text-sm text-muted-foreground">{link.student.email}</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Badge variant={link.status === 'verified' ? 'success' : 'warning'}>{link.status}</Badge>
+                        <Badge variant={link.status === 'verified' ? 'success' : 'warning'}>
+                          {link.status}
+                        </Badge>
                         {link.status === 'verified' && (
                           <>
                             <Button size="sm" asChild className="rounded-full">
-                              <Link href={`/parent/children/${link.student.id}/dashboard`}>Dashboard</Link>
+                              <Link
+                                href={`/parent/children/${link.student.id}/dashboard`}
+                                prefetch
+                              >
+                                Dashboard
+                              </Link>
                             </Button>
                             <Button size="sm" variant="outline" asChild className="rounded-full">
-                              <Link href={`/parent/children/${link.student.id}/report`}>Report</Link>
+                              <Link href={`/parent/children/${link.student.id}/report`} prefetch>
+                                Report
+                              </Link>
                             </Button>
                           </>
                         )}
@@ -135,7 +150,7 @@ export default async function ParentDashboard() {
           </div>
 
           <div className="space-y-6">
-            <Card className="stitch-card">
+            <Card className="stitch-card border-0 shadow-sm">
               <CardHeader>
                 <CardTitle>Link a child</CardTitle>
               </CardHeader>
@@ -144,20 +159,20 @@ export default async function ParentDashboard() {
               </CardContent>
             </Card>
 
-            <Card className="stitch-card">
+            <Card className="stitch-card border-0 shadow-sm">
               <CardHeader className="flex flex-row items-center gap-2">
                 <Bell className="h-5 w-5 text-primary" />
                 <CardTitle>School Notifications</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-sm">
-                <div className="rounded-lg border p-3">
+                <div className="rounded-xl bg-muted/40 p-4">
                   <p className="font-medium">Parent-teacher meeting scheduled</p>
                   <p className="text-muted-foreground">Friday, 4:00 PM</p>
                 </div>
-                <div className="rounded-lg border p-3">
+                <div className="rounded-xl bg-muted/40 p-4">
                   <p className="font-medium">Fee receipt available</p>
                   <p className="text-muted-foreground">
-                    <Link href="/parent/fees" className="text-primary hover:underline">
+                    <Link href="/parent/fees" prefetch className="text-primary hover:underline">
                       View fees
                     </Link>
                   </p>

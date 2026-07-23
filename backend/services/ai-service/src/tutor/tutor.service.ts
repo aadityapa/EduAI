@@ -113,6 +113,8 @@ export class TutorService {
         model: result.model,
         provider: result.provider,
         tokensUsed: result.tokensUsed.total,
+        cached: result.cached ?? false,
+        intent: result.intent,
         sources: dto.lessonId ? [{ type: 'lesson', id: dto.lessonId, label: dto.lessonId }] : [],
       };
     } catch (error) {

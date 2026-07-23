@@ -14,7 +14,7 @@
     "android": {
       "package": "in.eduai.mobile",
       "adaptiveIcon": {
-        "backgroundColor": "#6D28D9"
+        "backgroundColor": "#1A73E8"
       }
     },
     "plugins": [
@@ -22,7 +22,7 @@
       [
         "expo-notifications",
         {
-          "color": "#6D28D9"
+          "color": "#1A73E8"
         }
       ]
     ],
@@ -33,7 +33,8 @@
       "identityUrl": "http://localhost:3001",
       "learningUrl": "http://localhost:3003",
       "aiUrl": "http://localhost:3004",
-      "erpUrl": "http://localhost:3005"
+      "erpUrl": "http://localhost:3005",
+      "billingUrl": "http://localhost:3006"
     }
   }
 }

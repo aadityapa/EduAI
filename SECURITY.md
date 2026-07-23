@@ -70,8 +70,39 @@ academic records, guardian contact information, and payment details), any
 report involving unauthorized access to, or exposure of, student or guardian
 data will be treated as **critical severity** regardless of exploit complexity.
 
+## DPDP Act 2023 (engineering controls)
+
+EduAI implements technical controls aligned with India's Digital Personal Data
+Protection Act 2023. **Legal sign-off remains Phase 12.** Engineering mechanisms:
+
+- **Consent & purpose limitation** — `ConsentRecord` with enumerated purposes;
+  parental verification for minors (`pending_parental` → hashed OTP / attestation).
+- **Data principal rights** — Data Subject Request (DSR) APIs for export, erasure,
+  correction, and restrict-processing (`/api/v1/privacy/dsr`).
+- **Data minimization** — export packages exclude password hashes and payment secrets.
+- **Residency** — default India region `ap-south-1`; see
+  `backend/docs/security/data-residency.md`.
+- **Threat model** — `backend/docs/security/threat-model.md`.
+
+## Encryption and secrets
+
+- TLS in transit at the edge (documented in security architecture).
+- Passwords stored with bcrypt (cost factor 12).
+- Optional field-level AES-256-GCM via `FIELD_ENCRYPTION_KEY` (`encryptField` in `@eduai/shared`).
+- `JWT_SECRET` and `AUTH_SECRET` **fail closed** in production (process will not boot
+  with missing/short secrets). Never commit secrets; report leaked credentials privately.
+
+## Immutable audit
+
+Security-relevant actions (login success/failure, consent, DSR) write to
+`audit_logs`. Database triggers reject `UPDATE`/`DELETE` on that table (append-only).
+Repeated failed logins raise anomaly hooks for operator visibility.
+
 ## Secrets and Configuration
 
 If you find a committed secret, API key, or credential (for example in `.env`
 files, Kubernetes manifests, or CI configuration), please report it via the
 same channel above rather than filing a public issue.
+
+CI runs gitleaks, a lightweight secret pattern scan (`pnpm security:scan`), and
+`pnpm audit` on every PR.

@@ -7,3 +7,6 @@ packages:
   - "backend/shared/*"
   - "backend/database"
   - "backend/testing/load"
+  - "backend/testing/unit"
+  - "backend/testing/e2e"
+  - "backend/testing/contract"
