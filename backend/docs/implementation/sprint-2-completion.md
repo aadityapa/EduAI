@@ -1,4 +1,4 @@
-# EduAI Sprint 2 — Completion Report
+﻿# EduAI Sprint 2 — Completion Report
 
 **Sprint theme:** Student Learning Platform  
 **Status:** Complete (local dev ready)
@@ -81,7 +81,7 @@ pnpm --filter @eduai/learning-service dev    # :3003
 pnpm --filter @eduai/web dev                 # :3000
 ```
 
-**Demo login:** `student@demo.eduai.in` / `Demo1234!`
+**Demo login:** `student@demo.eduai.in` / `[local seed password]`
 
 **Demo quiz:** `/student/quizzes/00000000-0000-4000-8000-000000000040`
 

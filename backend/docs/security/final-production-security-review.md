@@ -1,4 +1,4 @@
-# Final Production Security Review
+﻿# Final Production Security Review
 
 **Date:** 2025-06-21  
 **Scope:** identity-service, billing-service, ai-service, backend/shared/auth, backend/shared/ai, backend/shared/nest-common  
@@ -74,7 +74,7 @@ Note: `pnpm audit` reports **Critical** on `vitest@2.1.9` (GHSA-5xrq-8626-4rwp).
 
 | ID | Finding |
 |----|---------|
-| SEC-L1 | Demo password `Demo1234!` in seed and k6 tests |
+| SEC-L1 | Demo password `[local seed password]` in seed and k6 tests |
 | SEC-L2 | `withTenantContext` SQL string interpolation (UUID-only mitigates injection) |
 | SEC-L3 | AI stream output filter partial |
 | SEC-L4 | Activity logs not shipped to SIEM |

@@ -88,7 +88,7 @@ or configuration:
 - `ARCHITECTURE.md` — architecture overview, service/app inventory, Mermaid
   request-flow diagram, repository layout tree
 - `CONTRIBUTING.md` — setup, branching, commit, and PR conventions
-- `SECURITY.md` — vulnerability disclosure policy (`security@karnex.in`)
+- `SECURITY.md` — vulnerability disclosure via GitHub Security Advisories
 - `CODE_OF_CONDUCT.md` — Contributor Covenant v2.1
 - `.github/CODEOWNERS` — default owner placeholder with a customization guide
 - `.github/PULL_REQUEST_TEMPLATE.md`

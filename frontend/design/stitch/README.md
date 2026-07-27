@@ -54,4 +54,5 @@ Run mobile dev:
 pnpm dev:mobile
 ```
 
-Demo login: `student@demo.eduai.in` / `Demo1234!` (backend on `:3001`)
+Ensure identity-service is running on `:3001`, then sign in with a local demo
+account from `pnpm db:seed` (do not commit or publish demo passwords).

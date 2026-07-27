@@ -37,7 +37,7 @@ function LoginPageInner() {
   const [portal, setPortal] = useState<Portal>('student');
   const [mode, setMode] = useState<LoginMode>('email');
   const [email, setEmail] = useState(PORTAL_EMAILS.student);
-  const [password, setPassword] = useState('Demo1234!');
+  const [password, setPassword] = useState('');
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -251,7 +251,8 @@ function LoginPageInner() {
               </div>
 
               <p className="text-center text-xs text-muted-foreground">
-                Demo password: Demo1234!
+                Local demo accounts come from database seed — do not use demo
+                credentials in production.
                 <br />
                 Admin CRM:{' '}
                 <a

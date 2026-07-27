@@ -35,12 +35,11 @@ Or run everything: `pnpm mvp:dev` (requires Docker + DB seeded).
 
 ## 4. Login
 
-| Portal | URL | Email | Password |
-|--------|-----|-------|----------|
-| Web (student) | http://localhost:3000 | student@demo.eduai.in | Demo1234! |
-| Web (teacher) | http://localhost:3000 | teacher@demo.eduai.in | Demo1234! |
-| Web (parent) | http://localhost:3000 | parent@demo.eduai.in | Demo1234! |
-| Admin | http://localhost:3002 | admin@demo.eduai.in | Demo1234! |
+After seed, use the **role tabs** on the web login page (Student / Teacher / Parent)
+or open the admin app at http://localhost:3002.
+
+Demo account details live only in the local seed script for development — do **not**
+publish passwords in docs, tickets, or production configs.
 
 ## Troubleshooting
 

@@ -27,7 +27,7 @@ export default function LoginScreen() {
   const { signIn } = useAuth();
   const [portal, setPortal] = useState<Portal>('student');
   const [email, setEmail] = useState('student@demo.eduai.in');
-  const [password, setPassword] = useState('Demo1234!');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   function selectPortal(p: Portal) {

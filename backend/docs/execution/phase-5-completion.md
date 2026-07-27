@@ -1,4 +1,4 @@
-# Phase 5 completion note — Mobile parity
+﻿# Phase 5 completion note — Mobile parity
 
 **Date:** 2026-07-23  
 **Status:** Complete — awaiting approval for Phase 6  
@@ -18,7 +18,7 @@ All mapped routes implemented with shared states:
 - Student: home, courses, tutor, quizzes, planner, profile, hub, gamification (Hub/Rewards tabs preserved)
 - Parent: home, fees (+ children, alerts)
 - Teacher: home (+ classes, attendance, homework)
-- Login: demo portal pills preserved (`student|teacher|parent@demo.eduai.in` / `Demo1234!`)
+- Login: demo portal pills preserved (`student|teacher|parent@demo.eduai.in` / `[local seed password]`)
 
 ### Live APIs
 - Expanded `src/api/services.ts`: enrollments, lessons, leaderboard, planner, teacher classes/assignments/attendance, ERP notifications

@@ -1,4 +1,4 @@
-# Sprint 4 — Enterprise ERP + CRM (Complete)
+﻿# Sprint 4 — Enterprise ERP + CRM (Complete)
 
 **Theme:** School ERP, Teacher Portal, Parent Portal, Admin CRM, Billing, RLS  
 **Status:** ✅ Complete  
@@ -57,7 +57,7 @@ pnpm --filter @eduai/web dev               # :3000
 pnpm --filter @eduai/admin dev             # :3002
 ```
 
-**Demo logins:** `teacher@demo.eduai.in`, `parent@demo.eduai.in`, `admin@demo.eduai.in` / `Demo1234!`
+**Demo logins:** `teacher@demo.eduai.in`, `parent@demo.eduai.in`, `admin@demo.eduai.in` / `[local seed password]`
 
 ---
 

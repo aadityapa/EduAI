@@ -1,4 +1,4 @@
-# EduAI Sprint 3 — Completion Report v2 (Production Readiness)
+﻿# EduAI Sprint 3 — Completion Report v2 (Production Readiness)
 
 **Sprint theme:** AI Platform — Production Ready  
 **Status:** Complete (staging/beta ready)  
@@ -93,7 +93,7 @@ OPENAI_API_KEY=sk-...
 AI_PREFERRED_PROVIDER=openai
 ```
 
-**Demo login:** `student@demo.eduai.in` / `Demo1234!`
+**Demo login:** `student@demo.eduai.in` / `[local seed password]`
 
 **Try AI features:**
 

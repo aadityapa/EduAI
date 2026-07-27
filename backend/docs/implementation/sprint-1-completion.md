@@ -1,4 +1,4 @@
-# EduAI Sprint 1 — Completion Report
+﻿# EduAI Sprint 1 — Completion Report
 
 **Sprint theme:** Foundation + Authentication & User Management  
 **Status:** Complete (local dev ready)
@@ -97,10 +97,10 @@ pnpm --filter @eduai/admin dev
 
 | Email | Password | Role |
 |-------|----------|------|
-| admin@demo.eduai.in | Demo1234! | Admin (tenant_admin) |
-| teacher@demo.eduai.in | Demo1234! | Teacher |
-| student@demo.eduai.in | Demo1234! | Student |
-| parent@demo.eduai.in | Demo1234! | Parent |
+| admin@demo.eduai.in | [local seed password] | Admin (tenant_admin) |
+| teacher@demo.eduai.in | [local seed password] | Teacher |
+| student@demo.eduai.in | [local seed password] | Student |
+| parent@demo.eduai.in | [local seed password] | Parent |
 
 ### 6. Verify build & tests
 

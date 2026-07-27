@@ -1,4 +1,4 @@
-# Pre-Production Audit — EduAI Platform
+﻿# Pre-Production Audit — EduAI Platform
 
 **Date:** 2025-06-21  
 **Branch:** `feature/sprint-4-enterprise` (commits ff98fc0, b7857bd)  
@@ -95,6 +95,6 @@
 - [x] Health endpoints accessible without auth
 - [x] Web + admin build successfully
 - [x] Database migrations apply cleanly
-- [x] Demo tenant seed functional (`*@demo.eduai.in` / `Demo1234!`)
+- [x] Demo tenant seed functional (`*@demo.eduai.in` / `[local seed password]`)
 
 **Approved for:** v0.9.0-beta tag and Sprint 5 execution

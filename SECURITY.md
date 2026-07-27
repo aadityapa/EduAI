@@ -12,7 +12,7 @@ platform safe.
 ## Supported Versions
 
 EduAI is developed as a single, continuously-deployed monorepo (no long-lived
-version branches). Security fixes are applied to the `master`/`main` branch and
+version branches). Security fixes are applied to the `main` branch and
 released as part of the next deployment. There are no separately maintained
 release lines to track.
 
@@ -22,9 +22,9 @@ release lines to track.
 
 If you discover a security vulnerability in any part of this repository
 (backend services, frontend apps, infrastructure configuration, or CI/CD
-pipelines), please report it privately by emailing:
-
-**security@karnex.in**
+pipelines), please report it privately using
+[GitHub Security Advisories](https://github.com/aadityapa/EduAI/security/advisories/new)
+for this repository.
 
 Please include as much of the following as you can:
 

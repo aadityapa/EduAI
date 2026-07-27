@@ -21,7 +21,7 @@
 
 **Web:** https://staging.eduai.in  
 **Admin:** https://admin.staging.eduai.in  
-**Demo:** `admin@demo.eduai.in` / `Demo1234!`
+**Demo:** use local seeded accounts from `pnpm db:seed` (development only).
 
 ### Roles to Test
 - Student: courses, AI tutor, quizzes

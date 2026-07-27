@@ -235,7 +235,7 @@ export const mr: Messages = {
     signOut: 'साइन आउट',
     settings: 'सेटिंग्ज',
     quickAction: 'त्वरित क्रिया',
-    demoHint: 'डेमो: admin@demo.eduai.in / Demo1234!',
+    demoHint: 'स्थानिक डेमो: pnpm db:seed मधील खाती वापरा (फक्त डेव्हलपमेंट).',
     loginTitle: 'साइन इन',
     loginSubtitle: 'अॅडमिन पोर्टल · पोर्ट 3002',
     workEmail: 'कार्य ईमेल',

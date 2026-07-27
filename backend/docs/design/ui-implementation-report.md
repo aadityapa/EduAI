@@ -1,4 +1,4 @@
-# UI Implementation Report — v2 Rebuild
+﻿# UI Implementation Report — v2 Rebuild
 
 **Branch:** `feature/ui-ux-rebuild`  
 **Date:** June 2025
@@ -97,7 +97,7 @@ pnpm --filter @eduai/web build
 ```bash
 pnpm --filter @eduai/admin dev
 # Open http://localhost:3002
-# Login: admin@demo.eduai.in / Demo1234!
+# Login: admin@demo.eduai.in / [local seed password]
 
 pnpm --filter @eduai/web dev
 # Open http://localhost:3000

@@ -1,4 +1,4 @@
-# Phase 4 completion note — Admin / CRM overhaul
+﻿# Phase 4 completion note — Admin / CRM overhaul
 
 **Date:** 2026-07-23  
 **Status:** Complete — awaiting approval for Phase 5  
@@ -10,7 +10,7 @@
 - Shared `ADMIN_NAV` for sidebar + ⌘K command palette (all admin routes including coupons, campaigns, RBAC)
 - Dense shell: collapsed sidebar, reduced-motion page transitions, RTL-safe logical props
 - Tenant switcher + notifications from live billing subscriptions / activity logs (no mock fixtures)
-- Login polish: design-system form, motion, demo credentials preserved (`admin@demo.eduai.in` / `Demo1234!`)
+- Login polish: design-system form, motion, demo credentials preserved (`admin@demo.eduai.in` / `[local seed password]`)
 
 ### Data / mocks
 - Deleted `lib/mock-data.ts` — zero mock-data imports on production paths

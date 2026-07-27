@@ -162,7 +162,7 @@ async function main() {
     );
   }
 
-  console.log('✅ Seed complete — demo tenant: demo, password: Demo1234!');
+  console.log('✅ Seed complete — demo tenant: demo (local development only)');
 }
 
 main()

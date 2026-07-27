@@ -1,4 +1,4 @@
-# EduAI Phase 0 — Gap Report
+﻿# EduAI Phase 0 — Gap Report
 
 **Date:** 2026-07-23  
 **Role:** Principal Engineer + Head of Design  
@@ -55,8 +55,8 @@ It is **not yet ₹100 Cr–grade**. The largest gaps are: no Storybook / incomp
 
 | Portal | URL | Email | Password |
 |--------|-----|-------|----------|
-| Student / Teacher / Parent | http://localhost:3000 | `*@demo.eduai.in` | `Demo1234!` |
-| Admin | http://localhost:3002 | `admin@demo.eduai.in` | `Demo1234!` |
+| Student / Teacher / Parent | http://localhost:3000 | `*@demo.eduai.in` | `[local seed password]` |
+| Admin | http://localhost:3002 | `admin@demo.eduai.in` | `[local seed password]` |
 
 Web login uses Student / Teacher / Parent tabs.
 
@@ -92,7 +92,7 @@ Domain-ish: CourseCard, QuizQuestion, ProgressBar/Card, MasteryRing, StatCard, K
 - Web/admin Auth.js use `resolveAuthSecret`.
 - Production: missing `JWT_SECRET` throws; `AUTH_SECRET` warns if short (does **not** hard-fail — trade-off to tighten in Phase 9).
 - `.env.example` documents secrets; no hardcoded production secrets found in the audit pass.
-- `SECURITY.md` exists with private disclosure to `security@karnex.in`.
+- `SECURITY.md` exists with private disclosure to `GitHub Security Advisories`.
 
 ### 2.7 TypeScript / lint / typecheck gates
 

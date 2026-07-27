@@ -53,9 +53,10 @@ is officially representing the community in public spaces.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the community leaders responsible for enforcement at:
-
-**security@karnex.in**
+reported to the community leaders responsible for enforcement via the
+repository maintainers (private contact through GitHub) or, for security
+issues, through
+[GitHub Security Advisories](https://github.com/aadityapa/EduAI/security/advisories/new).
 
 All complaints will be reviewed and investigated promptly and fairly.
 

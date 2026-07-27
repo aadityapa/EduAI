@@ -13,7 +13,7 @@ export default function AdminLoginPage() {
   const { t } = useAdminLocale();
   const reduceMotion = useReducedMotion();
   const [email, setEmail] = useState('admin@demo.eduai.in');
-  const [password, setPassword] = useState('Demo1234!');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [pending, startTransition] = useTransition();
 

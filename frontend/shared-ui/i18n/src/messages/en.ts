@@ -237,7 +237,7 @@ export const en = {
     signOut: 'Sign out',
     settings: 'Settings',
     quickAction: 'Quick Action',
-    demoHint: 'Demo: admin@demo.eduai.in / Demo1234!',
+    demoHint: 'Local demo: use seeded accounts from pnpm db:seed (dev only).',
     loginTitle: 'Sign in',
     loginSubtitle: 'Admin portal · port 3002',
     workEmail: 'Work email',
